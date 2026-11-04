@@ -5,8 +5,11 @@ import { build } from "vite-plus";
 
 const mobileRoot = NodePath.resolve(NodePath.dirname(NodeURL.fileURLToPath(import.meta.url)), "..");
 
-async function generateWebViewScript(feature: string, name: string) {
-  const stem = `${name.toLowerCase()}-stream`;
+async function generateWebViewScript(
+  feature: string,
+  name: string,
+  stem = `${name.toLowerCase()}-stream`,
+) {
   const result = await build({
     configFile: false,
     logLevel: "silent",
@@ -40,3 +43,5 @@ async function generateWebViewScript(feature: string, name: string) {
 
 export const generateDeviceStreamScript = () => generateWebViewScript("devices", "Device");
 export const generatePreviewStreamScript = () => generateWebViewScript("browser", "Preview");
+
+export const generateMermaidScript = () => generateWebViewScript("../native", "Mermaid", "mermaid");

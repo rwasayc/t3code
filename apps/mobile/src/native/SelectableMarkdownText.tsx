@@ -1,3 +1,6 @@
+import { useMemo } from "react";
+import { splitMermaidMarkdown } from "../lib/mermaidMarkdown";
+import { MermaidBlock } from "./MermaidBlock";
 import { Platform } from "react-native";
 import type { SelectableMarkdownTextProps } from "./SelectableMarkdownText.types";
 
@@ -24,5 +27,26 @@ export function SelectableMarkdownText(props: SelectableMarkdownTextProps) {
     Platform.OS === "android"
       ? { selectionColor, selectionHandleColor, ...props.textStyle }
       : props.textStyle;
-  return <MobileEnrichedMarkdownText {...props} textStyle={textStyle} />;
+  const segments = useMemo(() => splitMermaidMarkdown(props.markdown), [props.markdown]);
+  if (segments.length === 1 && segments[0]?.kind === "markdown") {
+    return <MobileEnrichedMarkdownText {...props} textStyle={textStyle} />;
+  }
+  return segments.map((segment) =>
+    segment.kind === "mermaid" ? (
+      <MermaidBlock
+        {...props}
+        key={`${segment.offset}:${segment.source}`}
+        markdown={segment.text}
+        source={segment.source}
+        textStyle={textStyle}
+      />
+    ) : (
+      <MobileEnrichedMarkdownText
+        {...props}
+        key={segment.offset}
+        markdown={segment.renderText ?? segment.text}
+        textStyle={textStyle}
+      />
+    ),
+  );
 }

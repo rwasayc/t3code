@@ -41,6 +41,13 @@ exporting a table preserves the TeX.
 The composer keeps TeX source editable, including when rich text is enabled. The Render math
 preference is saved separately on each device.
 
+## Mermaid diagrams
+
+On mobile, fenced `mermaid` blocks in messages and Markdown file previews render as diagrams
+without an internet connection. Use **Show code** or **Show diagram** to switch views. Unsupported
+syntax shows its source. Place diagrams at the document level; fences inside lists and blockquotes
+remain code blocks.
+
 ## Motion
 
 The main sidebar, right panel, and terminal drawer open and close immediately by default. Move the
