@@ -6,11 +6,13 @@ import mermaidScript from "@t3tools/mobile-mermaid";
 import { AppText } from "../components/ui/AppText";
 import { ControlPill } from "../components/ui/ControlPill";
 import { useAppearancePreferences } from "../features/settings/appearance/AppearancePreferencesProvider";
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { mermaidHtml, parseMermaidMessage } from "../lib/mermaidHtml";
 import { MobileEnrichedMarkdownText } from "./EnrichedMarkdownText";
 import type { SelectableMarkdownTextProps } from "./SelectableMarkdownText.types";
 
 export function MermaidBlock(props: SelectableMarkdownTextProps & { readonly source: string }) {
+  const { t } = useTranslation();
   const { themeAppearance } = useAppearancePreferences();
   const [showCode, setShowCode] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -23,7 +25,7 @@ export function MermaidBlock(props: SelectableMarkdownTextProps & { readonly sou
     <View className="my-2 gap-2">
       <View className="flex-row justify-end">
         <ControlPill
-          label={failed ? "Retry diagram" : showCode ? "Show diagram" : "Show code"}
+          label={t(failed ? "Retry diagram" : showCode ? "Show diagram" : "Show code")}
           variant="pill"
           onPress={() => {
             if (failed) {
@@ -33,7 +35,9 @@ export function MermaidBlock(props: SelectableMarkdownTextProps & { readonly sou
           }}
         />
       </View>
-      {failed ? <AppText>Unable to render diagram. The source is shown below.</AppText> : null}
+      {failed ? (
+        <AppText>{t("Unable to render diagram. The source is shown below.")}</AppText>
+      ) : null}
       {showCode || failed ? (
         <MobileEnrichedMarkdownText {...props} />
       ) : (

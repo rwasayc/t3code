@@ -293,7 +293,7 @@ const config: ExpoConfig = {
   android: {
     icon: variant.assets.appIcon,
     package: isSshPersonalBuild ? "com.workbench.t3ssh" : variant.androidPackage,
-    ...(isSshPersonalBuild ? { versionCode: 2 } : {}),
+    ...(isSshPersonalBuild ? { versionCode: 3 } : {}),
     ...(repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE
       ? { googleServicesFile: repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE }
       : {}),

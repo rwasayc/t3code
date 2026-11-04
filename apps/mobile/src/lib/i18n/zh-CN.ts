@@ -1,4 +1,5 @@
 export const ZH_CN: Readonly<Record<string, string>> = {
+  "Retry diagram": "重试图表",
   Cancel: "取消",
   "Try again": "重试",
   "Try again.": "请重试。",
