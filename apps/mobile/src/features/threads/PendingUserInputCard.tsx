@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import { QuestionAttachments } from "./QuestionAttachments";
 import type { EnvironmentId, RuntimeRequestId } from "@t3tools/contracts";
@@ -89,6 +90,7 @@ function QuestionText(props: {
 }
 
 export function PendingUserInputCard(props: PendingUserInputCardProps) {
+  const { t } = useTranslation();
   const questionCount = props.pendingUserInput.questions.length;
   const canRespond = props.pendingUserInput.responseCapability !== "not_resumable";
   const isResponding = props.respondingUserInputId === props.pendingUserInput.requestId;
@@ -171,7 +173,7 @@ export function PendingUserInputCard(props: PendingUserInputCardProps) {
       </Pressable>
       {props.onStopThread ? (
         <ControlPill
-          accessibilityLabel="Stop"
+          accessibilityLabel={t("Stop")}
           icon="stop.fill"
           variant="danger"
           className="h-9 w-9"
@@ -192,7 +194,7 @@ export function PendingUserInputCard(props: PendingUserInputCardProps) {
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Collapse user input"
+        accessibilityLabel={t("Collapse user input")}
         onPress={props.onToggleCollapsed}
         className="flex-row items-start gap-2"
       >
@@ -307,7 +309,7 @@ export function PendingUserInputCard(props: PendingUserInputCardProps) {
         })}
       </ScrollView>
       <Button
-        label="Submit answers"
+        label={t("Submit answers")}
         fullWidth
         tone={props.answers ? "primary" : "secondary"}
         disabled={!props.canOperateThread || responseDisabled || props.answers === null}
@@ -315,7 +317,7 @@ export function PendingUserInputCard(props: PendingUserInputCardProps) {
       />
       {props.pendingUserInput.dismissible ? (
         <Button
-          label="Dismiss without answering"
+          label={t("Dismiss without answering")}
           tone="text"
           disabled={isResponding}
           onPress={() => void props.onDismiss()}

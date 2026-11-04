@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import { SheetHeader } from "../../components/ui/SheetHeader";
 import { IconButton } from "../../components/ui/IconButton";
@@ -26,6 +27,7 @@ export function ConnectOnboardingRouteScreen() {
 }
 
 function ConfiguredConnectOnboardingRouteScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { isSignedIn, userId } = useAuth({ treatPendingAsSignedOut: false });
@@ -62,7 +64,7 @@ function ConfiguredConnectOnboardingRouteScreen() {
     <View collapsable={false} className="flex-1 bg-sheet">
       <SheetHeader
         presentation={Platform.OS === "android" ? "inline" : "native"}
-        title="Set up T3 Connect"
+        title={t("Set up T3 Connect")}
         onClose={handleClose}
         trailing={
           Platform.OS === "android" ? (
@@ -70,14 +72,14 @@ function ConfiguredConnectOnboardingRouteScreen() {
               <View
                 className="size-12 items-center justify-center"
                 accessible
-                accessibilityLabel="Refreshing environments"
+                accessibilityLabel={t("Refreshing environments")}
                 accessibilityState={{ busy: true }}
               >
                 <AppActivityIndicator />
               </View>
             ) : (
               <IconButton
-                accessibilityLabel="Refresh environments"
+                accessibilityLabel={t("Refresh environments")}
                 icon="arrow.clockwise"
                 onPress={handleRefresh}
               />

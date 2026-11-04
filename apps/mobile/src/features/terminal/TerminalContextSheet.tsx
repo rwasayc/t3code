@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import {
   ComposerContextId,
@@ -25,6 +26,7 @@ export function TerminalContextSheet(props: {
   onClose: () => void;
   onAttach: () => void;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const lines = props.text.replace(/\n+$/, "").split("\n");
   const [range, setRange] = useState({ start: 0, end: lines.length - 1 });
@@ -56,7 +58,7 @@ export function TerminalContextSheet(props: {
     props.onAttach();
   };
   return (
-    <Sheet title="Terminal output" onClose={props.onClose}>
+    <Sheet title={t("Terminal output")} onClose={props.onClose}>
       <ScrollView
         nestedScrollEnabled
         className="flex-1"
@@ -116,7 +118,7 @@ export function TerminalContextSheet(props: {
           </Text>
         ) : null}
         <Button
-          label="Attach selected output"
+          label={t("Attach selected output")}
           tone="primary"
           fullWidth
           disabled={!selectedText.trim() || tooLarge}

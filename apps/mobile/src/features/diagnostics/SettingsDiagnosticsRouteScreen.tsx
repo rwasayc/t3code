@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import * as Application from "expo-application";
@@ -69,6 +70,7 @@ function appIdentity() {
 }
 
 export function SettingsDiagnosticsRouteScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const state = useCrashLogState();
   const [copied, setCopied] = useState(false);
@@ -82,7 +84,7 @@ export function SettingsDiagnosticsRouteScreen() {
   };
 
   return (
-    <SettingsScreen title="Diagnostics">
+    <SettingsScreen title={t("Diagnostics")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentInset={{ bottom: Math.max(insets.bottom, 18) }}
@@ -92,7 +94,7 @@ export function SettingsDiagnosticsRouteScreen() {
       >
         {crashReportingAvailable ? <CrashReportsSetting /> : null}
 
-        <SettingsSection title="Startup crashes">
+        <SettingsSection title={t("Startup crashes")}>
           {state.status === "loading" ? (
             <View className="items-center gap-3 px-6 py-8">
               <AppActivityIndicator />
@@ -101,14 +103,14 @@ export function SettingsDiagnosticsRouteScreen() {
           ) : state.status === "unavailable" ? (
             <EmptyState
               icon="exclamationmark.triangle"
-              title="Crash log unavailable"
-              detail="Startup crash records are only kept in store and TestFlight builds."
+              title={t("Crash log unavailable")}
+              detail={t("Startup crash records are only kept in store and TestFlight builds.")}
             />
           ) : records.length === 0 ? (
             <EmptyState
               icon="checkmark.circle"
-              title="No startup crashes"
-              detail="Nothing has taken the app down during launch in the last 7 days."
+              title={t("No startup crashes")}
+              detail={t("Nothing has taken the app down during launch in the last 7 days.")}
             />
           ) : (
             records.map((record, index) => (
@@ -118,10 +120,10 @@ export function SettingsDiagnosticsRouteScreen() {
         </SettingsSection>
 
         <View className="gap-3">
-          <SettingsSection title="Actions">
+          <SettingsSection title={t("Actions")}>
             <SettingsActionRow
               icon={copied ? "checkmark" : "doc.on.doc"}
-              label={copied ? "Copied" : "Copy crash report"}
+              label={copied ? t("Copied") : "Copy crash report"}
               disabled={state.status !== "ready"}
               onPress={() => void copyReport()}
             />
@@ -138,6 +140,7 @@ export function SettingsDiagnosticsRouteScreen() {
 }
 
 function CrashReportsSetting() {
+  const { t } = useTranslation();
   const preferences = useAtomValue(mobilePreferencesAtom);
   const savePreferences = useAtomSet(updateMobilePreferencesAtom, { mode: "promiseExit" });
   // One change at a time, so a slow save never turns sending back on after a later opt-out.
@@ -167,10 +170,10 @@ function CrashReportsSetting() {
 
   return (
     <View className="gap-3">
-      <SettingsSection title="Crash reports">
+      <SettingsSection title={t("Crash reports")}>
         <SettingsSwitchRow
           icon="tray.and.arrow.up"
-          label="Send crash reports"
+          label={t("Send crash reports")}
           disabled={!ready || saving}
           value={enabled}
           onValueChange={change}

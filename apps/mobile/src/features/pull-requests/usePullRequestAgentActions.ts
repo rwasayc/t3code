@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { PullRequestDetail } from "@t3tools/contracts";
 import {
   pullRequestAgentActions,
@@ -13,6 +14,7 @@ export function usePullRequestAgentActions(
   pr: PullRequestDetail | null,
   filePath?: string,
 ) {
+  const { t } = useTranslation();
   const links = usePullRequestThreads(params, pr, filePath);
   const connected = usePullRequestConnected(params.environmentId);
   const actions = pr ? pullRequestAgentActions(pr, links.canWatch) : [];
@@ -42,7 +44,7 @@ export function usePullRequestAgentActions(
     const action = actions.find((action) => action.task === task);
     return {
       id: task,
-      title: action?.title ?? "Open thread",
+      title: action?.title ?? t("Open thread"),
       image: action?.icon,
       attributes: { disabled: disabled || !links.canAsk || action?.disabled },
       ...(links.threads.length > 1 ? { subactions: threadActions(task) } : {}),

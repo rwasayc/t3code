@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { pipe } from "effect/Function";
 import { useAtomValue } from "@effect/atom-react";
 import {
@@ -102,6 +103,7 @@ function PendingLinkRequest(props: {
   readonly environmentId: EnvironmentId;
   readonly item: LinkRequestItem;
 }) {
+  const { t } = useTranslation();
   const { item } = props;
   const [open, setOpen] = useState(false);
   const [declining, setDeclining] = useState(false);
@@ -173,7 +175,7 @@ function PendingLinkRequest(props: {
               className="px-1 py-1 active:opacity-60 disabled:opacity-50"
               onPress={() => void decline()}
             >
-              <Text className="font-sans text-xs text-foreground-muted">Decline</Text>
+              <Text className="font-sans text-xs text-foreground-muted">{t("Decline")}</Text>
             </Pressable>
           </View>
         </>
@@ -229,6 +231,7 @@ function LinkRequestSheet(props: {
   readonly item: LinkRequestItem;
   readonly onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const { item } = props;
   const insets = useSafeAreaInsets();
   const pickMachine = picksMachine(item);
@@ -345,7 +348,7 @@ function LinkRequestSheet(props: {
           ) : null}
         </View>
         {pickMachine ? (
-          <SettingsSection title="Machine">
+          <SettingsSection title={t("Machine")}>
             {machines.map((machine, index) => (
               <MachineRow
                 key={machine.environmentId}
@@ -360,8 +363,10 @@ function LinkRequestSheet(props: {
               />
             ))}
             <SettingsChoiceRow
-              label="Another address…"
-              description="Link a machine this app does not know, by its https or Tailscale address."
+              label={t("Another address…")}
+              description={t(
+                "Link a machine this app does not know, by its https or Tailscale address.",
+              )}
               selected={selected === ANOTHER_ADDRESS}
               separated={machines.length > 0}
               disabled={busy}
@@ -375,7 +380,7 @@ function LinkRequestSheet(props: {
         {needsAddress && !(item.url !== undefined && item.environmentId === undefined) ? (
           <View className="gap-2">
             <TextInput
-              accessibilityLabel="Address"
+              accessibilityLabel={t("Address")}
               placeholder="https://machine.tailnet.ts.net"
               value={address}
               onChangeText={setAddress}
@@ -403,8 +408,8 @@ function LinkRequestSheet(props: {
             {canMint ? null : (
               <View className="gap-2">
                 <TextInput
-                  accessibilityLabel="Pairing code"
-                  placeholder="Paste the code"
+                  accessibilityLabel={t("Pairing code")}
+                  placeholder={t("Paste the code")}
                   value={pairingCode}
                   onChangeText={setPairingCode}
                   editable={!busy}
@@ -420,7 +425,7 @@ function LinkRequestSheet(props: {
                 </Text>
               </View>
             )}
-            <SettingsSection title="What agents here may do there">
+            <SettingsSection title={t("What agents here may do there")}>
               {ACCESS_CHOICES.map((choice, index) => (
                 <SettingsChoiceRow
                   key={choice.access}
@@ -455,7 +460,13 @@ function LinkRequestSheet(props: {
           tone="primary"
           fullWidth
         />
-        <Button label="Cancel" tone="secondary" disabled={busy} onPress={props.onClose} fullWidth />
+        <Button
+          label={t("Cancel")}
+          tone="secondary"
+          disabled={busy}
+          onPress={props.onClose}
+          fullWidth
+        />
       </ScrollView>
     </Modal>
   );

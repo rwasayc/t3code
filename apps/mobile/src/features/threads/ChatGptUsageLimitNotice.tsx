@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { EnvironmentThreadShell } from "@t3tools/client-runtime/state/shell";
 import {
   CHATGPT_USAGE_LIMIT_CODE,
@@ -13,6 +14,7 @@ import { AppText as Text } from "../../components/ui/AppText";
 import { Button } from "../../components/ui/Button";
 
 export function ChatGptUsageLimitNotice({ thread }: { thread: EnvironmentThreadShell }) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<"copied" | "copy-failed" | "open-failed" | null>(null);
   const code = thread.runtime?.lastErrorCode;
   const workspaceLimit = code === CHATGPT_WORKSPACE_USAGE_LIMIT_CODE;
@@ -36,7 +38,7 @@ export function ChatGptUsageLimitNotice({ thread }: { thread: EnvironmentThreadS
       </Text>
       {workspaceLimit ? (
         <Button
-          label="Copy request for admin"
+          label={t("Copy request for admin")}
           tone="primary"
           onPress={() =>
             void Clipboard.setStringAsync(CHATGPT_WORKSPACE_ADMIN_REQUEST).then(
@@ -47,7 +49,7 @@ export function ChatGptUsageLimitNotice({ thread }: { thread: EnvironmentThreadS
         />
       ) : (
         <Button
-          label="Manage usage"
+          label={t("Manage usage")}
           tone="primary"
           onPress={() =>
             void Linking.openURL(CHATGPT_USAGE_URL).then(

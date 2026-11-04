@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import {
   pullRequestLinkProject,
   resolveLinkPullRequestInput,
@@ -34,6 +35,7 @@ export function useLinkedPullRequestActions(input: {
   readonly project: EnvironmentProject | null;
   readonly runtime: EnvironmentRuntimeState | null;
 }) {
+  const { t } = useTranslation();
   const { thread, project, runtime } = input;
   const terminology = sourceControlClients.get(project?.repositoryIdentity?.provider).changeRequest;
   const capabilities = runtime?.serverConfig?.environment.capabilities;
@@ -118,7 +120,7 @@ export function useLinkedPullRequestActions(input: {
     const open = link.snapshot === null || link.snapshot.state === "open";
     const watching = link.watch !== undefined;
     return [
-      { id: "copy", title: "Copy link", image: "link" },
+      { id: "copy", title: t("Copy link"), image: "link" },
       { id: "browser", title: "Open in browser", image: "safari" },
       ...((watching ? canWatch : canStartWatch) && open
         ? [

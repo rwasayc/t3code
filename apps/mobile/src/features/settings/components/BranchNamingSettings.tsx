@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { BranchNamingMode, type ServerSettingsPatch } from "@t3tools/contracts";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { View } from "react-native";
@@ -26,6 +27,7 @@ export function BranchNamingSettings(props: {
   disabled: Readonly<Record<"mode" | "prefix" | "instructions", boolean>>;
   onChange: (patch: ServerSettingsPatch) => void;
 }) {
+  const { t } = useTranslation();
   // Save on exit too: Android Back hides the keyboard without ending editing.
   type Field = "branchNamePrefix" | "branchNameInstructions";
   const drafts = useRef<Partial<Record<Field, { text: string; over: string | null }>>>({});
@@ -55,7 +57,7 @@ export function BranchNamingSettings(props: {
   useEffect(() => () => saveDrafts(), []);
   return (
     <SettingsSection
-      title="Worktree branch naming"
+      title={t("Worktree branch naming")}
       trailing={
         props.mode === null ? <Text className="text-xs text-foreground-muted">Mixed</Text> : null
       }
@@ -78,7 +80,7 @@ export function BranchNamingSettings(props: {
           </Text>
           <AppTextInput
             key={props.prefix}
-            accessibilityLabel="Branch prefix"
+            accessibilityLabel={t("Branch prefix")}
             onChangeText={(text) => edit("branchNamePrefix", text)}
             defaultValue={props.prefix ?? ""}
             placeholder={props.prefix === null ? "Mixed" : "No prefix"}
@@ -97,7 +99,7 @@ export function BranchNamingSettings(props: {
           </Text>
           <AppTextInput
             key={props.instructions}
-            accessibilityLabel="Branch naming instructions"
+            accessibilityLabel={t("Branch naming instructions")}
             onChangeText={(text) => edit("branchNameInstructions", text)}
             defaultValue={props.instructions ?? ""}
             placeholder={

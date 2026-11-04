@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { decodeComposerContextFragment } from "@t3tools/shared/composerContextClipboard";
 import {
   collectComposerContextReferences,
@@ -162,6 +163,7 @@ function enrichedStyle(
 }
 
 export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
+  const { t } = useTranslation();
   const { renderImage, resolveImageSource, fileEmbedLabel } = props;
   const { themeAppearance, mathRenderingEnabled } = useAppearancePreferences();
   const { markdown, fileHrefs } = useMemo(() => {
@@ -222,9 +224,9 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
             const menu = fileContextMenu?.(url) ?? {
               title: url,
               actions: [
-                { id: "enriched-open-link", title: "Open link" },
-                { id: "enriched-copy-link", title: "Copy link" },
-                { id: "enriched-share-link", title: "Share link" },
+                { id: "enriched-open-link", title: t("Open link") },
+                { id: "enriched-copy-link", title: t("Copy link") },
+                { id: "enriched-share-link", title: t("Share link") },
               ],
             };
             return [
@@ -294,8 +296,8 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
             const menu = props.fileContextMenu?.(url) ?? {
               title: url,
               actions: [
-                { id: "enriched-open-link", title: "Open link" },
-                { id: "enriched-copy-link", title: "Copy link" },
+                { id: "enriched-open-link", title: t("Open link") },
+                { id: "enriched-copy-link", title: t("Copy link") },
               ],
             };
             setActiveMenu({ url, menu });
@@ -338,6 +340,9 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
             preserveWindowsPaths: true,
           }}
           enableTaskListItemToggle={false}
+          accessibilityLabels={{
+            codeBlock: { wrap: t("Wrap lines"), unwrap: t("Disable line wrap") },
+          }}
           enableCodeBlockWrapToggle
           spoilerOverlay="solid"
           onLinkPress={

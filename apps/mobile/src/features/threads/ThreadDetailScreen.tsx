@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { ChildThreadApprovals } from "./ChildThreadApprovals";
 import { useOpenThreadInspector } from "./thread-inspector-navigation";
 import { useSidebarWorkspaceTabs } from "../workspace/useSystemWorkspaceTabBar";
@@ -384,6 +385,7 @@ function ThreadDetailBody(
     >;
   },
 ) {
+  const { t } = useTranslation();
   const usesNativeWorkspaceColumns = useNativeWorkspaceColumnsSupported();
   const { layout } = useAdaptiveWorkspaceLayout();
   const deviceType = useDeviceType();
@@ -737,13 +739,14 @@ function ThreadDetailBody(
           unresponsive && canForceStop
             ? {
                 label: forceStoppingKey === selectedThreadKey ? "Force stopping..." : "Force stop",
-                accessibilityLabel: "Force stop the agent",
+                accessibilityLabel: t("Force stop the agent"),
                 disabled: forceStoppingKey === selectedThreadKey,
                 onPress: () =>
                   Dialog.confirm({
-                    title: "Force stop the agent?",
-                    message:
+                    title: t("Force stop the agent?"),
+                    message: t(
                       "It has not answered Stop. Force stop ends the turn and kills the agent's processes, unless other working threads share them.",
+                    ),
                     confirmText: "Force stop",
                     destructive: true,
                     onConfirm: () => void forceStop(runStop.runId),
@@ -802,8 +805,8 @@ function ThreadDetailBody(
           });
         },
         action: {
-          label: statusPending ? "Stopping..." : "Stop",
-          accessibilityLabel: "Stop background work",
+          label: statusPending ? "Stopping..." : t("Stop"),
+          accessibilityLabel: t("Stop background work"),
           disabled: !props.canOperateThread || statusPending,
           onPress: () => void runStatusAction("stop"),
         },
@@ -1433,7 +1436,7 @@ function ThreadDetailBody(
             renderFallback={(fallback) => (
               <RenderFailureView
                 {...fallback}
-                title="The conversation couldn't be displayed"
+                title={t("The conversation couldn't be displayed")}
                 bottomInset={estimatedOverlayHeight}
               />
             )}
@@ -1796,7 +1799,7 @@ function ThreadDetailBody(
                             ? props.activePendingApproval.supportsFeedback
                               ? "Send feedback to decline this request"
                               : "Send a message to decline and redirect the agent"
-                            : "Ask anything"
+                            : t("Ask anything")
                         }
                         contentMaxWidth={contentMaxWidth}
                         draftControls={props.draftMode?.controls}

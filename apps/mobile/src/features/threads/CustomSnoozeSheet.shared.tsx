@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import {
@@ -23,6 +24,7 @@ export function CustomSnoozeSheet(props: {
   readonly onClose: () => void;
   readonly onSnooze: (snoozedUntil: string) => void;
 }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<CustomSnoozeInput["mode"]>("date");
   const [date, setDate] = useState(() => new Date(Date.now() + 3_600_000));
   const [picker, setPicker] = useState<"date" | "time" | null>(null);
@@ -42,7 +44,7 @@ export function CustomSnoozeSheet(props: {
           contentContainerStyle={{ padding: 24, paddingBottom: 24, gap: 20 }}
         >
           <AppText accessibilityRole="header" className="text-xl font-t3-semibold">
-            Custom snooze
+            {t("Custom snooze")}
           </AppText>
           <AppText className="text-base text-foreground-secondary">
             Choose when snoozed threads return to your inbox.
@@ -50,8 +52,8 @@ export function CustomSnoozeSheet(props: {
           <SegmentedControl
             options={
               [
-                { value: "date", label: "Date and time" },
-                { value: "duration", label: "Duration" },
+                { value: "date", label: t("Date and time") },
+                { value: "duration", label: t("Duration") },
               ] as const
             }
             selected={mode}
@@ -105,7 +107,7 @@ export function CustomSnoozeSheet(props: {
             <View className="gap-3">
               <AppText>Snooze for</AppText>
               <TextInput
-                accessibilityLabel="Duration"
+                accessibilityLabel={t("Duration")}
                 className="min-h-12 rounded-xl bg-subtle px-3 text-base text-foreground"
                 keyboardType="decimal-pad"
                 value={amount}
@@ -131,7 +133,11 @@ export function CustomSnoozeSheet(props: {
                     }}
                   >
                     <AppText>
-                      {value === "minutes" ? "Minutes" : value === "hours" ? "Hours" : "Days"}
+                      {value === "minutes"
+                        ? t("Minutes")
+                        : value === "hours"
+                          ? t("Hours")
+                          : t("Days")}
                     </AppText>
                   </Pressable>
                 ))}
@@ -144,9 +150,9 @@ export function CustomSnoozeSheet(props: {
             </AppText>
           )}
           <View className="flex-row justify-end gap-3">
-            <Button label="Cancel" tone="text" onPress={props.onClose} />
+            <Button label={t("Cancel")} tone="text" onPress={props.onClose} />
             <Button
-              label="Snooze"
+              label={t("Snooze")}
               tone="secondary"
               onPress={() => {
                 const input: CustomSnoozeInput =

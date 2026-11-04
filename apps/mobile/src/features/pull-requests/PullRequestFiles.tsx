@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { NativeScrollView } from "../../native/NativeScrollViewMarker";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { AnimatedLegendList } from "@legendapp/list/reanimated";
@@ -157,13 +158,14 @@ function FileRowSkeleton(props: { readonly index: number }) {
 }
 
 function FileFilterMenu({ filter }: { readonly filter: ChangedFiles["filter"] }) {
+  const { t } = useTranslation();
   return (
     <Menu
-      title="Review files"
+      title={t("Review files")}
       actions={[
         {
           id: "hide-tests",
-          title: "Hide test files",
+          title: t("Hide test files"),
           image: "line.3.horizontal.decrease",
           state: filter.hideTestFiles ? "on" : "off",
         },
@@ -173,7 +175,7 @@ function FileFilterMenu({ filter }: { readonly filter: ChangedFiles["filter"] })
       <View pointerEvents="none">
         <IconButton
           icon="line.3.horizontal.decrease"
-          accessibilityLabel="Filter review files"
+          accessibilityLabel={t("Filter review files")}
           selected={filter.hideTestFiles}
         />
       </View>
@@ -182,13 +184,14 @@ function FileFilterMenu({ filter }: { readonly filter: ChangedFiles["filter"] })
 }
 
 function NoVisibleFiles({ files }: { readonly files: ChangedFiles }) {
+  const { t } = useTranslation();
   const { diff, filter, parsed } = files;
   if (parsed.kind === "files") {
     return parsed.files.length === 0 && filter.hiddenCount > 0 ? (
       <EmptyState
-        title={diff.nextCursor ? "No non-test files loaded yet" : "Only test files changed"}
-        detail="Test files are hidden from this review."
-        action={<Button label="Show test files" tone="contrast" onPress={filter.showAll} />}
+        title={diff.nextCursor ? "No non-test files loaded yet" : t("Only test files changed")}
+        detail={t("Test files are hidden from this review.")}
+        action={<Button label={t("Show test files")} tone="contrast" onPress={filter.showAll} />}
         variant="plain"
       />
     ) : null;
@@ -252,6 +255,7 @@ function ChangeBreakdownLine(props: {
  * so the section supplies its header, rows, and footer instead of rendering a list of its own.
  */
 export function usePullRequestFilesSection(params: PullRequestParams) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const files = useChangedFiles(params);
   const { diff, filter, viewed, pr, parsed, loading } = files;
@@ -266,12 +270,12 @@ export function usePullRequestFilesSection(params: PullRequestParams) {
         <PullRequestReadStatus pending={false} error={diff.error} terminology={files.terminology} />
         {loading ? (
           <View
-            accessibilityLabel="Loading changed files"
+            accessibilityLabel={t("Loading changed files")}
             accessibilityState={{ busy: true }}
             className="min-h-17 flex-row items-center gap-2 py-3"
           >
             <View className="min-w-0 flex-1 gap-1">
-              <PullRequestSectionHeading>Changed files</PullRequestSectionHeading>
+              <PullRequestSectionHeading>{t("Changed files")}</PullRequestSectionHeading>
               {pr ? (
                 <Text textRole="caption" className="text-foreground-muted">
                   {pr.changedFiles} {pr.changedFiles === 1 ? "file" : "files"}
@@ -298,7 +302,7 @@ export function usePullRequestFilesSection(params: PullRequestParams) {
         ) : parsed.kind === "files" ? (
           <View className="min-h-17 flex-row items-center gap-2 py-3">
             <View className="min-w-0 flex-1 gap-1">
-              <PullRequestSectionHeading>Changed files</PullRequestSectionHeading>
+              <PullRequestSectionHeading>{t("Changed files")}</PullRequestSectionHeading>
               <Text textRole="caption" className="text-foreground-muted">
                 {describeFiles(parsed, files)}
               </Text>
@@ -397,6 +401,7 @@ function DirectoryRow(props: {
 
 /** The `PullRequestFiles` sheet: a changed-file picker presented over a file diff. */
 export function PullRequestFilesSheet({ route }: StaticScreenProps<PullRequestDiffParams>) {
+  const { t } = useTranslation();
   const params = route.params;
   const navigation = useNavigation();
   const jumpScope = pullRequestFileJumpScope(params);
@@ -414,7 +419,7 @@ export function PullRequestFilesSheet({ route }: StaticScreenProps<PullRequestDi
     <View collapsable={false} className="flex-1 bg-sheet">
       <SheetHeader
         presentation={Platform.OS === "android" ? "inline" : "native"}
-        title="Changed files"
+        title={t("Changed files")}
         subtitle={`#${params.number} · ${params.commit?.slice(0, 7) ?? params.repository}`}
         onClose={() => navigation.goBack()}
         // iOS gets the native menu below; SheetHeader would render this as a custom bar item.
@@ -422,8 +427,8 @@ export function PullRequestFilesSheet({ route }: StaticScreenProps<PullRequestDi
       />
       <Toolbar placement="right">
         <Toolbar.Menu
-          title="Review files"
-          accessibilityLabel="Filter review files"
+          title={t("Review files")}
+          accessibilityLabel={t("Filter review files")}
           icon="line.3.horizontal.decrease"
         >
           <Toolbar.MenuAction
@@ -431,7 +436,7 @@ export function PullRequestFilesSheet({ route }: StaticScreenProps<PullRequestDi
             isOn={filter.hideTestFiles}
             onPress={filter.toggle}
           >
-            <Toolbar.Label>Hide test files</Toolbar.Label>
+            <Toolbar.Label>{t("Hide test files")}</Toolbar.Label>
           </Toolbar.MenuAction>
         </Toolbar.Menu>
       </Toolbar>
@@ -502,7 +507,7 @@ export function PullRequestFilesSheet({ route }: StaticScreenProps<PullRequestDi
             loading ? (
               <View
                 accessible
-                accessibilityLabel="Loading changed files"
+                accessibilityLabel={t("Loading changed files")}
                 accessibilityState={{ busy: true }}
               >
                 {Array.from({ length: loadingRowCount(files) }, (_, index) => (

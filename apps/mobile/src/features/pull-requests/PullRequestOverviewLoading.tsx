@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Chip } from "../../components/ui/Chip";
 import { PullRequestSectionHeading } from "./PullRequestSectionHeading";
 import type { PullRequestListEntry } from "@t3tools/contracts";
@@ -18,13 +19,14 @@ export function PullRequestOverviewLoading({
   readonly params: PullRequestParams;
   readonly stack: PullRequestStackState;
 }) {
+  const { t } = useTranslation();
   const review = pullRequestListReviewStatus(summary);
   const conflicting = summary.mergeability === "conflicting";
   const clean = summary.mergeability === "mergeable";
   return (
     <View
       className="gap-5"
-      accessibilityLabel="Loading pull request details"
+      accessibilityLabel={t("Loading pull request details")}
       accessibilityState={{ busy: true }}
     >
       <PullRequestStackCard params={params} state={stack} />
@@ -38,7 +40,7 @@ export function PullRequestOverviewLoading({
                 ? "Checks failing"
                 : summary.checksState === "pending"
                   ? "Checks running"
-                  : "Checks"
+                  : t("Checks")
           }
           icon={
             summary.checksState === "passing"
@@ -59,7 +61,7 @@ export function PullRequestOverviewLoading({
         </PullRequestCardRow>
         <PullRequestCardRow
           compact
-          title={review?.accessibleLabel ?? "Reviews"}
+          title={review?.accessibleLabel ?? t("Reviews")}
           icon={review?.icon ?? "bubble.left"}
           tint={review?.tint}
         >
@@ -72,7 +74,7 @@ export function PullRequestOverviewLoading({
               ? `Conflicts with ${summary.baseBranch}`
               : clean
                 ? `No conflicts with ${summary.baseBranch}`
-                : "Branch"
+                : t("Branch")
           }
           icon={
             conflicting ? PullRequestGlyph.conflicting : clean ? "checkmark.circle" : "arrow.branch"
@@ -97,7 +99,7 @@ export function PullRequestOverviewLoading({
         </View>
       ) : null}
       <View className="gap-3">
-        <PullRequestSectionHeading>Description</PullRequestSectionHeading>
+        <PullRequestSectionHeading>{t("Description")}</PullRequestSectionHeading>
         <View className="gap-3 py-1">
           <View className="h-4 w-full rounded bg-subtle-strong" />
           <View className="h-4 w-full rounded bg-subtle-strong" />

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import { ConnectionTraceId } from "./ConnectionTraceId";
@@ -68,6 +69,7 @@ function ConnectedOnlyCloudEnvironmentRows(props: CloudEnvironmentRowsProps) {
 function CloudEnvironmentRowsContent(
   props: CloudEnvironmentRowsProps & { readonly discoveryAvailable?: boolean },
 ) {
+  const { t } = useTranslation();
   const controller = useConnectionController();
   const discoveryAvailable = props.discoveryAvailable ?? true;
   const availableCloudEnvironments = discoveryAvailable
@@ -153,14 +155,14 @@ function CloudEnvironmentRowsContent(
       !controller.relayDiscovery.isRefreshing ? (
         <View collapsable={false} className="gap-3 rounded-[24px] bg-grouped-card p-5">
           <Text className="text-base font-t3-bold text-foreground">
-            Could not load T3 Connect environments
+            {t("Could not load T3 Connect environments")}
           </Text>
           <Text className="text-sm text-foreground-muted">{controller.relayDiscovery.error}</Text>
           {controller.relayDiscovery.errorTraceId ? (
             <CopyTraceIdButton traceId={controller.relayDiscovery.errorTraceId} />
           ) : null}
           <Button
-            label="Try again"
+            label={t("Try again")}
             tone="secondary"
             onPress={() => {
               void controller.refreshRelayEnvironments();
@@ -429,9 +431,10 @@ function CloudEnvironmentRowShell(props: {
 }
 
 function CopyTraceIdButton(props: { readonly traceId: string }) {
+  const { t } = useTranslation();
   return (
     <Button
-      label="Copy trace ID"
+      label={t("Copy trace ID")}
       tone="secondary"
       onPress={() => {
         copyTextWithHaptic(props.traceId, { target: "connection-trace-id" });

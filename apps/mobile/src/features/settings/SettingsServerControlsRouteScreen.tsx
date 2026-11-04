@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useNavigation } from "@react-navigation/native";
 import { SettingsRow } from "./components/SettingsRow";
 import { AuthSettingsWriteScope } from "@t3tools/contracts";
@@ -177,6 +178,7 @@ export function SettingsEnvironmentMaintenanceRouteScreen() {
 }
 
 function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
+  const { t } = useTranslation();
   const environmentMenu = useSettingsEnvironmentMenu();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -317,7 +319,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
               {props.page === "threads" ? (
                 <>
                   <SettingsSection
-                    title="Default workspace"
+                    title={t("Default workspace")}
                     footer={managed("defaultThreadEnvMode")}
                     trailing={
                       pendingWrites === 0 && isMixed("defaultThreadEnvMode") ? (
@@ -343,7 +345,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     ))}
                   </SettingsSection>
                   <SettingsSection
-                    title="Default permissions"
+                    title={t("Default permissions")}
                     footer={managed("defaultRuntimeMode")}
                     trailing={
                       pendingWrites === 0 && uniform("defaultRuntimeMode") === null ? (
@@ -366,7 +368,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     ))}
                   </SettingsSection>
                   <SettingsSection
-                    title="Response streaming"
+                    title={t("Response streaming")}
                     footer={managed("responseStreamingMode")}
                     trailing={
                       pendingWrites === 0 && uniform("responseStreamingMode") === null ? (
@@ -386,10 +388,10 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                       />
                     ))}
                   </SettingsSection>
-                  <SettingsSection title="Preview browser">
+                  <SettingsSection title={t("Preview browser")}>
                     <SettingsSwitchRow
                       icon="globe"
-                      label="Agent browser access"
+                      label={t("Agent browser access")}
                       subtitle={managedSubtitle(
                         "enableAgentBrowserAccess",
                         "Allow agents to use the in-app preview browser.",
@@ -411,10 +413,10 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                       canWrite={(environmentId) => writableEnvironments.has(environmentId)}
                     />
                   )}
-                  <SettingsSection title="Pull requests">
+                  <SettingsSection title={t("Pull requests")}>
                     <SettingsSwitchRow
                       icon={PullRequestGlyph.merged}
-                      label="Remove agent credits when merging"
+                      label={t("Remove agent credits when merging")}
                       subtitle={managedSubtitle(
                         "removeAgentCreditsOnMerge",
                         "Remove recognized agent credits from merge and squash messages on hosts that support it, keeping human co-authors. Includes auto-merge. Excludes merge queues, stack merges, and existing commits.",
@@ -424,10 +426,10 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                       onValueChange={(value) => write({ removeAgentCreditsOnMerge: value })}
                     />
                   </SettingsSection>
-                  <SettingsSection title="Default branch">
+                  <SettingsSection title={t("Default branch")}>
                     <SettingsSwitchRow
                       icon="arrow.down.circle"
-                      label="Automatically pull"
+                      label={t("Automatically pull")}
                       subtitle={managedSubtitle(
                         "defaultAutoPull",
                         "Keep the default branch current when there are no local changes.",
@@ -442,10 +444,10 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
 
               {props.page === "worktrees" ? (
                 <>
-                  <SettingsSection title="New worktrees">
+                  <SettingsSection title={t("New worktrees")}>
                     <SettingsSwitchRow
                       icon="arrow.triangle.branch"
-                      label="Start from remote"
+                      label={t("Start from remote")}
                       subtitle={managedSubtitle(
                         "newWorktreesStartFromOrigin",
                         "Uses the latest commit of the base branch’s tracked remote branch, even if its name differs. Otherwise uses the same-named branch on origin. Uses your local branch if that remote branch is missing.",
@@ -456,7 +458,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     />
                   </SettingsSection>
                   <SettingsSection
-                    title="Worktree submodules"
+                    title={t("Worktree submodules")}
                     footer={managed("worktreeSubmodules")}
                     trailing={
                       pendingWrites === 0 && isMixed("worktreeSubmodules") ? (
@@ -507,7 +509,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     />
                   ) : null}
                   {!projectSelected ? (
-                    <SettingsSection title="Manage environments">
+                    <SettingsSection title={t("Manage environments")}>
                       {selectedTargets.map((target) => (
                         <SettingsRow
                           key={target.environmentId}
@@ -523,10 +525,10 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                       ))}
                     </SettingsSection>
                   ) : null}
-                  <SettingsSection title="Updates">
+                  <SettingsSection title={t("Updates")}>
                     <SettingsSwitchRow
                       icon="arrow.clockwise"
-                      label="Check provider updates"
+                      label={t("Check provider updates")}
                       subtitle={managedSubtitle(
                         "enableProviderUpdateChecks",
                         projectSelected
@@ -540,7 +542,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     <View className="border-t border-border-subtle">
                       <SettingsSwitchRow
                         icon="arrow.uturn.forward"
-                        label="Continue after restart"
+                        label={t("Continue after restart")}
                         subtitle={managedSubtitle(
                           "continueThreadsAfterServerUpdate",
                           "Resume interrupted threads after an update or restart.",

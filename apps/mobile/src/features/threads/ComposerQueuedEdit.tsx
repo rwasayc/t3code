@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import type { ChatAttachment, EnvironmentId } from "@t3tools/contracts";
 import { Image } from "expo-image";
@@ -12,6 +13,7 @@ export function ComposerQueuedEditBanner(props: {
   readonly saving: boolean;
   readonly onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <View className="flex-row items-center gap-2 px-4 pb-2">
       <SymbolView name="pencil" size={12} tintColorClassName="accent-foreground-muted" />
@@ -19,9 +21,9 @@ export function ComposerQueuedEditBanner(props: {
         Editing queued message
       </Text>
       <Button
-        label="Cancel"
+        label={t("Cancel")}
         tone="text"
-        accessibilityLabel="Cancel editing queued message"
+        accessibilityLabel={t("Cancel editing queued message")}
         disabled={props.saving}
         onPress={props.onCancel}
       />

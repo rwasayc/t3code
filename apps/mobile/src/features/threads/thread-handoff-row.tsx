@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomValue } from "@effect/atom-react";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
@@ -84,6 +85,7 @@ export function ThreadHandoffRow(props: {
   iconColor: ColorValue;
   surfaceColor: string;
 }) {
+  const { t } = useTranslation();
   const { item } = props.projectedItem;
   const endpointsAtom = useMemo(
     () => handoffEndpointsAtom(props.environmentId, props.projectedItem),
@@ -98,7 +100,7 @@ export function ThreadHandoffRow(props: {
       endpoints={endpoints}
       iconColor={color}
       surfaceColor={props.surfaceColor}
-      label="Context handoff"
+      label={t("Context handoff")}
       failed={item.status === "failed"}
     />
   );

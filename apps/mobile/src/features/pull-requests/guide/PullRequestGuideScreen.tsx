@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { Toolbar } from "../../../components/ui/Toolbar";
 import { parsePatchFiles } from "@pierre/diffs/utils/parsePatchFiles";
@@ -99,6 +100,7 @@ export function PullRequestGuideContent({
 }
 
 export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideStopParams>) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const state = useReviewGuide(route.params);
   const detail = useEnvironmentQuery(composerPullRequests.detail(pullRequestTarget(route.params)));
@@ -148,7 +150,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
               actions={[
                 {
                   id: "word-wrap",
-                  title: "Word wrap",
+                  title: t("Word wrap"),
                   image: "text.alignleft",
                   state: appearance.codeWordBreak ? "on" : "off",
                 },
@@ -156,20 +158,24 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
               onPressAction={() => setCodeWordBreak(!appearance.codeWordBreak)}
             >
               <View pointerEvents="none">
-                <IconButton icon="ellipsis" accessibilityLabel="Guide options" />
+                <IconButton icon="ellipsis" accessibilityLabel={t("Guide options")} />
               </View>
             </Menu>
           }
         />
       ) : null}
       <Toolbar placement="right">
-        <Toolbar.Menu title="Guide options" accessibilityLabel="Guide options" icon="ellipsis">
+        <Toolbar.Menu
+          title={t("Guide options")}
+          accessibilityLabel={t("Guide options")}
+          icon="ellipsis"
+        >
           <Toolbar.MenuAction
             icon="text.alignleft"
             isOn={appearance.codeWordBreak}
             onPress={() => setCodeWordBreak(!appearance.codeWordBreak)}
           >
-            <Toolbar.Label>Word wrap</Toolbar.Label>
+            <Toolbar.Label>{t("Word wrap")}</Toolbar.Label>
           </Toolbar.MenuAction>
         </Toolbar.Menu>
       </Toolbar>

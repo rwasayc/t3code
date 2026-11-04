@@ -76,6 +76,7 @@ describe("mobile preferences state", () => {
 
       registry.set(state.updatePreferencesAtom, {
         collapsedProjectGroups: ["project:new"],
+        appLanguage: "zh-CN",
       });
       pendingLoad.resolve({
         baseFontSize: 18,
@@ -88,9 +89,11 @@ describe("mobile preferences state", () => {
       expect(preferences).toEqual({
         baseFontSize: 18,
         collapsedProjectGroups: ["project:new"],
+        appLanguage: "zh-CN",
       });
       expect(savePatch).toHaveBeenCalledWith({
         collapsedProjectGroups: ["project:new"],
+        appLanguage: "zh-CN",
       });
       expect(AsyncResult.isFailure(registry.get(state.updatePreferencesAtom))).toBe(false);
 

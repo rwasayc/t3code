@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { useEffectEvent, useState } from "react";
 import { View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -13,6 +14,7 @@ export function SettingsDragHandle(props: {
   readonly onEnd: (translation: number, cancelled: boolean) => void;
   readonly onStep: (direction: "up" | "down") => void;
 }) {
+  const { t } = useTranslation();
   const onStart = useEffectEvent(() => props.onStart());
   const onMove = useEffectEvent((translation: number) => props.onMove(translation));
   const onEnd = useEffectEvent((translation: number, cancelled: boolean) =>
@@ -37,8 +39,8 @@ export function SettingsDragHandle(props: {
         accessibilityRole="adjustable"
         accessibilityLabel={`Reorder ${props.title}`}
         accessibilityActions={[
-          ...(props.canMoveUp ? [{ name: "decrement", label: "Move up" }] : []),
-          ...(props.canMoveDown ? [{ name: "increment", label: "Move down" }] : []),
+          ...(props.canMoveUp ? [{ name: "decrement", label: t("Move up") }] : []),
+          ...(props.canMoveDown ? [{ name: "increment", label: t("Move down") }] : []),
         ]}
         onAccessibilityAction={({ nativeEvent }) => {
           if (nativeEvent.actionName === "decrement" && props.canMoveUp) props.onStep("up");

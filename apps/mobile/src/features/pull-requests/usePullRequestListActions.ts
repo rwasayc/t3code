@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import { RegistryContext, useAtomValue } from "@effect/atom-react";
 import { useNavigation } from "@react-navigation/native";
@@ -31,6 +32,7 @@ export function usePullRequestListActions(
     patch: Partial<EnvironmentPullRequestListEntry>,
   ) => void,
 ) {
+  const { t } = useTranslation();
   const registry = use(RegistryContext);
   const navigation = useNavigation();
   const selectDetail = useSelectWorkspaceDetail();
@@ -163,7 +165,7 @@ export function usePullRequestListActions(
         ? [
             {
               id: "request-review",
-              title: "Request review",
+              title: t("Request review"),
               image: Platform.OS === "ios" ? "person.badge.plus" : "person_add",
             },
             {
@@ -189,10 +191,10 @@ export function usePullRequestListActions(
           : []),
       {
         id: "share",
-        title: "Share…",
+        title: t("Share…"),
         image: Platform.OS === "ios" ? "square.and.arrow.up" : "share",
       },
-      { id: "copy", title: "Copy link", image: Platform.OS === "ios" ? "link" : "link" },
+      { id: "copy", title: t("Copy link"), image: Platform.OS === "ios" ? "link" : "link" },
       {
         id: "provider",
         title: openOnProviderLabel(entry.provider),

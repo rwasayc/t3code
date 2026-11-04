@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { Button } from "../../../components/ui/Button";
 import { View } from "react-native";
 import Animated, { FadeIn, ReduceMotion } from "react-native-reanimated";
@@ -10,6 +11,7 @@ import type { useReviewGuide } from "./useReviewGuide";
 const NOTICE_ENTER = FadeIn.delay(180).duration(120).reduceMotion(ReduceMotion.System);
 
 export function GuideNotice({ state }: { readonly state: ReturnType<typeof useReviewGuide> }) {
+  const { t } = useTranslation();
   const notice = guideNoticeState(state);
   if (notice.kind === "ready") return null;
   const compact = state.data?.guide != null;
@@ -33,7 +35,7 @@ export function GuideNotice({ state }: { readonly state: ReturnType<typeof useRe
           tintColorClassName={failed ? "accent-danger-foreground" : "accent-icon-muted"}
         />
         <Text className="text-base font-t3-semibold">
-          {compact ? notice.title : "Review guide"}
+          {compact ? notice.title : t("Review guide")}
         </Text>
       </View>
       <View style={compact ? undefined : { minHeight: 100 }} className="pt-3 pb-4">

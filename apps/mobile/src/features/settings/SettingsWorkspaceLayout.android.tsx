@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { NavigationRouteContext } from "@react-navigation/native";
 import { Activity, useState, type ReactNode } from "react";
 import { View } from "react-native";
@@ -12,6 +13,7 @@ import { SettingsScreen } from "./components/SettingsScreen";
 const SETTINGS_LIST_ROUTE = { key: "settings-sidebar", name: "Settings" };
 
 export function SettingsWorkspaceLayout(props: { readonly children: ReactNode }) {
+  const { t } = useTranslation();
   const root = useAndroidWorkspaceRoot();
   const { layout } = useAdaptiveWorkspaceLayout();
   const split = root?.settingsOpen === true && layout.usesSplitView;
@@ -47,7 +49,7 @@ export function SettingsWorkspaceLayout(props: { readonly children: ReactNode })
         {emptyDetail ? (
           <View className="absolute inset-0">
             <NavigationRouteContext value={route}>
-              <SettingsScreen title="Settings" workspaceRoot>
+              <SettingsScreen title={t("Settings")} workspaceRoot>
                 <View className="flex-1 items-center justify-center p-6">
                   <AppText className="text-foreground-muted">Select a setting</AppText>
                 </View>

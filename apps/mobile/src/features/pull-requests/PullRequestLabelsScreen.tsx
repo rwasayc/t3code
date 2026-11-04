@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import type { StaticScreenProps } from "@react-navigation/native";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
@@ -20,6 +21,7 @@ import { usePullRequestConnected } from "./usePullRequestConnected";
 import { pullRequestTarget, type PullRequestParams } from "./usePullRequestDiff";
 
 export function PullRequestLabelsScreen({ route }: StaticScreenProps<PullRequestParams>) {
+  const { t } = useTranslation();
   const target = pullRequestTarget(route.params);
   const pr = useEnvironmentQuery(composerPullRequests.detail(target)).data;
   const canWrite = useAtomValue(
@@ -71,8 +73,8 @@ export function PullRequestLabelsScreen({ route }: StaticScreenProps<PullRequest
   };
   return (
     <PullRequestSearchSheet
-      title="Labels"
-      placeholder="Search labels"
+      title={t("Labels")}
+      placeholder={t("Search labels")}
       closeAccessibilityLabel="Close labels"
       clearAccessibilityLabel="Clear label search"
       searchTextChangeId="pr-label-search"
@@ -139,7 +141,7 @@ export function PullRequestLabelsScreen({ route }: StaticScreenProps<PullRequest
                   }
                   variant="plain"
                 />
-                {result.error ? <Button label="Retry" onPress={result.refresh} /> : null}
+                {result.error ? <Button label={t("Retry")} onPress={result.refresh} /> : null}
               </View>
             )
           }

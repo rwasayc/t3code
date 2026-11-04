@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useIsFocused } from "@react-navigation/native";
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import { useAudioPlayerStatus } from "expo-audio";
@@ -29,6 +30,7 @@ type PreviewProps = {
 };
 
 function FileCardHeader(props: PreviewProps) {
+  const { t } = useTranslation();
   return (
     <Pressable
       accessibilityRole="button"
@@ -45,7 +47,7 @@ function FileCardHeader(props: PreviewProps) {
           {props.source.name}
         </Text>
         <Text className="text-xs text-foreground-muted" numberOfLines={1}>
-          Audio
+          {t("Audio")}
           {props.sizeBytes !== undefined ? ` · ${formatAttachmentSize(props.sizeBytes)}` : ""}
         </Text>
       </View>
@@ -60,6 +62,7 @@ function timestamp(seconds: number) {
 }
 
 function InlineAudio(props: PreviewProps & { readonly resolveUri: () => Promise<string | null> }) {
+  const { t } = useTranslation();
   // An empty source keeps native buffering off until the user explicitly plays.
   const player = usePlaybackAudioPlayer(null);
   const status = useAudioPlayerStatus(player);
@@ -212,7 +215,7 @@ function InlineAudio(props: PreviewProps & { readonly resolveUri: () => Promise<
             {error || status.error
               ? "Unavailable · tap play to retry"
               : busy
-                ? "Loading…"
+                ? t("Loading…")
                 : `${timestamp(status.currentTime)} / ${status.isLoaded ? timestamp(status.duration) : "--:--"}`}
           </Text>
         </View>

@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { Observe } from "expo-observe";
 import { Component, type ReactNode } from "react";
 import { ScrollView, View } from "react-native";
@@ -90,6 +91,7 @@ export function RenderFailureView(
     readonly exit?: { readonly label: string; readonly onPress: () => void };
   },
 ) {
+  const { t } = useTranslation();
   const title = props.title ?? "This screen couldn't be displayed";
   return (
     <ScrollView
@@ -109,9 +111,9 @@ export function RenderFailureView(
         {props.details.split("\n", 1)[0]?.slice(0, 300)}
       </Text>
       <View className="w-full max-w-xs gap-2">
-        <Button label="Try again" onPress={props.retry} tone="primary" fullWidth />
+        <Button label={t("Try again")} onPress={props.retry} tone="primary" fullWidth />
         <Button
-          label="Copy details"
+          label={t("Copy details")}
           onPress={() => copyTextWithHaptic(props.details, { target: "error details" })}
           fullWidth
         />

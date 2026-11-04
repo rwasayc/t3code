@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
@@ -23,6 +24,7 @@ import { SettingsSection } from "./components/SettingsSection";
 import { SettingsScreen } from "./components/SettingsScreen";
 
 export function SettingsClientStorageRouteScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const summaryResult = useAtomValue(clientCacheSummaryAtom);
   const clearResult = useAtomValue(clearClientCacheAtom);
@@ -47,8 +49,9 @@ export function SettingsClientStorageRouteScreen() {
       environment.environmentId;
     Dialog.confirm({
       title: `Clear cache for ${label}?`,
-      message:
+      message: t(
         "This removes offline threads, server metadata, and cached branches for this environment. The saved connection and credentials stay intact.",
+      ),
       confirmText: "Clear Cache",
       destructive: true,
       onConfirm: () =>
@@ -58,9 +61,10 @@ export function SettingsClientStorageRouteScreen() {
 
   const confirmClearAll = () => {
     Dialog.confirm({
-      title: "Clear all client caches?",
-      message:
+      title: t("Clear all client caches?"),
+      message: t(
         "This removes offline data for every environment. Connections, credentials, account data, and app preferences stay intact.",
+      ),
       confirmText: "Clear All Caches",
       destructive: true,
       onConfirm: () => clearCache({ type: "all" }),
@@ -68,7 +72,7 @@ export function SettingsClientStorageRouteScreen() {
   };
 
   return (
-    <SettingsScreen title="Client Storage">
+    <SettingsScreen title={t("Client Storage")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentInset={{ bottom: Math.max(insets.bottom, 18) }}
@@ -76,7 +80,7 @@ export function SettingsClientStorageRouteScreen() {
         className="flex-1"
         contentContainerClassName="gap-6 px-5 pt-4 pb-[18px]"
       >
-        <SettingsSection title="Environment caches">
+        <SettingsSection title={t("Environment caches")}>
           {AsyncResult.isFailure(summaryResult) ? (
             <View className="items-center gap-2 px-6 py-8">
               <SymbolView
@@ -133,7 +137,7 @@ export function SettingsClientStorageRouteScreen() {
         </SettingsSection>
 
         <View className="gap-3">
-          <SettingsSection title="Actions">
+          <SettingsSection title={t("Actions")}>
             <SettingsActionRow
               icon="trash"
               label={summary ? `Clear ${formatBytes(summary.payloadBytes)}` : "Clear caches"}

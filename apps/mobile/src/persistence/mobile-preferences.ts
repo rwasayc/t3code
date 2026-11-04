@@ -87,6 +87,7 @@ const ThreadProject = Schema.Struct({
 const isThreadProject = Schema.is(ThreadProject);
 
 export interface Preferences {
+  readonly appLanguage?: "system" | "en" | "zh-CN";
   readonly navigationTabOrder?: readonly string[];
   readonly hiddenNavigationTabs?: readonly string[];
   readonly pullRequestHideTestFiles?: boolean;
@@ -178,6 +179,7 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     lightThemeId?: MobileThemeId;
     darkThemeId?: MobileThemeId;
     themeMode?: MobileThemeMode;
+    appLanguage?: "system" | "en" | "zh-CN";
     androidNavigationStyle?: AndroidNavigationStyle;
     baseFontSize?: number;
     terminalFontSize?: number | null;
@@ -258,6 +260,13 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     parsed.themeMode === "dark"
   ) {
     preferences.themeMode = parsed.themeMode;
+  }
+  if (
+    parsed.appLanguage === "system" ||
+    parsed.appLanguage === "en" ||
+    parsed.appLanguage === "zh-CN"
+  ) {
+    preferences.appLanguage = parsed.appLanguage;
   }
   if (parsed.androidNavigationStyle === "one-ui" || parsed.androidNavigationStyle === "material") {
     preferences.androidNavigationStyle = parsed.androidNavigationStyle;

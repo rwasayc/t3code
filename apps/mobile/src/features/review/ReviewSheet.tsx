@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import { AsyncResult } from "effect/reactivity";
 import type { EnvironmentId, ThreadId } from "@t3tools/contracts";
@@ -67,6 +68,7 @@ function ReviewHeader(
     readonly onReturnToThread: () => void;
   },
 ) {
+  const { t } = useTranslation();
   const { panes, toggleAuxiliaryPane } = useAdaptiveWorkspaceLayout();
   const presentation = useReviewHeaderPresentation(props);
   const sectionAction = (section: ReviewSectionItem | null, title: string): AppBarMenuItem => ({
@@ -85,7 +87,7 @@ function ReviewHeader(
       onBack={props.onReturnToThread}
       hideBottomBorder
       options={{ headerTintColor: props.iconColor, headerTitle: props.title }}
-      backInSplitView={{ accessibilityLabel: "Back to chat", icon: "chevron.left" }}
+      backInSplitView={{ accessibilityLabel: t("Back to chat"), icon: "chevron.left" }}
       actions={
         props.showChangedFilesToggle
           ? [
@@ -105,7 +107,7 @@ function ReviewHeader(
         ...(props.showSectionToolbar
           ? [
               {
-                title: "Select diff",
+                title: t("Select diff"),
                 icon: presentation.menuIcon,
                 items: [
                   {
@@ -121,7 +123,7 @@ function ReviewHeader(
                     ? [
                         {
                           id: "turns",
-                          title: "Turn",
+                          title: t("Turn"),
                           items: props.sectionMenu.turns.map((section) => ({
                             id: `section:${section.id}`,
                             title: section.title,
@@ -288,6 +290,7 @@ interface ReviewFileNavigatorProps {
 }
 
 function ReviewFileNavigator({ files, sectionId, onSelectFile, ref }: ReviewFileNavigatorProps) {
+  const { t } = useTranslation();
   const [fileSelection, setFileSelection] = useState<{
     readonly sectionId: string | null;
     readonly fileId: string | null;
@@ -333,7 +336,7 @@ function ReviewFileNavigator({ files, sectionId, onSelectFile, ref }: ReviewFile
   return (
     <View className="flex-1 ios:bg-sheet android:bg-header">
       <AppBar
-        title="Changed files"
+        title={t("Changed files")}
         subtitle={`${files.length} ${files.length === 1 ? "file" : "files"}`}
         hideBottomBorder={Platform.OS === "android"}
       />
@@ -358,6 +361,7 @@ type ReviewSheetProps = StaticScreenProps<{
 }>;
 
 export function ReviewSheet(props: ReviewSheetProps) {
+  const { t } = useTranslation();
   const reduceMotion = useReduceMotionEnabled();
   const { nativeReviewDiffStyle } = useAppearanceCodeSurface();
   const { panes } = useAdaptiveWorkspaceLayout();
@@ -758,7 +762,7 @@ export function ReviewSheet(props: ReviewSheetProps) {
                       : "border-b border-border bg-card px-4 py-5"
                   }
                 >
-                  <Text className="text-sm font-t3-bold text-foreground">No changes</Text>
+                  <Text className="text-sm font-t3-bold text-foreground">{t("No changes")}</Text>
                   <Text
                     className={cn(
                       "text-xs leading-normal text-foreground-muted",

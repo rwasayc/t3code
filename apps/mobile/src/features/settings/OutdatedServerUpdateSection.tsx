@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtom, useAtomValue } from "@effect/atom-react";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import type { EnvironmentId } from "@t3tools/contracts";
@@ -28,6 +29,7 @@ export function OutdatedServerUpdateSection({
   readonly environmentId: EnvironmentId;
   readonly label: string;
 }) {
+  const { t } = useTranslation();
   const describe = useAtomCommand(describeOutdatedServer, { reportFailure: false });
   const update = useAtomCommand(updateOutdatedServer, { reportFailure: false });
   const state = useAtomValue(serverEnvironment.updateStateAtom(environmentId));
@@ -99,7 +101,7 @@ export function OutdatedServerUpdateSection({
       </View>
       <SettingsActionRow
         icon="arrow.clockwise"
-        label="Check for updates"
+        label={t("Check for updates")}
         disabled={busy}
         loading={checking}
         onPress={check}

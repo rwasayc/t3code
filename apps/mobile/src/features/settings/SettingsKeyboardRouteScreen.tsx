@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { AsyncResult } from "effect/reactivity";
@@ -31,6 +32,7 @@ const ENTER_BEHAVIOR_OPTIONS: ReadonlyArray<{
 ];
 
 export function SettingsKeyboardRouteScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
@@ -40,7 +42,7 @@ export function SettingsKeyboardRouteScreen() {
     : null;
 
   return (
-    <SettingsScreen title="Keyboard">
+    <SettingsScreen title={t("Keyboard")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -48,12 +50,12 @@ export function SettingsKeyboardRouteScreen() {
         contentContainerClassName="gap-3 px-5 pt-4"
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
-        <SettingsSection title="Return key">
+        <SettingsSection title={t("Return key")}>
           {ENTER_BEHAVIOR_OPTIONS.map((option, index) => (
             <SettingsChoiceRow
               key={option.behavior}
-              label={option.label}
-              description={option.description}
+              label={t(option.label)}
+              description={t(option.description)}
               selected={selectedBehavior === option.behavior}
               separated={index > 0}
               disabled={!preferencesReady}

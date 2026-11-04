@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import * as Dialog from "../../components/ui/Dialog";
@@ -118,6 +119,7 @@ export function PreviewStreamWebView(
       readonly paused?: boolean;
     },
 ) {
+  const { t } = useTranslation();
   const { access, error, refresh, retryAfter } = usePreviewStreamAccess(props.environmentId);
   if (access && !props.paused) {
     return (
@@ -150,7 +152,7 @@ export function PreviewStreamWebView(
           </AppText>
           {error && (
             <View className="items-center">
-              <Button label="Retry" tone="secondary" onPress={refresh} />
+              <Button label={t("Retry")} tone="secondary" onPress={refresh} />
             </View>
           )}
         </>
@@ -233,6 +235,7 @@ function PreviewStreamDocumentView({
   readonly onStreaming: () => void;
   readonly onRecoverProcess: () => boolean;
 }) {
+  const { t } = useTranslation();
   const webView = useRef<WebView<object>>(null);
   const active = useRef(false);
   const failed = useRef(false);
@@ -434,7 +437,7 @@ function PreviewStreamDocumentView({
             The page asks for {fileChooser.multiple ? "files" : "a file"}.
           </AppText>
           <View className="flex-row justify-end gap-3">
-            <Button label="Cancel" tone="text" onPress={() => answerFileChooser(false)} />
+            <Button label={t("Cancel")} tone="text" onPress={() => answerFileChooser(false)} />
             <Button
               label={`Choose ${fileChooser.multiple ? "files" : "file"}`}
               tone="secondary"
@@ -450,7 +453,7 @@ function PreviewStreamDocumentView({
             <>
               {control.dialog.type === "prompt" ? (
                 <TextInput
-                  accessibilityLabel="Dialog response"
+                  accessibilityLabel={t("Dialog response")}
                   className="rounded-lg border border-input-border bg-input px-3 py-2 text-foreground"
                   placeholderTextColorClassName="accent-placeholder"
                   selectionColorClassName="accent-focus/32"
@@ -460,12 +463,12 @@ function PreviewStreamDocumentView({
               ) : null}
               <View className="flex-row justify-end gap-3">
                 <Button
-                  label="Dismiss"
+                  label={t("Dismiss")}
                   tone="text"
                   onPress={() => command({ type: "dialog", accept: false })}
                 />
                 <Button
-                  label="Accept"
+                  label={t("Accept")}
                   tone="secondary"
                   onPress={() =>
                     command({
@@ -508,13 +511,13 @@ function PreviewStreamDocumentView({
               <AppText selectable className="flex-1 font-mono text-sm text-secondary-foreground">
                 {hostSetup.command}
               </AppText>
-              <AppText className="text-xs text-foreground-muted">Copy</AppText>
+              <AppText className="text-xs text-foreground-muted">{t("Copy")}</AppText>
             </Pressable>
           ) : null}
           {status === "error" && !gone && !compact ? (
             <View className="items-center">
               <Button
-                label={hostSetup ? "Try again" : "Reconnect"}
+                label={hostSetup ? t("Try again") : t("Reconnect")}
                 tone="secondary"
                 onPress={onRetry}
               />

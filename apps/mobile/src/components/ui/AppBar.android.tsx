@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { type RefObject, use, useRef, useState } from "react";
 import { Keyboard, type TextInputInstance, View } from "react-native";
 import { useHardwareBack } from "../../lib/backHandler";
@@ -65,6 +66,7 @@ function SearchableAppBar(props: AppBarProps & { readonly search: AppBarSearch }
 }
 
 function AppBarView(props: AppBarProps & { readonly searchState?: SearchState }) {
+  const { t } = useTranslation();
   const { search, searchState } = props;
   const { paddingTop, paddingBottom } = useToolbarLayout(props.sheet);
   const { themeVariables } = useAppearancePreferences();
@@ -196,7 +198,7 @@ function AppBarView(props: AppBarProps & { readonly searchState?: SearchState })
             {props.trailing}
             {closeInspector ? (
               <AndroidHeaderIconButton
-                accessibilityLabel="Close inspector"
+                accessibilityLabel={t("Close inspector")}
                 icon="xmark"
                 onPress={closeInspector}
               />
@@ -236,14 +238,14 @@ function AppBarView(props: AppBarProps & { readonly searchState?: SearchState })
               {inline ? (
                 props.onBack ? (
                   <ScreenHeaderButton
-                    accessibilityLabel="Navigate up"
+                    accessibilityLabel={t("Navigate up")}
                     icon="arrow.left"
                     onPress={props.onBack}
                   />
                 ) : null
               ) : (
                 <ScreenHeaderButton
-                  accessibilityLabel={search.closeAccessibilityLabel ?? "Close search"}
+                  accessibilityLabel={search.closeAccessibilityLabel ?? t("Close search")}
                   icon="arrow.left"
                   onPress={closeSearch}
                 />

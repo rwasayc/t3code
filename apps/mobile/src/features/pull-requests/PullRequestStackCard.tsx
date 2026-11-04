@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Platform, View } from "react-native";
@@ -14,6 +15,7 @@ export function PullRequestStackCard(props: {
   readonly params: PullRequestParams;
   readonly state: PullRequestStackState;
 }) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const selectDetail = useSelectWorkspaceDetail();
   const [expanded, setExpanded] = useState(false);
@@ -27,7 +29,7 @@ export function PullRequestStackCard(props: {
     return (
       <PullRequestCardGroup>
         <PullRequestCardRow
-          title="Stack"
+          title={t("Stack")}
           icon={PullRequestGlyph.stack}
           value={`${summary.position} of ${summary.size}`}
           last
@@ -39,7 +41,7 @@ export function PullRequestStackCard(props: {
   return (
     <PullRequestCardGroup>
       <PullRequestCardRow
-        title="Stack"
+        title={t("Stack")}
         icon={PullRequestGlyph.stack}
         value={`${position} of ${stack.layers.length}`}
         accessibilityLabel={`Stack, ${position} of ${stack.layers.length}${props.state.isFresh ? "" : ", showing saved stack"}`}

@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import * as Dialog from "./ui/Dialog";
 import { ComposerContextId } from "@t3tools/contracts";
 import { useAtomValue } from "@effect/atom-react";
@@ -56,6 +57,7 @@ export function ComposerEditor({
   onInertChipPress,
   ...props
 }: ComposerEditorProps) {
+  const { t } = useTranslation();
   const draft = useComposerDraft(draftKey ?? null);
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
   const preferredEnterBehavior = AsyncResult.isSuccess(preferencesResult)
@@ -217,7 +219,10 @@ export function ComposerEditor({
       {selected && (selectedReference || selectedSkill) ? (
         <ComposerContextSheet
           label={
-            selectedReference?.label ?? selectedSkill?.displayName ?? selectedSkill?.name ?? "Skill"
+            selectedReference?.label ??
+            selectedSkill?.displayName ??
+            selectedSkill?.name ??
+            t("Skill")
           }
           record={
             record ??

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { usePaneRole } from "../../components/ui/Pane";
 import { Button } from "../../components/ui/Button";
 import {
@@ -107,6 +108,7 @@ export function PullRequestsScreen(
     readonly renderFrame?: (filters: PullRequestFilterMenu | null, list: ReactNode) => ReactNode;
   } = {},
 ) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const primaryColumn = use(NativePrimaryColumnContext);
   const workspace = useWorkspaceTabs()!;
@@ -345,7 +347,7 @@ export function PullRequestsScreen(
                 {result.data.errors.map((error) => (
                   <PullRequestListError
                     key={`${error.environmentId} ${error.projectTitle} ${error.message}`}
-                    message={`${error.projectTitle || environments.find((environment) => environment.environmentId === error.environmentId)?.environmentLabel || "Environment"}: ${error.message}`}
+                    message={`${error.projectTitle || environments.find((environment) => environment.environmentId === error.environmentId)?.environmentLabel || t("Environment")}: ${error.message}`}
                   />
                 ))}
               </View>
@@ -357,15 +359,15 @@ export function PullRequestsScreen(
             <View className="items-center py-5">
               <AppActivityIndicator
                 colorClassName="accent-icon"
-                accessibilityLabel="Loading more pull requests"
+                accessibilityLabel={t("Loading more pull requests")}
               />
             </View>
           ) : result.loadMoreError ? (
             <View className="items-center gap-2 px-8 py-4">
               <Text className="text-xs text-foreground-muted">{result.loadMoreError}</Text>
               <Button
-                label="Try again"
-                accessibilityLabel="Retry loading more pull requests"
+                label={t("Try again")}
+                accessibilityLabel={t("Retry loading more pull requests")}
                 onPress={() => void result.loadMore(true)}
               />
             </View>
@@ -373,8 +375,8 @@ export function PullRequestsScreen(
             // A filtered page can be too short to scroll, which leaves nothing to reach the end of.
             <View className="items-center py-4">
               <Button
-                label="Load more"
-                accessibilityLabel="Load more pull requests"
+                label={t("Load more")}
+                accessibilityLabel={t("Load more pull requests")}
                 onPress={() => void result.loadMore()}
               />
             </View>
@@ -395,7 +397,7 @@ export function PullRequestsScreen(
                       ? "Environment offline"
                       : targets.length
                         ? query
-                          ? "No results"
+                          ? t("No results")
                           : "No matching pull requests"
                         : "Connect an environment"
                 }

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import {
   formatProviderSubagentStatus,
   type ProviderSubagentStatus,
@@ -21,6 +22,7 @@ export function ProviderSubagentBar(props: {
   /** Set for providers whose children T3 reads on demand instead of streaming. */
   readonly inspect: { readonly environmentId: EnvironmentId; readonly threadId: ThreadId } | null;
 }) {
+  const { t } = useTranslation();
   const [inspecting, setInspecting] = useState(false);
   const live = props.status !== null && isOrchestrationV2WorkActive(props.status.status);
   const nowMs = useVisibleSecondClock(live);
@@ -65,10 +67,10 @@ export function ProviderSubagentBar(props: {
         </Text>
       </View>
       {props.inspect ? (
-        <Button label="Work" tone="secondary" onPress={() => setInspecting(true)} />
+        <Button label={t("Work")} tone="secondary" onPress={() => setInspecting(true)} />
       ) : null}
       {props.onOpenParent ? (
-        <Button label="Open parent" tone="secondary" onPress={props.onOpenParent} />
+        <Button label={t("Open parent")} tone="secondary" onPress={props.onOpenParent} />
       ) : null}
       {props.inspect && inspecting ? (
         <NativeChildWorkSheet {...props.inspect} onClose={() => setInspecting(false)} />

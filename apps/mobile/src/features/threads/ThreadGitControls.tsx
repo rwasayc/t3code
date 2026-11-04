@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Toolbar } from "../../components/ui/Toolbar";
 import * as Dialog from "../../components/ui/Dialog";
 import { useOpenPullRequest } from "../../native/useOpenPullRequest";
@@ -118,6 +119,7 @@ type ThreadGitControlsProps = ThreadGitMenuProps & {
 };
 
 function useThreadGitControlModel(props: ThreadGitMenuProps) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const openPullRequest = useOpenPullRequest();
   const environmentId = props.environmentId;
@@ -137,7 +139,7 @@ function useThreadGitControlModel(props: ThreadGitMenuProps) {
   const quickAction = (() => {
     if (!isRepo) {
       return {
-        label: "Git unavailable",
+        label: t("Git unavailable"),
         disabled: true,
         kind: "show_hint" as const,
         hint: "This workspace is not a git repository.",
@@ -276,15 +278,16 @@ function useThreadGitControlModel(props: ThreadGitMenuProps) {
 }
 
 function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGitHeaderActionItems {
+  const { t } = useTranslation();
   const model = useThreadGitControlModel(props);
 
   return {
     terminal: {
-      accessibilityLabel: "Open terminal",
+      accessibilityLabel: t("Open terminal"),
       disabled: !props.canOpenTerminal,
       icon: { name: "terminal", type: "sfSymbol" },
       identifier: "thread-right-terminal",
-      label: "Terminal",
+      label: t("Terminal"),
       menu: {
         items: [
           ...props.projectScripts.map((script) => ({
@@ -298,10 +301,10 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
           ...(props.projectScripts.length === 0
             ? [
                 {
-                  description: "This project has no saved scripts yet",
+                  description: t("This project has no saved scripts yet"),
                   disabled: true,
                   icon: { name: "play", type: "sfSymbol" as const },
-                  label: "No project scripts",
+                  label: t("No project scripts"),
                   onPress: () => {},
                   type: "action" as const,
                 },
@@ -323,33 +326,33 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
             type: "action" as const,
           })),
           {
-            description: "Start another shell for this thread",
+            description: t("Start another shell for this thread"),
             disabled: !props.canOperateTerminal,
             icon: { name: "plus", type: "sfSymbol" },
-            label: "Open new terminal",
+            label: t("Open new terminal"),
             onPress: props.onOpenNewTerminal,
             type: "action",
           },
         ],
-        title: "Terminal",
+        title: t("Terminal"),
       },
       sharesBackground: true,
       type: "menu",
       variant: "plain",
     },
     files: {
-      accessibilityLabel: "Open files",
+      accessibilityLabel: t("Open files"),
       disabled: !props.canOpenFiles,
       icon: { name: "folder", type: "sfSymbol" },
       identifier: "thread-right-files",
-      label: "Files",
+      label: t("Files"),
       onPress: model.openFiles,
       sharesBackground: true,
       type: "button",
       variant: "plain",
     },
     git: {
-      accessibilityLabel: "Git actions",
+      accessibilityLabel: t("Git actions"),
       icon: { name: "point.topleft.down.curvedto.point.bottomright.up", type: "sfSymbol" },
       identifier: "thread-right-git",
       label: "Git",
@@ -381,16 +384,16 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
                 : "Turn diffs and worktree changes",
             disabled: !model.isRepo || props.hasThread === false,
             icon: { name: "text.bubble", type: "sfSymbol" },
-            label: "Review changes",
+            label: t("Review changes"),
             onPress: model.openReview,
             type: "action",
           },
           ...(props.onMergeBack
             ? [
                 {
-                  description: "Bring this thread's latest turn into its source",
+                  description: t("Bring this thread's latest turn into its source"),
                   icon: { name: PullRequestGlyph.merged, type: "sfSymbol" as const },
-                  label: "Merge back to source",
+                  label: t("Merge back to source"),
                   onPress: props.onMergeBack,
                   type: "action" as const,
                 },
@@ -403,7 +406,7 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
                 : "Commit, files, branches",
             disabled: props.hasThread === false,
             icon: { name: "ellipsis", type: "sfSymbol" },
-            label: "More",
+            label: t("More"),
             onPress: model.openGitInspector,
             type: "action",
           },
@@ -428,6 +431,7 @@ export function useThreadGitCenterHeaderItems(props: ThreadGitControlsProps): He
 }
 
 export function ThreadGitControls(props: ThreadGitControlsProps) {
+  const { t } = useTranslation();
   const model = useThreadGitControlModel(props);
   const showActionControls = props.showActionControls ?? true;
 
@@ -447,7 +451,7 @@ export function ThreadGitControls(props: ThreadGitControlsProps) {
       ) : null}
       {showActionControls ? (
         <Toolbar.Menu
-          accessibilityLabel="Open terminal"
+          accessibilityLabel={t("Open terminal")}
           icon="terminal"
           disabled={!props.canOpenTerminal}
           separateBackground
@@ -469,9 +473,9 @@ export function ThreadGitControls(props: ThreadGitControlsProps) {
               icon="play"
               disabled
               onPress={() => {}}
-              subtitle="This project has no saved scripts yet"
+              subtitle={t("This project has no saved scripts yet")}
             >
-              <Toolbar.Label>No project scripts</Toolbar.Label>
+              <Toolbar.Label>{t("No project scripts")}</Toolbar.Label>
             </Toolbar.MenuAction>
           )}
           {props.terminalSessions.map((session) => (
@@ -496,15 +500,15 @@ export function ThreadGitControls(props: ThreadGitControlsProps) {
             icon="plus"
             disabled={!props.canOperateTerminal}
             onPress={props.onOpenNewTerminal}
-            subtitle="Start another shell for this thread"
+            subtitle={t("Start another shell for this thread")}
           >
-            <Toolbar.Label>Open new terminal</Toolbar.Label>
+            <Toolbar.Label>{t("Open new terminal")}</Toolbar.Label>
           </Toolbar.MenuAction>
         </Toolbar.Menu>
       ) : null}
       {showActionControls && props.showDirectFileControl ? (
         <Toolbar.Button
-          accessibilityLabel="Open files"
+          accessibilityLabel={t("Open files")}
           disabled={!props.canOpenFiles}
           icon="folder"
           onPress={model.openFiles}

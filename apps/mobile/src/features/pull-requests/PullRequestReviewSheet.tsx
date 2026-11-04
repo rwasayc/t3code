@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { AsyncResult } from "effect/reactivity";
 import { useAtomRefresh } from "@effect/atom-react";
 import { StackActions, useNavigation, type StaticScreenProps } from "@react-navigation/native";
@@ -64,6 +65,7 @@ const VERDICTS = [
 export function PullRequestReviewSheet({
   route,
 }: StaticScreenProps<PullRequestParams & { readonly mode: "review" | "comment" }>) {
+  const { t } = useTranslation();
   const params = route.params;
   const target = pullRequestTarget(params);
   const result = useEnvironmentQuery(composerPullRequests.detail(target));
@@ -132,7 +134,7 @@ export function PullRequestReviewSheet({
     });
   return (
     <SheetContent
-      title={reviewing ? "Submit review" : "Add comment"}
+      title={reviewing ? t("Submit review") : t("Add comment")}
       subtitle={`#${params.number}${reviewing && result.data?.headSha ? ` · reviewing ${result.data.headSha.slice(0, 7)}` : ` · ${params.repository}`}`}
       busy={submission.busy}
       footer={
@@ -142,10 +144,10 @@ export function PullRequestReviewSheet({
               ? "Submitting…"
               : reviewing
                 ? verdict?.value === "approve"
-                  ? "Approve"
+                  ? t("Approve")
                   : verdict?.value === "request-changes"
-                    ? "Request changes"
-                    : "Submit review"
+                    ? t("Request changes")
+                    : t("Submit review")
                 : "Post comment"
           }
           fullWidth
@@ -167,11 +169,11 @@ export function PullRequestReviewSheet({
         />
       ) : null}
       <Text className="px-4 text-xs text-foreground-muted">
-        {reviewing ? "Summary" : "Comment"}
+        {reviewing ? "Summary" : t("Comment")}
       </Text>
       <TextInput
         multiline
-        accessibilityLabel={reviewing ? "Review summary" : "Comment"}
+        accessibilityLabel={reviewing ? "Review summary" : t("Comment")}
         placeholder={
           reviewing
             ? summaryRequired

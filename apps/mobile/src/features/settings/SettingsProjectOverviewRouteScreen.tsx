@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { AppText as Text, AppTextInput } from "../../components/ui/AppText";
 import { Button } from "../../components/ui/Button";
@@ -49,6 +50,7 @@ import { DEFAULT_SETTINGS_PAGE } from "../workspace/workspace-tab-navigation";
 import { readUnloadedThreadCount } from "../../state/olderSettledShelf";
 
 export function SettingsProjectOverviewRouteScreen() {
+  const { t } = useTranslation();
   const environmentMenu = useSettingsEnvironmentMenu();
   const insets = useSafeAreaInsets();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -89,7 +91,7 @@ export function SettingsProjectOverviewRouteScreen() {
   return (
     <>
       <SettingsEnvironmentFilterHeader />
-      <SettingsScreen title="Projects" menus={[environmentMenu]}>
+      <SettingsScreen title={t("Projects")} menus={[environmentMenu]}>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
@@ -142,6 +144,7 @@ function ProjectOverviewContent(props: {
   readonly projectKey: string | null;
   readonly onProjectRemoved: (projectKey: string | null) => void;
 }) {
+  const { t } = useTranslation();
   const { isRemoving, setIsRemoving, startRemoval, finishRemoval } = props;
   const representative = props.members[0]!;
   const displayName = deriveProjectGroupLabel({ representative, members: props.members });
@@ -239,7 +242,7 @@ function ProjectOverviewContent(props: {
       unloadedThreadCount: readUnloadedThreadCount(members, threads),
     });
     Dialog.confirm({
-      title: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
+      title: plan.targetKind === "checkout" ? "Remove checkout" : t("Remove project"),
       message: plan.confirmationMessage,
       confirmText: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
       destructive: true,
@@ -325,12 +328,12 @@ function ProjectOverviewContent(props: {
         </View>
       </View>
 
-      <SettingsSection title="Project">
+      <SettingsSection title={t("Project")}>
         <View className="gap-3 p-4">
-          <Text className="text-sm font-t3-medium text-foreground-muted">Name</Text>
+          <Text className="text-sm font-t3-medium text-foreground-muted">{t("Name")}</Text>
           <View className="flex-row items-center gap-3">
             <AppTextInput
-              accessibilityLabel="Project name"
+              accessibilityLabel={t("Project name")}
               className="min-h-11 min-w-0 flex-1 rounded-xl border-continuous bg-card px-3 text-base text-foreground"
               value={draftName ?? displayName}
               onChangeText={setDraftName}
@@ -340,7 +343,7 @@ function ProjectOverviewContent(props: {
             />
             {canSave ? (
               <Button
-                label="Save"
+                label={t("Save")}
                 accessibilityHint="Save project name"
                 tone="secondary"
                 onPress={saveName}
@@ -351,10 +354,10 @@ function ProjectOverviewContent(props: {
       </SettingsSection>
 
       {canOrganize ? (
-        <SettingsSection title="Organize">
+        <SettingsSection title={t("Organize")}>
           <SettingsSwitchRow
             icon="pin"
-            label="Pin"
+            label={t("Pin")}
             subtitle={
               offline
                 ? "Connect every machine with this project to change this."
@@ -378,7 +381,7 @@ function ProjectOverviewContent(props: {
         </SettingsSection>
       ) : null}
 
-      <SettingsSection title="Checkouts">
+      <SettingsSection title={t("Checkouts")}>
         {props.members.map((member, index) => {
           const environment = props.environments.find(
             (entry) => entry.environmentId === member.environmentId,
@@ -395,7 +398,7 @@ function ProjectOverviewContent(props: {
                     : "text-lg text-foreground"
                 }
               >
-                {environment?.label ?? "Environment"}
+                {environment?.label ?? t("Environment")}
               </Text>
               {environment?.displayUrl ? (
                 <Text className="text-sm leading-normal text-foreground-muted">
@@ -416,7 +419,7 @@ function ProjectOverviewContent(props: {
           );
         })}
       </SettingsSection>
-      <SettingsSection title="Danger">
+      <SettingsSection title={t("Danger")}>
         <SettingsActionRow
           icon="trash"
           label={
@@ -424,7 +427,7 @@ function ProjectOverviewContent(props: {
               ? "Remove checkout"
               : props.members.length > 1
                 ? "Remove this project everywhere"
-                : "Remove project"
+                : t("Remove project")
           }
           description={
             props.hasOtherMembers

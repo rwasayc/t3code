@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { SheetHeader } from "../../components/ui/SheetHeader";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import * as Dialog from "../../components/ui/Dialog";
@@ -75,6 +76,7 @@ function BrowserPreviewScreen({
   readonly initialTabId: string | null;
   readonly onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { themeVariables } = useAppearancePreferences();
   const prepared = usePreparedConnection(environmentId);
@@ -112,7 +114,7 @@ function BrowserPreviewScreen({
   return (
     <View className="flex-1 bg-sheet" style={{ paddingBottom: insets.bottom }}>
       <AppBar
-        title={tab ? browserTabTitle(tab) : "Browser"}
+        title={tab ? browserTabTitle(tab) : t("Browser")}
         onBack={onClose}
         options={{ headerBackVisible: false }}
         actions={
@@ -139,7 +141,7 @@ function BrowserPreviewScreen({
           tabs.length > 1
             ? [
                 {
-                  title: "Tabs",
+                  title: t("Tabs"),
                   icon: "square.on.square",
                   items: tabs.map((entry) => ({
                     id: entry.tabId,
@@ -155,9 +157,9 @@ function BrowserPreviewScreen({
       />
       {Platform.OS === "ios" ? (
         <SheetHeader
-          title={tab ? browserTabTitle(tab) : "Browser"}
+          title={tab ? browserTabTitle(tab) : t("Browser")}
           onClose={onClose}
-          accessibilityLabel="Close browser"
+          accessibilityLabel={t("Close browser")}
         />
       ) : null}
       {tab ? (
@@ -215,6 +217,7 @@ function BrowserAddressBar({
   readonly onCommand: PreviewStreamRef["command"];
   readonly onPaste: () => void;
 }) {
+  const { t } = useTranslation();
   const url = browserTabUrl(tab);
   const [draft, setDraft] = useState<string | null>(null);
   const submit = () => {
@@ -230,24 +233,24 @@ function BrowserAddressBar({
     <View className="flex-row items-center gap-1 px-2 pb-2">
       <ControlPill
         icon="chevron.left"
-        accessibilityLabel="Back"
+        accessibilityLabel={t("Back")}
         disabled={!ready || !tab.canGoBack}
         onPress={() => onCommand({ type: "history", delta: -1 })}
       />
       <ControlPill
         icon="chevron.right"
-        accessibilityLabel="Forward"
+        accessibilityLabel={t("Forward")}
         disabled={!ready || !tab.canGoForward}
         onPress={() => onCommand({ type: "history", delta: 1 })}
       />
       <TextInput
-        accessibilityLabel="Address"
+        accessibilityLabel={t("Address")}
         editable={ready}
         value={draft ?? url}
         onChangeText={setDraft}
         onBlur={() => setDraft(null)}
         onSubmitEditing={submit}
-        placeholder="Enter a URL"
+        placeholder={t("Enter a URL")}
         placeholderTextColorClassName="accent-placeholder"
         autoCapitalize="none"
         autoCorrect={false}
@@ -259,7 +262,7 @@ function BrowserAddressBar({
       />
       <ControlPill
         icon="arrow.clockwise"
-        accessibilityLabel="Reload page"
+        accessibilityLabel={t("Reload page")}
         disabled={!ready}
         onPress={() => onCommand({ type: "reload" })}
       />

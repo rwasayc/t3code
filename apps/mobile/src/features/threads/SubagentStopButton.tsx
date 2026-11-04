@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import type { EnvironmentId, OrchestrationV2Subagent } from "@t3tools/contracts";
 import { useState } from "react";
@@ -18,6 +19,7 @@ export function SubagentStopButton(props: {
   readonly subagent: OrchestrationV2Subagent;
   readonly className?: string;
 }) {
+  const { t } = useTranslation();
   const target = resolveSubagentStopTarget(props.subagent);
   const canStop = useAtomValue(
     orchestrationEnvironment.stopWorkflow.permissionAtom(props.environmentId),
@@ -48,7 +50,7 @@ export function SubagentStopButton(props: {
       <IconButton
         icon="stop.fill"
         variant="danger"
-        accessibilityLabel={`${stopping ? "Stopping" : "Stop"} ${workflow ? "workflow" : "agent"} ${label}`}
+        accessibilityLabel={`${stopping ? "Stopping" : t("Stop")} ${workflow ? "workflow" : "agent"} ${label}`}
         disabled={stopping}
         onPress={() =>
           Dialog.confirm({

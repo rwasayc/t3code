@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { NativeScrollView } from "../../native/NativeScrollViewMarker";
 import { SearchField } from "../../components/ui/SearchField";
 import { Button } from "../../components/ui/Button";
@@ -66,6 +67,7 @@ function EnvironmentPickerRow(props: {
   isLast: boolean;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const { presentation } = useEnvironmentPresentation(props.environmentId);
   const { diagnosis, state } = useConnectionDiagnosis(props.environmentId, presentation);
@@ -107,7 +109,7 @@ function EnvironmentPickerRow(props: {
         </Pressable>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`${expanded ? "Hide" : "Show"} connection details for ${props.title}`}
+          accessibilityLabel={`${expanded ? t("Hide") : t("Show")} connection details for ${props.title}`}
           accessibilityState={{ expanded }}
           onPress={() => setExpanded(!expanded)}
           className="min-h-11 min-w-11 items-center justify-center active:opacity-65"
@@ -133,7 +135,7 @@ function EnvironmentPickerRow(props: {
           ) : null}
           {connection?.phase !== "connected" ? (
             <Button
-              label="Reconnect now"
+              label={t("Reconnect now")}
               onPress={() => onReconnectEnvironment(props.environmentId)}
             />
           ) : null}
@@ -183,6 +185,7 @@ function PickerSurface(props: { readonly children: ReactNode }) {
 }
 
 export function NewTaskEnvironmentPickerRouteScreen() {
+  const { t } = useTranslation();
   const flow = useNewTaskFlow();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -191,11 +194,16 @@ export function NewTaskEnvironmentPickerRouteScreen() {
       <NativeStackScreenOptions
         options={{
           headerShown: Platform.OS !== "android",
-          title: "Environment",
+          title: t("Environment"),
         }}
       />
       {Platform.OS === "android" ? (
-        <AppBar embedded title="Environment" hideBottomBorder onBack={() => navigation.goBack()} />
+        <AppBar
+          embedded
+          title={t("Environment")}
+          hideBottomBorder
+          onBack={() => navigation.goBack()}
+        />
       ) : null}
       <ScreenContent>
         <ScrollView
@@ -232,6 +240,7 @@ export function NewTaskEnvironmentPickerRouteScreen() {
 }
 
 export function NewTaskBranchPickerRouteScreen() {
+  const { t } = useTranslation();
   const flow = useNewTaskFlow();
   const canWriteSourceControl = useEnvironmentScope(
     flow.selectedProject?.environmentId ?? null,
@@ -314,7 +323,7 @@ export function NewTaskBranchPickerRouteScreen() {
 
   return (
     <BranchPickerScreen
-      title={flow.workspaceMode === "worktree" ? "Base branch" : "Branch"}
+      title={flow.workspaceMode === "worktree" ? t("Base branch") : t("Branch")}
       project={flow.selectedProject}
       branches={filterNewTaskBranches(branchState.refs, branchQuery)}
       selectedBranchName={
@@ -365,6 +374,7 @@ export function BranchPickerScreen(props: {
     readonly onChangeStartFromOrigin: (value: boolean) => void;
   };
 }) {
+  const { t } = useTranslation();
   const searchRef = useRef<import("react-native").TextInputInstance>(null);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -406,7 +416,7 @@ export function BranchPickerScreen(props: {
     >
       <ToggleRow
         onValueChange={props.worktree.onChangeStartFromOrigin}
-        title="Start from remote"
+        title={t("Start from remote")}
         value={props.worktree.startFromOrigin}
       />
     </View>
@@ -442,7 +452,7 @@ export function BranchPickerScreen(props: {
           </Text>
           {!props.loading && props.error ? (
             <View className="self-center">
-              <Button label="Try again" tone="secondary" onPress={props.onRefresh} />
+              <Button label={t("Try again")} tone="secondary" onPress={props.onRefresh} />
             </View>
           ) : null}
         </View>
@@ -486,10 +496,10 @@ export function BranchPickerScreen(props: {
           <SearchField
             inputRef={searchRef}
             autoFocus={false}
-            accessibilityLabel="Find a branch"
+            accessibilityLabel={t("Find a branch")}
             clearAccessibilityLabel="Clear branch search"
             onChangeText={props.onQueryChange}
-            placeholder="Find a branch"
+            placeholder={t("Find a branch")}
             value={props.query}
           />
         </View>
@@ -508,7 +518,7 @@ export function BranchPickerScreen(props: {
             ? () => [
                 createNativeMailSearchToolbarItem({
                   onSearchTextChange: props.onQueryChange,
-                  placeholder: "Find a branch",
+                  placeholder: t("Find a branch"),
                   searchTextChangeId: "new-task-branch-search-text",
                   showsSearchDismissButton: true,
                 }),
@@ -521,7 +531,7 @@ export function BranchPickerScreen(props: {
                 autoCapitalize: "none",
                 hideNavigationBar: false,
                 obscureBackground: false,
-                placeholder: "Find a branch",
+                placeholder: t("Find a branch"),
                 onChangeText: (event) => {
                   props.onQueryChange(event.nativeEvent.text);
                 },

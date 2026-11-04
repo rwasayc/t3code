@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { videoMimeType } from "@t3tools/shared/video";
 import { Modal, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -101,6 +102,7 @@ function OpenVideoPreviewModal(props: {
   readonly playback: PlaybackState;
   readonly onRequestClose: () => void;
 }) {
+  const { t } = useTranslation();
   const { playback } = props;
   const insets = useSafeAreaInsets();
   const mediaActions = useMediaActions(playback.actionsSource, props.onRequestClose);
@@ -125,7 +127,7 @@ function OpenVideoPreviewModal(props: {
           <MediaActionsMenu media={mediaActions} inModal />
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Close video"
+            accessibilityLabel={t("Close video")}
             onPress={props.onRequestClose}
             className="size-12 items-center justify-center"
           >
@@ -157,13 +159,13 @@ function OpenVideoPreviewModal(props: {
         ) : null}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Save or share video"
+          accessibilityLabel={t("Save or share video")}
           disabled={playback.uri === null || mediaActions.sharing}
           onPress={mediaActions.share}
           className="mx-4 my-3 min-h-12 items-center justify-center rounded-xl bg-white/15 px-4"
         >
           <AppText className="font-t3-medium text-base text-white">
-            {mediaActions.sharing ? "Opening share sheet..." : "Save or share video"}
+            {mediaActions.sharing ? "Opening share sheet..." : t("Save or share video")}
           </AppText>
         </Pressable>
       </View>

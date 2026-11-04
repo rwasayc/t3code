@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { Button } from "../../../components/ui/Button";
 import type { PullRequestReviewGuide } from "@t3tools/contracts";
 import { stopFilePaths } from "@t3tools/client-runtime/review-guide-tour";
@@ -18,6 +19,7 @@ export function GuideOutline({
   readonly onOpen: (position: number) => void;
   readonly onRewrite?: () => void;
 }) {
+  const { t } = useTranslation();
   const { appearance, setCodeWordBreak } = useAppearancePreferences();
   const files = new Set(guide.stops.flatMap(stopFilePaths));
   return (
@@ -30,16 +32,16 @@ export function GuideOutline({
           </Text>
         </View>
         <Menu
-          title="Guide options"
+          title={t("Guide options")}
           actions={[
             {
               id: "word-wrap",
-              title: "Word wrap",
+              title: t("Word wrap"),
               image: "text.alignleft",
               state: appearance.codeWordBreak ? "on" : "off",
             },
             ...(onRewrite
-              ? [{ id: "rewrite", title: "Rewrite guide", image: "arrow.clockwise" }]
+              ? [{ id: "rewrite", title: t("Rewrite guide"), image: "arrow.clockwise" }]
               : []),
           ]}
           onPressAction={({ nativeEvent }) =>
@@ -50,7 +52,7 @@ export function GuideOutline({
         >
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Guide options"
+            accessibilityLabel={t("Guide options")}
             className="h-11 w-11 items-center justify-center rounded-full active:bg-grouped-card"
           >
             <SymbolView name="ellipsis" size={20} tintColorClassName="accent-icon-muted" />
@@ -89,7 +91,7 @@ export function GuideOutline({
                   <SymbolView name="eye" size={14} tintColorClassName="accent-warning-foreground" />
                 ) : null}
                 <Text className="shrink text-xs text-foreground-muted" numberOfLines={1}>
-                  {filename ?? "Context"}
+                  {filename ?? t("Context")}
                   {paths.length > 1 ? ` +${paths.length - 1}` : ""}
                 </Text>
               </View>
@@ -102,7 +104,12 @@ export function GuideOutline({
       })}
       {guide.stops.length ? (
         <View className="self-end">
-          <Button label="Start tour" tone="text" onPress={() => onOpen(0)} icon="arrow.right" />
+          <Button
+            label={t("Start tour")}
+            tone="text"
+            onPress={() => onOpen(0)}
+            icon="arrow.right"
+          />
         </View>
       ) : null}
     </View>

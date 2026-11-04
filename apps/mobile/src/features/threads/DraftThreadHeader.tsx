@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { uuidv4 } from "../../lib/uuid";
 import * as Dialog from "../../components/ui/Dialog";
 import { useNavigation } from "@react-navigation/native";
@@ -22,6 +23,7 @@ export function DraftThreadHeader(props: {
   readonly project: EnvironmentProject;
   readonly cwd: string | null;
 }) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { themeVariables } = useAppearancePreferences();
   const environmentId = props.thread.environmentId;
@@ -49,7 +51,7 @@ export function DraftThreadHeader(props: {
   return (
     <ThreadHeader
       draft
-      title="New thread"
+      title={t("New thread")}
       subtitle=""
       headerColor={themeVariables["--color-header"]}
       usesNativeHeaderGlass={NATIVE_LIQUID_GLASS_SUPPORTED}

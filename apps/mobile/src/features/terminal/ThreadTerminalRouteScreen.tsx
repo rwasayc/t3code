@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import {
   AuthTerminalReadScope,
@@ -105,26 +106,27 @@ function TerminalHeader(props: {
   readonly onOpenNewTerminal: () => void;
   readonly onSelectTerminal: (terminalId: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <AppBar
-      title="Terminal"
+      title={t("Terminal")}
       subtitle={props.subtitle}
       onBack={props.onCloseTerminal}
       backInSplitView={{
-        accessibilityLabel: "Back to chat",
+        accessibilityLabel: t("Back to chat"),
         icon: "chevron.left",
       }}
       menus={
         props.isEnvironmentReady
           ? [
               {
-                title: "Terminal options",
+                title: t("Terminal options"),
                 icon: "terminal",
                 status: getTerminalStatusLabel(props.status),
                 items: [
                   {
                     id: "text-size",
-                    title: "Text size",
+                    title: t("Text size"),
                     icon: "textformat.size",
                     inline: true,
                     items: [
@@ -161,7 +163,7 @@ function TerminalHeader(props: {
                   {
                     id: "terminal-new",
                     disabled: !props.canOperateTerminal,
-                    title: "Open new terminal",
+                    title: t("Open new terminal"),
                     icon: "plus",
                     subtitle: `Start another shell in ${basename(props.workspaceRoot) ?? "this workspace"}`,
                     onPress: props.onOpenNewTerminal,
@@ -270,6 +272,7 @@ function useTerminalAccess(environmentId: EnvironmentId | null) {
 }
 
 export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps) {
+  const { t } = useTranslation();
   const connectionsReady = useConnectionsReady();
   const params = props.route.params;
   const selection = useThreadSelection();
@@ -305,14 +308,14 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
 
   if (!selectedThread) {
     if (!connectionsReady) {
-      return <LoadingScreen message="Opening terminal…" />;
+      return <LoadingScreen message={t("Opening terminal…")} />;
     }
 
     return (
       <View className="flex-1 bg-screen">
         <EmptyState
-          title="Thread unavailable"
-          detail="This terminal route needs an active thread and workspace."
+          title={t("Thread unavailable")}
+          detail={t("This terminal route needs an active thread and workspace.")}
         />
       </View>
     );
@@ -362,6 +365,7 @@ function ThreadTerminal(props: {
   readonly access: ReturnType<typeof useTerminalAccess>;
   readonly knownSessions: ReturnType<typeof useKnownTerminalSessions>;
 }) {
+  const { t } = useTranslation();
   const { params, routeEnvironmentId, thread: selectedThread, terminalId } = props;
   const { selectedThreadProject, selectedEnvironmentConnection } = props.selection;
   const {
@@ -784,15 +788,17 @@ function ThreadTerminal(props: {
     return (
       <View className="flex-1 bg-screen">
         <EmptyState
-          title="Terminal unavailable"
-          detail="This thread does not have a workspace root yet, so there is nowhere to open a shell."
+          title={t("Terminal unavailable")}
+          detail={t(
+            "This thread does not have a workspace root yet, so there is nowhere to open a shell.",
+          )}
         />
       </View>
     );
   }
 
   if (!environment.isReady && environment.presentation === null) {
-    return <LoadingScreen message="Opening terminal…" />;
+    return <LoadingScreen message={t("Opening terminal…")} />;
   }
 
   return (
@@ -864,8 +870,8 @@ function ThreadTerminal(props: {
             />
           ) : terminalSession.data === null && terminalSession.error === null ? (
             <EmptyState
-              title="Checking terminal access"
-              detail="Waiting for this connection's permissions."
+              title={t("Checking terminal access")}
+              detail={t("Waiting for this connection's permissions.")}
             />
           ) : !canReadTerminal && !canOperateTerminal ? (
             <EmptyState
@@ -881,21 +887,27 @@ function ThreadTerminal(props: {
             />
           ) : canOperateTerminal && launchLocation === null ? (
             sessionsError !== null ? (
-              <EmptyState title="Could not load terminals" detail={sessionsError} />
+              <EmptyState title={t("Could not load terminals")} detail={sessionsError} />
             ) : (
-              <EmptyState title="Loading terminals" detail="Reading existing terminal sessions." />
+              <EmptyState
+                title={t("Loading terminals")}
+                detail={t("Reading existing terminal sessions.")}
+              />
             )
           ) : !canOperateTerminal && !hasTerminalTarget && sessionsPending ? (
-            <EmptyState title="Loading terminals" detail="Reading existing terminal sessions." />
+            <EmptyState
+              title={t("Loading terminals")}
+              detail={t("Reading existing terminal sessions.")}
+            />
           ) : !canOperateTerminal && !hasTerminalTarget && sessionsError !== null ? (
-            <EmptyState title="Could not load terminals" detail={sessionsError} />
+            <EmptyState title={t("Could not load terminals")} detail={sessionsError} />
           ) : !canOperateTerminal && !hasTerminalTarget ? (
             <EmptyState
-              title="No terminal sessions"
-              detail="Existing terminals will appear here when another client opens one."
+              title={t("No terminal sessions")}
+              detail={t("Existing terminals will appear here when another client opens one.")}
             />
           ) : !canOperateTerminal && terminal.error !== null ? (
-            <EmptyState title="Terminal unavailable" detail={terminal.error} />
+            <EmptyState title={t("Terminal unavailable")} detail={terminal.error} />
           ) : (
             <>
               <View
@@ -940,11 +952,11 @@ function ThreadTerminal(props: {
               {Platform.OS === "android" && !keyboardState.isVisible ? (
                 <View className="min-h-14 flex-row items-center gap-2 bg-card-alt px-2">
                   {hasNativeTerminalSurface() ? (
-                    <Button label="Attach output" tone="text" onPress={requestCapture} />
+                    <Button label={t("Attach output")} tone="text" onPress={requestCapture} />
                   ) : null}
                   <View className="flex-1" />
                   <IconButton
-                    accessibilityLabel="Show keyboard"
+                    accessibilityLabel={t("Show keyboard")}
                     disabled={!canOperateTerminal}
                     icon="keyboard"
                     onPress={handleShowKeyboard}
@@ -1011,7 +1023,7 @@ function ThreadTerminal(props: {
                         })}
                       </ComposerToolbarScroller>
                       <ComposerToolbarButton
-                        accessibilityLabel="Dismiss keyboard"
+                        accessibilityLabel={t("Dismiss keyboard")}
                         icon={{ ios: "keyboard.chevron.compact.down", android: "keyboard_hide" }}
                         onPress={handleDismissKeyboard}
                         showChevron={false}
@@ -1021,7 +1033,7 @@ function ThreadTerminal(props: {
                 </KeyboardStickyView>
               ) : canOperateTerminal && !keyboardState.isVisible && Platform.OS !== "android" ? (
                 <Pressable
-                  accessibilityLabel="Show keyboard"
+                  accessibilityLabel={t("Show keyboard")}
                   accessibilityRole="button"
                   onPress={handleShowKeyboard}
                   style={({ pressed }) => ({

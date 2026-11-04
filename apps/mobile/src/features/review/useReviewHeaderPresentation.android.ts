@@ -1,11 +1,12 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { useReviewHeaderPresentation as useIosReviewHeaderPresentation } from "./useReviewHeaderPresentation";
 
-// oxlint-disable-next-line t3code/no-hookless-use-function -- Android stub of a hook; the iOS file calls hooks.
 export function useReviewHeaderPresentation(
   props: Parameters<typeof useIosReviewHeaderPresentation>[0],
 ): ReturnType<typeof useIosReviewHeaderPresentation> {
+  const { t } = useTranslation();
   return {
-    title: "Review changes",
+    title: t("Review changes"),
     subtitle: props.androidSubtitle || "Select a diff",
     gitMenu: null,
     menuIcon: "ellipsis.circle",

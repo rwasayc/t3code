@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import * as Dialog from "../../components/ui/Dialog";
@@ -115,6 +116,7 @@ export function ThreadMcpApp(props: {
   readonly onExitFullscreen?: () => void;
   readonly height?: number;
 }) {
+  const { t } = useTranslation();
   const [height, setHeight] = useState(MCP_APP_INLINE_MAX_HEIGHT);
   const [documentKey, setDocumentKeyState] = useState(0);
   // The view keeps its first URL: a re-minted one would reload the app.
@@ -502,7 +504,7 @@ export function ThreadMcpApp(props: {
         <Text className="text-sm text-foreground-muted">The {app.server} app was closed</Text>
         <View className="items-center">
           <Button
-            label="Show app"
+            label={t("Show app")}
             tone="secondary"
             onPress={() => {
               reopenDocument();

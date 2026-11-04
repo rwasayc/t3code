@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useId, useState } from "react";
 import { Image, Pressable, View } from "react-native";
 
@@ -14,6 +15,7 @@ function ResolvedWorkspaceFileImagePreview(props: {
   readonly uri: string;
   readonly actionsSource?: MediaActionsSource;
 }) {
+  const { t } = useTranslation();
   const [loadError, setLoadError] = useState<string | null>(null);
   const [preview, setPreview] = useState<FilePreviewSource | null>(null);
   const sourceIdentifier = useId();
@@ -60,7 +62,7 @@ function ResolvedWorkspaceFileImagePreview(props: {
           pointerEvents="none"
           className="absolute inset-0 items-center justify-center bg-card px-6"
         >
-          <EmptyState title="Image unavailable" detail={loadError} />
+          <EmptyState title={t("Image unavailable")} detail={loadError} />
         </View>
       ) : null}
       <FilePreviewModal source={preview} onRequestClose={() => setPreview(null)} />
@@ -73,8 +75,9 @@ export function WorkspaceFileImagePreview(props: {
   readonly uri: string | null;
   readonly actionsSource?: MediaActionsSource;
 }) {
+  const { t } = useTranslation();
   if (props.uri === null) {
-    return <FilePreviewLoading message="Preparing image preview..." background="card" />;
+    return <FilePreviewLoading message={t("Preparing image preview...")} background="card" />;
   }
 
   return (

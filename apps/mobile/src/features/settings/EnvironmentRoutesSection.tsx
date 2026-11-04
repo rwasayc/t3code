@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomValue } from "@effect/atom-react";
@@ -57,6 +58,7 @@ export function EnvironmentRoutesSection({
   readonly connected: boolean;
   readonly onAddRoute: () => void;
 }) {
+  const { t } = useTranslation();
   const entry = useAtomValue(environmentCatalog.catalogValueAtom).entries.get(environmentId);
   const prepared = useAtomValue(environmentSession.preparedConnectionValueAtom(environmentId));
   const sessionResult = useAtomValue(environmentSession.sessionStateAtom(environmentId));
@@ -130,11 +132,11 @@ export function EnvironmentRoutesSection({
 
   return (
     <SettingsSection
-      title="Routes"
+      title={t("Routes")}
       trailing={
         routes.length > 1 ? (
           <Button
-            label={editing ? "Done" : "Edit"}
+            label={editing ? t("Done") : t("Edit")}
             tone="text"
             onPress={() => setEditing((value) => !value)}
           />
@@ -143,7 +145,7 @@ export function EnvironmentRoutesSection({
     >
       <SettingsActionRow
         icon="checkmark.circle"
-        label="Your permissions"
+        label={t("Your permissions")}
         onPress={() => setPermissionsOpen((open) => !open)}
       />
       {permissionsOpen ? (
@@ -218,7 +220,7 @@ export function EnvironmentRoutesSection({
           />
         );
       })}
-      <SettingsActionRow icon="plus" label="Add route" onPress={onAddRoute} />
+      <SettingsActionRow icon="plus" label={t("Add route")} onPress={onAddRoute} />
     </SettingsSection>
   );
 }
@@ -238,6 +240,7 @@ function RouteRow(props: {
   readonly onStep: (direction: "up" | "down") => void;
   readonly onRemove: (() => void) | undefined;
 }) {
+  const { t } = useTranslation();
   const { route, lifted, offset } = props;
   const label = connectionRouteLabel(route);
   const address = connectionRouteAddress(route);
@@ -305,7 +308,7 @@ function RouteRow(props: {
               {label}
             </Text>
             {props.inUse ? (
-              <StatusPill {...connectionTone("connected")} label="In use" size="compact" />
+              <StatusPill {...connectionTone("connected")} label={t("In use")} size="compact" />
             ) : null}
           </View>
           {address !== null ? (

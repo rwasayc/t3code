@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type {
   EnvironmentId,
   OrchestrationV2GetNativeChildWorkResult,
@@ -24,6 +25,7 @@ export function NativeChildWorkSheet(props: {
   readonly threadId: ThreadId;
   readonly onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const query = useEnvironmentQuery<OrchestrationV2GetNativeChildWorkResult, unknown>(
     orchestrationEnvironment.nativeChildWork({
@@ -33,7 +35,7 @@ export function NativeChildWorkSheet(props: {
   );
   const children = query.data?.children;
   return (
-    <Sheet title="Subagent work" onClose={props.onClose}>
+    <Sheet title={t("Subagent work")} onClose={props.onClose}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
@@ -51,7 +53,7 @@ export function NativeChildWorkSheet(props: {
             {query.error}
           </Text>
         ) : children === undefined ? (
-          <Text className="font-sans text-sm text-foreground-secondary">Loading…</Text>
+          <Text className="font-sans text-sm text-foreground-secondary">{t("Loading…")}</Text>
         ) : children.length === 0 ? (
           <Text className="font-sans text-sm text-foreground-secondary">
             The provider has no record of which subagents this call started.
@@ -61,7 +63,7 @@ export function NativeChildWorkSheet(props: {
         )}
         <View className="flex-row justify-end">
           <Button
-            label="Refresh"
+            label={t("Refresh")}
             tone="secondary"
             disabled={query.isPending}
             onPress={query.refresh}

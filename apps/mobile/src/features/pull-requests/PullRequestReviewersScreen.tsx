@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { SheetHeader } from "../../components/ui/SheetHeader";
 import { AsyncResult } from "effect/reactivity";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
@@ -43,6 +44,7 @@ function ReviewerScrollView(props: ScrollViewProps) {
 }
 
 export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequestParams>) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const listRef = useRef<FlatList<PullRequestReviewerCandidate>>(null);
@@ -125,7 +127,7 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
   };
   const listCandidates = pr?.capabilities.reviewers.listCandidates === true;
   const searchOptions = {
-    placeholder: "Search reviewers",
+    placeholder: t("Search reviewers"),
     autoCapitalize: "none" as const,
     onChangeText: (event: { nativeEvent: { text: string } }) => search(event.nativeEvent.text),
     onCancelButtonPress: () => search(""),
@@ -138,10 +140,10 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
   return (
     <View className="flex-1 bg-sheet">
       <SheetHeader
-        title="Request review"
+        title={t("Request review")}
         subtitle={`#${route.params.number} · ${route.params.repository}`}
         onClose={() => navigation.goBack()}
-        accessibilityLabel="Close request review"
+        accessibilityLabel={t("Close request review")}
       />
       <NativeStackScreenOptions
         options={{
@@ -150,7 +152,7 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
             listCandidates && integratedSearch
               ? [
                   createNativeMailSearchToolbarItem({
-                    placeholder: "Search reviewers",
+                    placeholder: t("Search reviewers"),
                     onSearchTextChange: search,
                     showsSearchDismissButton: true,
                     searchTextChangeId: "pr-reviewer-search",
@@ -179,8 +181,8 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
               </Text>
               {Platform.OS === "android" ? (
                 <TextInput
-                  accessibilityLabel="Search reviewers"
-                  placeholder="Search reviewers"
+                  accessibilityLabel={t("Search reviewers")}
+                  placeholder={t("Search reviewers")}
                   placeholderTextColorClassName="accent-foreground-muted"
                   value={query}
                   onChangeText={search}
@@ -250,7 +252,7 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                   detail={result.error ?? "Search people and teams with access to this repository."}
                   variant="plain"
                 />
-                {result.error ? <Button label="Retry" onPress={result.refresh} /> : null}
+                {result.error ? <Button label={t("Retry")} onPress={result.refresh} /> : null}
               </View>
             )
           }
@@ -284,8 +286,8 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                 This provider accepts a reviewer ID but cannot list candidates.
               </Text>
               <TextInput
-                accessibilityLabel="Reviewer ID"
-                placeholder="Reviewer login or ID"
+                accessibilityLabel={t("Reviewer ID")}
+                placeholder={t("Reviewer login or ID")}
                 placeholderTextColorClassName="accent-foreground-muted"
                 value={query}
                 onChangeText={search}
@@ -294,13 +296,13 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                 className="min-h-12 rounded-xl bg-grouped-card px-3 text-base"
               />
               <Button
-                label="Request review"
+                label={t("Request review")}
                 fullWidth
                 disabled={!allowed || !query.trim() || pending !== null}
                 onPress={() => void update({ id: query.trim(), kind: "user", isRequested: false })}
               />
               <Button
-                label="Remove review request"
+                label={t("Remove review request")}
                 fullWidth
                 tone="text"
                 disabled={!allowed || !query.trim() || pending !== null}

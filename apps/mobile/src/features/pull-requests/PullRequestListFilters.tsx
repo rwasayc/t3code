@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import { sortProjectsByGroupOrder } from "@t3tools/client-runtime/state/project-grouping";
 import type { ScopedProjectRef, SidebarProjectGroupingMode } from "@t3tools/contracts";
@@ -106,6 +107,7 @@ export function usePullRequestListFilters(props: {
   /** Opens a picker that searches the host, for a label or author no loaded row carries. */
   readonly onSearch: (kind: "labels" | "authors") => void;
 }) {
+  const { t } = useTranslation();
   const { value } = props;
   const projects = useProjectsInSidebarOrder(props.projects);
   const selectedLabels = value.filters.labels?.flat() ?? [];
@@ -223,17 +225,17 @@ export function usePullRequestListFilters(props: {
   const more: MenuProps["actions"] = [
     {
       id: "drafts",
-      title: value.filters.draft ? DRAFTS[value.filters.draft] : "Drafts",
+      title: value.filters.draft ? DRAFTS[value.filters.draft] : t("Drafts"),
       subactions: choices("draft", DRAFTS, value.filters.draft ?? "all"),
     },
     {
       id: "reviews",
-      title: value.filters.review ? REVIEWS[value.filters.review] : "Reviews",
+      title: value.filters.review ? REVIEWS[value.filters.review] : t("Reviews"),
       subactions: choices("review", REVIEWS, value.filters.review ?? "all"),
     },
     {
       id: "checks",
-      title: value.filters.checks ? `${CHECKS[value.filters.checks]} checks` : "Checks",
+      title: value.filters.checks ? `${CHECKS[value.filters.checks]} checks` : t("Checks"),
       subactions: choices("checks", CHECKS, value.filters.checks ?? "all"),
     },
     {
@@ -242,7 +244,7 @@ export function usePullRequestListFilters(props: {
         projects.find(
           (project) =>
             project.id === value.projectId && project.environmentId === value.projectEnvironmentId,
-        )?.title ?? "Project",
+        )?.title ?? t("Project"),
       subactions: choices(
         "project",
         Object.fromEntries([
@@ -259,7 +261,7 @@ export function usePullRequestListFilters(props: {
   ];
   const reset = (withEnvironment: boolean): MenuProps["actions"][number] => ({
     id: id("reset", withEnvironment ? "environment" : ""),
-    title: "Reset filters",
+    title: t("Reset filters"),
     attributes: {
       disabled:
         count === 0 &&
@@ -282,8 +284,8 @@ export function usePullRequestListFilters(props: {
   const stateActions = choices("state", STATES, value.state);
   const involvementActions = choices("involvement", INVOLVEMENT, value.involvement);
   const labelActions: MenuProps["actions"] = [
-    { id: id("search", "labels"), title: "Search labels…", image: "magnifyingglass" },
-    { id: id("labels", ""), title: "All labels", state: selectedLabels.length ? "off" : "on" },
+    { id: id("search", "labels"), title: t("Search labels…"), image: "magnifyingglass" },
+    { id: id("labels", ""), title: t("All labels"), state: selectedLabels.length ? "off" : "on" },
     ...labels.map((label) => {
       const color = props.labelColors[label.toLowerCase()];
       return {
@@ -295,7 +297,7 @@ export function usePullRequestListFilters(props: {
     }),
   ];
   const authorActions: MenuProps["actions"] = [
-    { id: id("search", "authors"), title: "Search authors…", image: "magnifyingglass" },
+    { id: id("search", "authors"), title: t("Search authors…"), image: "magnifyingglass" },
     ...choices(
       "author",
       Object.fromEntries([
@@ -312,11 +314,11 @@ export function usePullRequestListFilters(props: {
     Platform.OS === "android"
       ? {
           actions: [
-            { id: "environment", title: "Environment", subactions: environmentActions },
-            { id: "state", title: "State", subactions: stateActions },
-            { id: "involvement", title: "Involvement", subactions: involvementActions },
-            { id: "labels", title: "Labels", subactions: labelActions },
-            { id: "author", title: "Author", subactions: authorActions },
+            { id: "environment", title: t("Environment"), subactions: environmentActions },
+            { id: "state", title: t("State"), subactions: stateActions },
+            { id: "involvement", title: t("Involvement"), subactions: involvementActions },
+            { id: "labels", title: t("Labels"), subactions: labelActions },
+            { id: "author", title: t("Author"), subactions: authorActions },
             ...more,
             reset(true),
           ],
@@ -352,6 +354,7 @@ export function PullRequestListFilters(props: {
   readonly sidebar?: boolean;
   readonly filters: ReturnType<typeof usePullRequestListFilters>;
 }) {
+  const { t } = useTranslation();
   const { count, more, reset, select, author, selectedLabelCount } = props.filters;
   return (
     <ScrollView
@@ -367,7 +370,7 @@ export function PullRequestListFilters(props: {
     >
       {Platform.OS === "android" ? null : (
         <ListFilterMenu
-          label={count ? String(count) : "Filters"}
+          label={count ? String(count) : t("Filters")}
           icon
           active={count > 0}
           accessibilityLabel={count ? `Filters, ${count} active` : "More filters"}
@@ -378,7 +381,7 @@ export function PullRequestListFilters(props: {
       {props.filters.environmentLabel !== null ? (
         <ListFilterMenu
           label={props.filters.environmentLabel}
-          accessibilityLabel="Choose pull request environment"
+          accessibilityLabel={t("Choose pull request environment")}
           actions={props.filters.environmentActions}
           onSelect={select}
         />
@@ -386,28 +389,28 @@ export function PullRequestListFilters(props: {
       <ListFilterMenu
         label={STATES[props.filters.state]}
         active={props.filters.state !== "open"}
-        accessibilityLabel="Filter by state"
+        accessibilityLabel={t("Filter by state")}
         actions={props.filters.stateActions}
         onSelect={select}
       />
       <ListFilterMenu
         label={INVOLVEMENT[props.filters.involvement]}
         active={props.filters.involvement !== "all"}
-        accessibilityLabel="Filter by involvement"
+        accessibilityLabel={t("Filter by involvement")}
         actions={props.filters.involvementActions}
         onSelect={select}
       />
       <ListFilterMenu
-        label={selectedLabelCount ? `Labels ${selectedLabelCount}` : "Labels"}
+        label={selectedLabelCount ? `Labels ${selectedLabelCount}` : t("Labels")}
         active={selectedLabelCount > 0}
-        accessibilityLabel="Filter by label"
+        accessibilityLabel={t("Filter by label")}
         actions={props.filters.labelActions}
         onSelect={select}
       />
       <ListFilterMenu
-        label={author === "me" ? "By you" : (author ?? "Author")}
+        label={author === "me" ? "By you" : (author ?? t("Author"))}
         active={Boolean(author)}
-        accessibilityLabel="Filter by author"
+        accessibilityLabel={t("Filter by author")}
         actions={props.filters.authorActions}
         onSelect={select}
       />

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { findErrorTraceId } from "@t3tools/client-runtime/errors";
 import {
   isAtomCommandInterrupted,
@@ -43,6 +44,7 @@ function confirmDeregister(environment: RelayClientEnvironmentRecord, onConfirm:
 }
 
 export function T3ConnectProfilePage() {
+  const { t } = useTranslation();
   const environmentsState = useManagedRelayEnvironments();
   const deregisterEnvironment = useAtomCommand(deregisterManagedRelayEnvironmentCommand, {
     reportFailure: false,
@@ -137,12 +139,12 @@ export function T3ConnectProfilePage() {
       {environmentsState.error ? (
         <>
           <ClerkRow
-            title="Could not load T3 Connect environments"
+            title={t("Could not load T3 Connect environments")}
             subtitle={environmentsState.error}
           />
           {errorTraceId ? (
             <ClerkButtonRow
-              label="Copy trace ID"
+              label={t("Copy trace ID")}
               onPress={() => {
                 copyTextWithHaptic(errorTraceId, { target: "connection-trace-id" });
               }}
@@ -152,7 +154,7 @@ export function T3ConnectProfilePage() {
       ) : isInitialLoad ? (
         <View className="flex-row items-center gap-3 px-6 py-4">
           <AppActivityIndicator colorClassName={"accent-clerk-foreground-muted"} size="small" />
-          <Text className="text-base text-clerk-foreground-muted">Loading environments</Text>
+          <Text className="text-base text-clerk-foreground-muted">{t("Loading environments")}</Text>
         </View>
       ) : environments.length > 0 ? (
         environments.map((environment) => (
@@ -196,7 +198,7 @@ export function T3ConnectProfilePage() {
         ))
       ) : (
         <ClerkRow
-          title="No servers registered"
+          title={t("No servers registered")}
           subtitle="Link a server from its local Settings to reach it through T3 Connect."
         />
       )}

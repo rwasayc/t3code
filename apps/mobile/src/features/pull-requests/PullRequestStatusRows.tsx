@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { usePullRequestConnected } from "./usePullRequestConnected";
 import { useAtomValue } from "@effect/atom-react";
 import { useNavigation } from "@react-navigation/native";
@@ -102,6 +103,7 @@ export function PullRequestStatusMenu(props: RowProps) {
 }
 
 export function PullRequestChecksRow(props: RowProps) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const checks = pullRequestChecksSummary(props.pr);
   const action = usePullRequestAction(props.params, props.pr);
@@ -127,11 +129,11 @@ export function PullRequestChecksRow(props: RowProps) {
         >
           {props.pr.state === "open" &&
           props.pr.checks.some((check) => check.status === "failure") ? (
-            <PullRequestAgentRow {...props} task="feedback" title="Fix failing checks" />
+            <PullRequestAgentRow {...props} task="feedback" title={t("Fix failing checks")} />
           ) : null}
           {action.available("approve-workflows") ? (
             <PullRequestCardRow
-              title="Approve workflows"
+              title={t("Approve workflows")}
               icon="checkmark"
               detail={`${props.pr.workflowApprovalsRequired} waiting for approval`}
               onPress={() =>
@@ -164,7 +166,7 @@ export function PullRequestChecksRow(props: RowProps) {
             <Text className="px-4 py-3 text-xs text-foreground-muted">No checks reported.</Text>
           ) : null}
           <PullRequestCardRow
-            title="Open checks on provider"
+            title={t("Open checks on provider")}
             icon="arrow.up.right"
             onPress={() =>
               void Linking.openURL(
@@ -179,6 +181,7 @@ export function PullRequestChecksRow(props: RowProps) {
 }
 
 export function PullRequestBranchRow(props: RowProps) {
+  const { t } = useTranslation();
   const action = usePullRequestAction(props.params, props.pr);
   const agent = usePullRequestAgentActions(props.params, props.pr);
   const methods = action.available("update-branch") ? allowedUpdateMethods(props.pr) : [];
@@ -194,7 +197,7 @@ export function PullRequestBranchRow(props: RowProps) {
           ? `Conflicts with ${props.pr.baseBranch}`
           : clean
             ? `No conflicts with ${props.pr.baseBranch}`
-            : "Branch"
+            : t("Branch")
       }
       icon={
         conflicting ? PullRequestGlyph.conflicting : clean ? "checkmark.circle" : "arrow.branch"
@@ -219,7 +222,7 @@ export function PullRequestBranchRow(props: RowProps) {
   if (!methods.length && !canResolve) return row;
   return (
     <Menu
-      title="Branch"
+      title={t("Branch")}
       actions={[
         ...(canResolve ? [agent.menuAction("conflicts")] : []),
         ...methods.map((id) => ({ id, title: `Update with ${id}`, image: "arrow.up.circle" })),
@@ -236,6 +239,7 @@ export function PullRequestBranchRow(props: RowProps) {
 }
 
 export function PullRequestReviewersRow(props: RowProps) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const navigation = useNavigation();
   const activity = useEnvironmentQuery(
@@ -321,13 +325,13 @@ export function PullRequestReviewersRow(props: RowProps) {
             ))}
           {canRequest ? (
             <PullRequestCardRow
-              title="Request review"
+              title={t("Request review")}
               icon="person.badge.plus"
               onPress={() => navigation.navigate("PullRequestReviewers", props.params)}
             />
           ) : (
             <PullRequestCardRow
-              title="View reviewers on provider"
+              title={t("View reviewers on provider")}
               icon="arrow.up.right"
               onPress={() => void Linking.openURL(props.pr.url)}
             />

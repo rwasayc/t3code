@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useIsFocused } from "@react-navigation/native";
 import type { EnvironmentId, PreviewSessionSnapshot, ThreadId } from "@t3tools/contracts";
 import { previewPdfAssetUrl } from "@t3tools/shared/preview";
@@ -83,6 +84,7 @@ function FloatingBrowserPlayer(props: {
   readonly onOpen: () => void;
   readonly onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const { themeVariables } = useAppearancePreferences();
   const prepared = usePreparedConnection(props.environmentId);
   const httpBaseUrl = Option.isSome(prepared) ? prepared.value.httpBaseUrl : null;
@@ -126,7 +128,7 @@ function FloatingBrowserPlayer(props: {
       </Pressable>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Close floating preview"
+        accessibilityLabel={t("Close floating preview")}
         hitSlop={8}
         onPress={props.onClose}
         className="absolute right-1.5 top-1.5 size-6 items-center justify-center rounded-full bg-black/55"

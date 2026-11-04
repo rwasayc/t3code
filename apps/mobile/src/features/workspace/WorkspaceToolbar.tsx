@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -50,6 +51,7 @@ export function WorkspaceToolbar(props: {
   readonly sidebar?: boolean;
   readonly onNewTask: () => void;
 }) {
+  const { t } = useTranslation();
   const workspace = useWorkspaceTabs();
   const input = useRef<TextInputInstance>(null);
   const [focusRequest, setFocusRequest] = useState(0);
@@ -130,7 +132,12 @@ export function WorkspaceToolbar(props: {
                 focusSearch();
               }}
             />
-            <ToolbarButton label="Cancel search" icon="xmark" size={48} onPress={cancelSearch} />
+            <ToolbarButton
+              label={t("Cancel search")}
+              icon="xmark"
+              size={48}
+              onPress={cancelSearch}
+            />
           </View>
         ) : null}
         {showNavigation ? <WorkspaceDock onNewTask={props.onNewTask} /> : null}

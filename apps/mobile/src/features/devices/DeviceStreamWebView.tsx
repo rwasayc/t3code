@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import deviceStreamScript from "@t3tools/mobile-device-stream";
 import {
@@ -94,6 +95,7 @@ function DeviceStreamDocumentView({
   readonly onStreaming: () => void;
   readonly onRecoverProcess: () => boolean;
 }) {
+  const { t } = useTranslation();
   const webView = useRef<WebView<object>>(null);
   const active = useRef(false);
   const failed = useRef(false);
@@ -203,7 +205,7 @@ function DeviceStreamDocumentView({
           </AppText>
           {status === "error" ? (
             <View className="items-center">
-              <Button label="Reconnect" tone="secondary" onPress={onRetry} />
+              <Button label={t("Reconnect")} tone="secondary" onPress={onRetry} />
             </View>
           ) : null}
         </View>

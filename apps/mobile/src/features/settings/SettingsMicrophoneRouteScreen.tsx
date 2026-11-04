@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { AsyncResult } from "effect/reactivity";
@@ -101,16 +102,19 @@ const UNAVAILABLE_EXPLANATION =
     : "T3 Code's voice input uses Apple's on-device speech transcription, which needs iOS 26 or later on a device that supports it. Without it, the composer has no microphone button, and allowing microphone access won't add one. Apple keyboard dictation is separate and isn't affected.";
 
 export function SettingsMicrophoneRouteScreen() {
+  const { t } = useTranslation();
   const transcriber = useAtomValue(localVoiceTranscriberAtom);
   // Android's probe is asynchronous; an empty sheet avoids flashing "unavailable" first.
-  if (transcriber === "checking") return <SettingsScreen title="Microphone">{null}</SettingsScreen>;
+  if (transcriber === "checking")
+    return <SettingsScreen title={t("Microphone")}>{null}</SettingsScreen>;
   return transcriber === null ? <VoiceInputUnavailable /> : <MicrophoneSettings />;
 }
 
 function VoiceInputUnavailable() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   return (
-    <SettingsScreen title="Microphone">
+    <SettingsScreen title={t("Microphone")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -118,8 +122,8 @@ function VoiceInputUnavailable() {
         contentContainerClassName="gap-3 px-5 pt-4"
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
-        <SettingsSection title="Voice input">
-          <ListRowLayout icon="mic" label="Not available on this device" />
+        <SettingsSection title={t("Voice input")}>
+          <ListRowLayout icon="mic" label={t("Not available on this device")} />
         </SettingsSection>
         <Text className="px-2 text-sm text-foreground-muted">{UNAVAILABLE_EXPLANATION}</Text>
       </ScrollView>
@@ -128,6 +132,7 @@ function VoiceInputUnavailable() {
 }
 
 function MicrophoneSettings() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
@@ -175,7 +180,7 @@ function MicrophoneSettings() {
   const dragTo = drag === null ? -1 : dragFrom + dropSteps(dragFrom, drag.translation);
 
   return (
-    <SettingsScreen title="Microphone">
+    <SettingsScreen title={t("Microphone")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -185,7 +190,7 @@ function MicrophoneSettings() {
       >
         {permission === "ask" || permission === "denied" ? (
           <>
-            <SettingsSection title="Microphone access">
+            <SettingsSection title={t("Microphone access")}>
               <SettingsActionRow
                 icon="mic"
                 label={permission === "ask" ? "Allow microphone access" : "Open Settings"}
@@ -201,7 +206,7 @@ function MicrophoneSettings() {
             </Text>
           </>
         ) : null}
-        <SettingsSection title="Preferred order">
+        <SettingsSection title={t("Preferred order")}>
           {entries.map((entry, index) => {
             const key = microphoneEntryKey(entry);
             const shift =
@@ -262,6 +267,7 @@ function MicrophoneRow(props: {
   readonly onStep: (direction: "up" | "down") => void;
   readonly onForget: (() => void) | undefined;
 }) {
+  const { t } = useTranslation();
   const { lifted, offset, entry, onForget } = props;
   const kind = KINDS[entry.kind];
   const title = isMicrophoneDevice(entry) ? entry.name : kind.row;
@@ -282,7 +288,7 @@ function MicrophoneRow(props: {
       <View
         accessible
         accessibilityLabel={`${title}, ${kind.label}, ${props.position} of ${props.count}`}
-        accessibilityActions={onForget ? [{ name: "forget", label: "Forget" }] : undefined}
+        accessibilityActions={onForget ? [{ name: "forget", label: t("Forget") }] : undefined}
         onAccessibilityAction={({ nativeEvent }) => {
           if (nativeEvent.actionName === "forget") onForget?.();
         }}
@@ -326,7 +332,7 @@ function MicrophoneRow(props: {
             accessibilityLabel: `Forget ${title}`,
             destructive: true,
             icon: "trash",
-            label: "Forget",
+            label: t("Forget"),
             onPress: onForget,
           }}
           secondaryAction={null}

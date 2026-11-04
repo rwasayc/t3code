@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useState } from "react";
 import { Platform, View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -14,13 +15,15 @@ import { isPdfPreviewUri } from "../../lib/pdfPreview";
 import { useNativeColumnLayoutMetrics } from "../../native/native-layout-metrics";
 
 export function WorkspaceFileWebPreview(props: { readonly uri: string | null }) {
+  const { t } = useTranslation();
   if (props.uri === null) {
-    return <FilePreviewLoading message="Preparing preview..." background="card" />;
+    return <FilePreviewLoading message={t("Preparing preview...")} background="card" />;
   }
   return <DocumentWebPreview key={props.uri} uri={props.uri} />;
 }
 
 function DocumentWebPreview(props: { readonly uri: string }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const columnMetrics = useNativeColumnLayoutMetrics();
   // iOS headers float over this column, so content starts below them.
@@ -49,7 +52,7 @@ function DocumentWebPreview(props: { readonly uri: string }) {
           <PdfPreview key={linkedPdf} uri={linkedPdf} />
           <SafeAreaView edges={["bottom"]} className="border-t border-border px-4 py-2">
             <ControlPill
-              label="Back to document"
+              label={t("Back to document")}
               variant="pill"
               onPress={() => setLinkedPdf(null)}
             />

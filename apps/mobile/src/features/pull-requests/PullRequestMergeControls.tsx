@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomRefresh, useAtomSet, useAtomValue } from "@effect/atom-react";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
@@ -33,6 +34,7 @@ export function PullRequestMergeControls(props: {
   readonly params: PullRequestParams;
   readonly stack: PullRequestStackState;
 }) {
+  const { t } = useTranslation();
   const { pr, stack } = props;
   const terminology = sourceControlClients.get(pr.provider).changeRequest;
   const target = pullRequestTarget(props.params);
@@ -103,20 +105,20 @@ export function PullRequestMergeControls(props: {
           action: nextAction,
         }
       : pr.state === "merged"
-        ? { label: "Merged", icon: PullRequestGlyph.merged, final: true }
+        ? { label: t("Merged"), icon: PullRequestGlyph.merged, final: true }
         : pr.state === "closed"
-          ? { label: "Closed", icon: PullRequestGlyph.closed, final: true }
+          ? { label: t("Closed"), icon: PullRequestGlyph.closed, final: true }
           : pr.isDraft
-            ? { label: "Draft", icon: PullRequestGlyph.draft }
+            ? { label: t("Draft"), icon: PullRequestGlyph.draft }
             : pr.mergeability === "conflicting"
-              ? { label: "Resolve conflicts to merge", icon: PullRequestGlyph.conflicting }
+              ? { label: t("Resolve conflicts to merge"), icon: PullRequestGlyph.conflicting }
               : pr.autoMergeEnabled
                 ? {
                     label: `Auto-merge pending${pr.autoMergeMethod ? ` (${pr.autoMergeMethod})` : ""}`,
                     icon: "clock",
                   }
                 : checkingStack && !busy
-                  ? { label: "Checking stack…", icon: PullRequestGlyph.merged }
+                  ? { label: t("Checking stack…"), icon: PullRequestGlyph.merged }
                   : null;
   const autoAction = pr.autoMergeEnabled ? "disable-auto-merge" : "enable-auto-merge";
   const canAutoMerge =
@@ -257,7 +259,7 @@ export function PullRequestMergeControls(props: {
         <Text className="px-1 text-xs text-foreground-muted">{reason}</Text>
       ) : null}
       {stack.error && stack.supportsStackActions ? (
-        <Button label="Retry stack lookup" tone="text" onPress={stack.refresh} />
+        <Button label={t("Retry stack lookup")} tone="text" onPress={stack.refresh} />
       ) : null}
     </View>
   );

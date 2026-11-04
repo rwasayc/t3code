@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { NativeScrollView } from "../../native/NativeScrollViewMarker";
 import { Button } from "../../components/ui/Button";
 import { LegendList } from "@legendapp/list/react-native";
@@ -117,6 +118,7 @@ export function FileTreeBrowser(props: {
   readonly onRefresh: () => void;
   readonly onSelectFile: (path: string) => void;
 }) {
+  const { t } = useTranslation();
   const { expandedPaths, setExpandedPaths } = props;
   const [pendingSelection, setPendingSelection] = useState<{
     readonly path: string;
@@ -253,7 +255,7 @@ export function FileTreeBrowser(props: {
         <View className="px-4 py-5">
           {props.error && props.entries.length === 0 ? (
             <>
-              <Text className="text-sm font-t3-bold text-foreground">Files unavailable</Text>
+              <Text className="text-sm font-t3-bold text-foreground">{t("Files unavailable")}</Text>
               <Text
                 accessibilityRole="alert"
                 className="mt-1 text-xs leading-normal text-foreground-muted"
@@ -262,7 +264,7 @@ export function FileTreeBrowser(props: {
               </Text>
               <View className="mt-3">
                 <Button
-                  label="Try again"
+                  label={t("Try again")}
                   tone="secondary"
                   onPress={props.onRefresh}
                   disabled={props.isPending}

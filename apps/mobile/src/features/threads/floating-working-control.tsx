@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { SubagentPillSegment } from "@t3tools/client-runtime/state/thread-subagents";
 import { formatDuration } from "@t3tools/shared/orchestrationTiming";
 import { GlassContainer, GlassView } from "expo-glass-effect";
@@ -79,6 +80,7 @@ export function FloatingWorkingControl(props: {
   readonly onOpenQueue: () => void;
   readonly lift?: SharedValue<number>;
 }) {
+  const { t } = useTranslation();
   const { width: windowWidth } = useWindowDimensions();
   const reducedMotion = useReducedMotion();
   const [overlayWidth, setOverlayWidth] = useState(windowWidth);
@@ -325,7 +327,7 @@ export function FloatingWorkingControl(props: {
             style={[arrowTransformStyle, arrowContentStyle]}
           >
             <ControlPill
-              accessibilityLabel="Scroll to end"
+              accessibilityLabel={t("Scroll to end")}
               activateOnPressIn
               className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-black/10"
               disabled={!props.showScrollToEnd}
@@ -345,7 +347,7 @@ export function FloatingWorkingControl(props: {
         </UniwindGlassView>
       ) : (
         <ControlPill
-          accessibilityLabel="Scroll to end"
+          accessibilityLabel={t("Scroll to end")}
           activateOnPressIn
           className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-black/10"
           icon={{ ios: "chevron.down", android: "keyboard_arrow_down" }}
@@ -357,8 +359,13 @@ export function FloatingWorkingControl(props: {
 }
 
 function CompactingLabel(props: { readonly onLayout: (event: LayoutChangeEvent) => void }) {
+  const { t } = useTranslation();
   return (
-    <StatusLabelRow accessibilityLabel="Compacting" className="gap-1.5" onLayout={props.onLayout}>
+    <StatusLabelRow
+      accessibilityLabel={t("Compacting")}
+      className="gap-1.5"
+      onLayout={props.onLayout}
+    >
       <SymbolView
         name="arrow.down.right.and.arrow.up.left"
         size={13}
@@ -592,6 +599,7 @@ function WorkingDuration(props: {
 }
 
 function WorkingTimer(props: { readonly startedAt: string }) {
+  const { t } = useTranslation();
   const nowMs = useVisibleSecondClock(true);
   return (
     <SystemText
@@ -599,7 +607,8 @@ function WorkingTimer(props: { readonly startedAt: string }) {
       numberOfLines={1}
       style={{ fontVariant: ["tabular-nums"], fontWeight: "500" }}
     >
-      Working {formatWorkingDuration(props.startedAt, nowMs)}
+      {t("Working")}
+      {formatWorkingDuration(props.startedAt, nowMs)}
     </SystemText>
   );
 }
@@ -624,9 +633,10 @@ function formatWorkingDuration(startedAt: string, nowMs: number): string {
 }
 
 function ScrollToEndButton(props: { readonly disabled?: boolean; readonly onPress: () => void }) {
+  const { t } = useTranslation();
   return (
     <ControlPill
-      accessibilityLabel="Scroll to end"
+      accessibilityLabel={t("Scroll to end")}
       activateOnPressIn
       className="h-11 w-11 bg-transparent"
       disabled={props.disabled}

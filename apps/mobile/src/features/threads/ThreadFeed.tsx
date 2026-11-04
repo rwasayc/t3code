@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Button } from "../../components/ui/Button";
 import * as Dialog from "../../components/ui/Dialog";
 import { useOpenPullRequest } from "../../native/useOpenPullRequest";
@@ -400,9 +401,10 @@ function UserMessageCopyButton(props: {
   readonly onCopy: (() => Promise<void>) | undefined;
   readonly tintColor: ColorValue;
 }) {
+  const { t } = useTranslation();
   const button = (
     <CopyTextButton
-      accessibilityLabel="Copy message"
+      accessibilityLabel={t("Copy message")}
       text={props.text}
       onCopy={props.onCopy}
       tintColor={props.tintColor}
@@ -433,6 +435,7 @@ function AssistantForkButton(props: {
   readonly projectedItem: OrchestrationV2ProjectedTurnItem;
   readonly sourceTitle: string;
 }) {
+  const { t } = useTranslation();
   const support = useV2ItemSupport({
     environmentId: props.environmentId,
     sourceThreadId: props.projectedItem.sourceThreadId,
@@ -452,7 +455,7 @@ function AssistantForkButton(props: {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Fork from this response"
+      accessibilityLabel={t("Fork from this response")}
       disabled={busy}
       onPress={() => {
         const targetThreadId = ThreadId.make(uuidv4());
@@ -1145,6 +1148,7 @@ function ArtifactTemplateCard(props: {
   readonly template: CodexArtifactTemplate;
   readonly onUse?: ((template: CodexArtifactTemplate) => void) | undefined;
 }) {
+  const { t } = useTranslation();
   return (
     <View className="my-2 min-w-0 flex-row items-center gap-3 rounded-2xl border border-border bg-card px-3 py-3">
       <View className="relative h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-subtle">
@@ -1173,7 +1177,7 @@ function ArtifactTemplateCard(props: {
       </View>
       {props.onUse ? (
         <Button
-          label="Use template"
+          label={t("Use template")}
           tone="secondary"
           accessibilityLabel={`Use ${props.template.displayName} template`}
           onPress={() => props.onUse?.(props.template)}
@@ -1432,6 +1436,7 @@ function OpenSenderThreadButton(props: {
   readonly environmentId: EnvironmentId;
   readonly senderThreadId: ThreadId;
 }) {
+  const { t } = useTranslation();
   const openLinkedThread = useOpenLinkedThread();
   return (
     <Pressable
@@ -1444,7 +1449,7 @@ function OpenSenderThreadButton(props: {
         })
       }
     >
-      <Text className="font-t3-medium text-xs text-foreground-secondary">Open thread</Text>
+      <Text className="font-t3-medium text-xs text-foreground-secondary">{t("Open thread")}</Text>
     </Pressable>
   );
 }
@@ -2371,6 +2376,7 @@ type UserMessageContentProps = {
 };
 
 function UserMessageContent(props: UserMessageContentProps) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<{ contextId: string; label: string } | null>(null);
   const navigation = useNavigation();
   const openLinkedThread = useOpenLinkedThread();
@@ -2429,8 +2435,8 @@ function UserMessageContent(props: UserMessageContentProps) {
             return {
               title: record?.label ?? "Context unavailable",
               actions: [
-                { id: "open-context", title: "Open context" },
-                { id: "copy-context", title: "Copy context", disabled: !record },
+                { id: "open-context", title: t("Open context") },
+                { id: "copy-context", title: t("Copy context"), disabled: !record },
               ],
             };
           },
@@ -2658,6 +2664,7 @@ export const ThreadFeed = memo(function ThreadFeed({
   ref,
   ...props
 }: ThreadFeedProps & { readonly ref?: Ref<ThreadFeedHandle> }) {
+  const { t } = useTranslation();
   const { listRef, onEndFollowEnabledChange, onHeaderMaterialVisibilityChange } = props;
   const workflowOpening = useWorkflowOpening(props.detailRef);
   const guestShare = useThreadGuestShare(props.detailRef);
@@ -3028,10 +3035,10 @@ export const ThreadFeed = memo(function ThreadFeed({
           actions: [
             {
               id: "open-skill",
-              title: "View instructions",
+              title: t("View instructions"),
               disabled: !enrichedSkillInstructionsPath(skill),
             },
-            { id: "copy-skill", title: "Copy skill" },
+            { id: "copy-skill", title: t("Copy skill") },
           ],
         };
       }
@@ -3039,10 +3046,11 @@ export const ThreadFeed = memo(function ThreadFeed({
       if (thread) {
         return {
           title:
-            appAtomRegistry.get(environmentThreadShells.threadShellAtom(thread))?.title ?? "Thread",
+            appAtomRegistry.get(environmentThreadShells.threadShellAtom(thread))?.title ??
+            t("Thread"),
           actions: [
-            { id: "open-thread", title: "Open thread" },
-            { id: "copy-thread-link", title: "Copy link" },
+            { id: "open-thread", title: t("Open thread") },
+            { id: "copy-thread-link", title: t("Copy link") },
           ],
         };
       }
@@ -3941,7 +3949,7 @@ export const ThreadFeed = memo(function ThreadFeed({
                   endpoints={props.pendingHandoff}
                   iconColor={iconSubtleColor}
                   surfaceColor={screenColor}
-                  label="Context handoff pending"
+                  label={t("Context handoff pending")}
                 />
               ) : null
             }
@@ -3962,8 +3970,10 @@ export const ThreadFeed = memo(function ThreadFeed({
             style={[StyleSheet.absoluteFill, { left: contentLeftInset, right: contentRightInset }]}
           >
             <ThreadFeedPlaceholder
-              title="No conversation yet"
-              detail="Ask the agent to inspect the repo, run a command, or continue the active thread."
+              title={t("No conversation yet")}
+              detail={t(
+                "Ask the agent to inspect the repo, run a command, or continue the active thread.",
+              )}
               topInset={topContentInset}
               bottomInset={bottomContentInset}
               horizontalPadding={horizontalPadding}
@@ -3978,6 +3988,7 @@ export const ThreadFeed = memo(function ThreadFeed({
 });
 
 function ThreadFeedLoadEarlierControl(props: ThreadFeedHistoryControls) {
+  const { t } = useTranslation();
   const theme = useUniwindTheme();
   const mutedColor = theme["--color-icon-subtle"];
   if (!props.hasMoreHistory && props.error === null) {
@@ -3988,9 +3999,9 @@ function ThreadFeedLoadEarlierControl(props: ThreadFeedHistoryControls) {
       {props.hasMoreHistory ? (
         <View className="self-center">
           <Button
-            label={props.loading ? "Loading earlier activity…" : "Load earlier activity"}
+            label={props.loading ? "Loading earlier activity…" : t("Load earlier activity")}
             tone="secondary"
-            accessibilityLabel="Load earlier activity"
+            accessibilityLabel={t("Load earlier activity")}
             disabled={props.loading}
             onPress={props.onLoadEarlier}
             icon="chevron.up"

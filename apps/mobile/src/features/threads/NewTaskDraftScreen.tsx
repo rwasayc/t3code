@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { DraftEnvironmentControl } from "./DraftEnvironmentControl";
 import { NativeScrollEdgeEffectsContext } from "../../native/NativeScrollViewMarker";
 import { DraftThreadHeader } from "./DraftThreadHeader";
@@ -153,6 +154,7 @@ export function NewTaskDraftScreen(props: {
   readonly draftId?: string;
   readonly incomingShareId?: string;
 }) {
+  const { t } = useTranslation();
   const [creationMetadata] = useState(makeTurnCommandMetadata);
   const projects = useProjects();
   const flow = useNewTaskFlow();
@@ -737,11 +739,11 @@ export function NewTaskDraftScreen(props: {
       <View className="flex-row flex-wrap items-center justify-center gap-x-1">
         <ComposerInlineControl
           accessibilityHint="Opens the project picker"
-          accessibilityLabel="No project"
+          accessibilityLabel={t("No project")}
           chevronDirection="right"
           disabled={isComposerInteractionLocked}
           icon="folder"
-          label="No project"
+          label={t("No project")}
           onPress={chooseProject}
         />
         {environmentControl}
@@ -837,7 +839,7 @@ export function NewTaskDraftScreen(props: {
 
       <View className="min-w-0 shrink">
         <ComposerInlineControl
-          accessibilityLabel={`${flow.workspaceMode === "worktree" ? "Base branch" : "Branch"}: ${selectedBranchLabel}`}
+          accessibilityLabel={`${flow.workspaceMode === "worktree" ? t("Base branch") : t("Branch")}: ${selectedBranchLabel}`}
           chevronDirection="right"
           disabled={isComposerInteractionLocked || !flow.isGitRepo}
           icon="arrow.triangle.branch"
@@ -854,7 +856,7 @@ export function NewTaskDraftScreen(props: {
       <ThreadScreenFallback
         header={
           <AppBar
-            title="New thread"
+            title={t("New thread")}
             onBack={goBack}
             options={{
               ...threadHeaderAppearance(NATIVE_LIQUID_GLASS_SUPPORTED),
@@ -874,7 +876,7 @@ export function NewTaskDraftScreen(props: {
             draftKey={flow.draftKey}
             value={flow.prompt}
             onChangeText={flow.setPrompt}
-            placeholder="Ask anything"
+            placeholder={t("Ask anything")}
             multiline
             style={{ minHeight: 64 }}
           />

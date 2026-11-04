@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import {
   deriveWorkflowGroups,
@@ -53,6 +54,7 @@ export function useThreadTurnSubagents(target: AgentsTarget | null): ThreadTurnS
 }
 
 export function ThreadAgentsSheet({ route }: StaticScreenProps<AgentsTarget>) {
+  const { t } = useTranslation();
   const { layout } = useAdaptiveWorkspaceLayout();
   const target = route.params;
   const navigation = useNavigation();
@@ -151,7 +153,7 @@ export function ThreadAgentsSheet({ route }: StaticScreenProps<AgentsTarget>) {
               tintColorClassName="accent-foreground"
               hideBackButton
               hideShadow={false}
-              title="Agents"
+              title={t("Agents")}
               titleColorClassName="accent-foreground"
               titleFontSize={18}
               titleFontWeight="800"
@@ -166,7 +168,7 @@ export function ThreadAgentsSheet({ route }: StaticScreenProps<AgentsTarget>) {
   return (
     <View collapsable={false} className="flex-1 bg-sheet">
       <NativeStackScreenOptions options={{ sheetCornerRadius: 28 }} />
-      <AppBar sheet title="Agents" onBack={() => navigation.goBack()} />
+      <AppBar sheet title={t("Agents")} onBack={() => navigation.goBack()} />
       <ScreenContent insetHorizontal={layout.usesSplitView}>{content}</ScreenContent>
     </View>
   );

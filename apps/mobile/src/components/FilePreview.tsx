@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { Button } from "./ui/Button";
 import * as Dialog from "./ui/Dialog";
 import { useEffect, useEffectEvent } from "react";
@@ -16,6 +17,7 @@ function PdfDocumentPreview(props: {
   readonly source: ResolvedFilePreviewSource;
   readonly onRequestClose: () => void;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   return (
     <Modal
@@ -32,7 +34,7 @@ function PdfDocumentPreview(props: {
           <Text className="flex-1 font-t3-semibold text-foreground" numberOfLines={1}>
             {props.source.name ?? "PDF"}
           </Text>
-          <ControlPill label="Close" variant="pill" onPress={props.onRequestClose} />
+          <ControlPill label={t("Close")} variant="pill" onPress={props.onRequestClose} />
         </View>
         <PdfPreview uri={props.source.uri} />
       </View>
@@ -45,6 +47,7 @@ function DocumentPreview(props: {
   readonly onRequestClose: () => void;
   readonly onOpenError?: (error: unknown) => void;
 }) {
+  const { t } = useTranslation();
   const { uri, name } = props.source;
   const onRequestClose = useEffectEvent(props.onRequestClose);
   const onOpenError = useEffectEvent((error: unknown) => {
@@ -87,7 +90,7 @@ function DocumentPreview(props: {
             {name ?? "Document"}
           </Text>
           <View className="items-end">
-            <Button label="Cancel" tone="text" onPress={props.onRequestClose} />
+            <Button label={t("Cancel")} tone="text" onPress={props.onRequestClose} />
           </View>
         </View>
       </View>
