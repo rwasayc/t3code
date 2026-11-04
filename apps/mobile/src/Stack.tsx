@@ -551,7 +551,7 @@ function NotFoundScreen() {
       style={[{ flex: 1 }, screenBgStyle]}
     >
       <Text className="text-3xl font-t3-bold text-foreground" selectable>
-        Route not found
+        {t("Route not found")}
       </Text>
       <Pressable
         style={returnHomeButtonStyle}

@@ -54,7 +54,7 @@ export function WorkspaceEmptyDetail(props: {
             />
             <Text className="text-center text-xl font-t3-bold">
               {settings
-                ? "Select a setting"
+                ? t("Select a setting")
                 : pullRequests
                   ? "Select a pull request"
                   : "Select a thread"}

@@ -114,7 +114,9 @@ export function PullRequestMergeControls(props: {
               ? { label: t("Resolve conflicts to merge"), icon: PullRequestGlyph.conflicting }
               : pr.autoMergeEnabled
                 ? {
-                    label: `Auto-merge pending${pr.autoMergeMethod ? ` (${pr.autoMergeMethod})` : ""}`,
+                    label: t("Auto-merge pending{value0}", {
+                      value0: String(pr.autoMergeMethod ? ` (${pr.autoMergeMethod})` : ""),
+                    }),
                     icon: "clock",
                   }
                 : checkingStack && !busy
@@ -172,7 +174,7 @@ export function PullRequestMergeControls(props: {
     if (AsyncResult.isFailure(response)) {
       const cause = squashAtomCommandFailure(response);
       Dialog.alert(
-        "Couldn't complete the merge action",
+        t("Couldn't complete the merge action"),
         cause instanceof Error ? cause.message : "Try again.",
       );
     }
@@ -216,7 +218,11 @@ export function PullRequestMergeControls(props: {
           status
             ? status.label
             : scope
-              ? `${label}, ${scope.layers.length} stack layers through #${pr.number}`
+              ? t("{label}, {length} stack layers through #{number}", {
+                  label: String(label),
+                  length: String(scope.layers.length),
+                  number: String(pr.number),
+                })
               : label
         }
         icon={status?.icon ?? PullRequestGlyph.merged}

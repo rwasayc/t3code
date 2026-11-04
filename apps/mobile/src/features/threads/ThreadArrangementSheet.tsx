@@ -129,7 +129,7 @@ function DragHandle(props: {
         collapsable={false}
         accessible
         accessibilityRole="adjustable"
-        accessibilityLabel={`Reorder ${props.title}`}
+        accessibilityLabel={t("Reorder {title}", { title: String(props.title) })}
         accessibilityHint="Move up and Move down reorder within this section. Other actions move between sections."
         accessibilityState={{ disabled: props.disabled }}
         accessibilityActions={[
@@ -402,7 +402,7 @@ function ThreadArrangementSheet(props: { onClose: () => void }) {
                 accessibilityLabel={t("Close arrange threads")}
               />
               <Text className="px-5 pb-3 text-sm text-foreground-muted">
-                Drag to reorder, pin, or settle. Changes save when you drop.
+                {t("Drag to reorder, pin, or settle. Changes save when you drop.")}
               </Text>
               <View
                 onLayout={(event) => {
@@ -535,7 +535,9 @@ function ThreadArrangementSheet(props: { onClose: () => void }) {
                                 ? t("Loading")
                                 : olderSettledShelf.failed
                                   ? "Could not load older threads. Retry"
-                                  : `Show more (${settledCount - visibleSettled.length} settled hidden)`}
+                                  : t("Show more ({value0} settled hidden)", {
+                                      value0: String(settledCount - visibleSettled.length),
+                                    })}
                             </Text>
                           </Pressable>
                         ) : (

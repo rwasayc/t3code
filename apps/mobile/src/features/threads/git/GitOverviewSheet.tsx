@@ -268,7 +268,10 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
             label={t("Pull latest")}
             description={
               canWriteSourceControl
-                ? `${behindCount} commit${behindCount === 1 ? "" : "s"} behind upstream`
+                ? t("{behindCount} commit{value1} behind upstream", {
+                    behindCount: String(behindCount),
+                    value1: String(behindCount === 1 ? "" : "s"),
+                  })
                 : "This connection cannot change source control."
             }
             disabled={!canWriteSourceControl || busy || !isRepo}
@@ -312,15 +315,21 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         {linkedPrActions.canLink ? (
           <ListRow
             icon="link"
-            label={`Link ${linkedPrActions.terminology.singular}`}
-            description={`Attach a ${linkedPrActions.terminology.singular} by URL or number`}
+            label={t("Link {singular}", {
+              singular: String(t(linkedPrActions.terminology.singular)),
+            })}
+            description={t("Attach a {singular} by URL or number", {
+              singular: String(t(linkedPrActions.terminology.singular)),
+            })}
             onPress={linkedPrActions.promptLink}
           />
         ) : null}
       </ListSection>
 
       {linkedPrLines.length > 0 ? (
-        <ListSection title={`Linked ${linkedPrActions.terminology.plural}`}>
+        <ListSection
+          title={t("Linked {plural}", { plural: String(t(linkedPrActions.terminology.plural)) })}
+        >
           {linkedPrLines.map((line, index) => (
             <LinkedPullRequestRow
               key={linkedPullRequestKey(line)}

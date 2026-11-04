@@ -16,6 +16,8 @@ describe("app language", () => {
   });
   it("falls back to authored copy and interpolates values without translating their contents", () => {
     expect(translate("en", "Settings")).toBe("Settings");
+    expect(translate("en", "Tap ")).toBe("Tap ");
+    expect(translate("zh-CN", "Tap ")).toBe("点按");
     expect(translate("zh-CN", "Settings")).toBe("设置");
     expect(translate("zh-CN", "Untranslated message")).toBe("Untranslated message");
     expect(translate("zh-CN", "No settings match “{query}”.", { query: "Settings" })).toBe(

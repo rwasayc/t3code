@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { selectedNavigationTab, visibleNavigationTabs } from "./navigation-tab-order";
 import { requireNativeView } from "expo";
 import { CommonActions, useNavigation } from "@react-navigation/native";
@@ -35,6 +36,7 @@ interface NativeNavigationProps extends ViewProps {
   readonly rail: boolean;
   readonly floating: boolean;
   readonly tabs: readonly string[];
+  readonly labels: Readonly<Record<string, string>>;
   readonly selectedTab: AndroidWorkspaceNavigationTab;
   readonly dark: boolean;
   readonly textScale: number;
@@ -72,6 +74,7 @@ export function AndroidWorkspaceNavigation(props: {
   /** The rail needs the whole workspace while it widens over the list. */
   readonly onOverlayChange?: (overlay: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const workspace = useWorkspaceTabs()!;
   const order = useNavigationTabOrder();
   const hidden = useHiddenNavigationTabs();
@@ -121,6 +124,17 @@ export function AndroidWorkspaceNavigation(props: {
         rail={rail}
         floating={floating}
         tabs={tabs}
+        labels={{
+          threads: t("Chats"),
+          pullRequests: t("Pulls"),
+          pullRequestsExpanded: t("Pull Requests"),
+          usage: t("Usage"),
+          settings: t("Settings"),
+          newThread: t("New thread"),
+          closeRail: t("Close navigation rail"),
+          collapseRail: t("Collapse navigation rail"),
+          expandRail: t("Expand navigation rail"),
+        }}
         selectedTab={selectedTab}
         dark={themeAppearance === "dark"}
         textScale={scale}

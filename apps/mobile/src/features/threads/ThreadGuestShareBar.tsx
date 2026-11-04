@@ -88,7 +88,7 @@ export function ThreadGuestShareBar(props: {
     Dialog.confirm({
       title: t("Stop sharing?"),
       message: t("The guest loses access and the link stops working."),
-      confirmText: "Stop sharing",
+      confirmText: t("Stop sharing"),
       destructive: true,
       onConfirm: () => {
         if (disabled) return;
@@ -111,7 +111,7 @@ export function ThreadGuestShareBar(props: {
           ? "Guest link expired"
           : share.guestName === null
             ? "Guest link active"
-            : `${share.guestName} is a guest`}
+            : t("{guestName} is a guest", { guestName: String(share.guestName) })}
       </Text>
       <Button label={t("Stop sharing")} tone="text" disabled={disabled} onPress={stopSharing} />
     </View>
@@ -175,14 +175,18 @@ export function ThreadGuestPendingMessage(props: {
           <Button
             label={t("Dismiss")}
             tone="secondary"
-            accessibilityLabel={`Dismiss message from ${guestName}`}
+            accessibilityLabel={t("Dismiss message from {guestName}", {
+              guestName: String(guestName),
+            })}
             disabled={busy}
             onPress={() => void resolve("dismiss")}
           />
           <Button
             label={t("Send")}
             tone="primary"
-            accessibilityLabel={`Send message from ${guestName}`}
+            accessibilityLabel={t("Send message from {guestName}", {
+              guestName: String(guestName),
+            })}
             disabled={busy}
             onPress={() => void resolve("send")}
           />

@@ -148,8 +148,9 @@ export function PullRequestLabelsScreen({ route }: StaticScreenProps<PullRequest
           ListFooterComponent={
             result.data?.truncated ? (
               <Text className="py-4 text-xs text-foreground-muted">
-                This repository has more labels than are listed here. Apply the rest on the
-                provider.
+                {t(
+                  "This repository has more labels than are listed here. Apply the rest on the provider.",
+                )}
               </Text>
             ) : undefined
           }

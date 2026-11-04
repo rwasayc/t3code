@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { pipe } from "effect/Function";
 import {
   isAtomCommandInterrupted,
@@ -27,6 +28,7 @@ const CLI_COMMAND = "npx t3 triage";
  * clones the matching source, then a No project draft opens with the prompt.
  */
 export function useStartTriage() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const selectDetail = useSelectWorkspaceDetail();
   const prepare = useAtomCommand(serverEnvironment.prepareTriage, { reportFailure: false });
@@ -34,14 +36,14 @@ export function useStartTriage() {
 
   const fail = (message: string) =>
     Dialog.alert(
-      "Could not start triage",
+      t("Could not start triage"),
       `${message} Run ${CLI_COMMAND} in a terminal on that machine instead.`,
       [
         {
           text: "Copy command",
           onPress: () =>
             void Clipboard.setStringAsync(CLI_COMMAND).catch(() =>
-              Dialog.alert("Could not copy", `Type ${CLI_COMMAND} instead.`),
+              Dialog.alert(t("Could not copy"), `Type ${CLI_COMMAND} instead.`),
             ),
         },
         { text: "OK", style: "cancel" },
@@ -71,7 +73,7 @@ export function useStartTriage() {
         pipe(
           squashAtomCommandFailure(scratch),
           (failure) =>
-            errorMessage(failure, "This machine cannot start threads without a project."),
+            errorMessage(failure, t("This machine cannot start threads without a project.")),
           fail,
         );
       }
@@ -85,7 +87,7 @@ export function useStartTriage() {
       if (!isAtomCommandInterrupted(prepared)) {
         pipe(
           squashAtomCommandFailure(prepared),
-          (failure) => errorMessage(failure, "The server could not prepare it."),
+          (failure) => errorMessage(failure, t("The server could not prepare it.")),
           fail,
         );
       }
@@ -105,7 +107,9 @@ export function useStartTriage() {
     setComposerDraftText(draftId, prepared.value.prompt);
     selectDetail({
       name: "Thread",
-      params: { draft: { environmentId, projectId: scratch.value.id, title: "Triage", draftId } },
+      params: {
+        draft: { environmentId, projectId: scratch.value.id, title: t("Triage"), draftId },
+      },
     });
   };
 }

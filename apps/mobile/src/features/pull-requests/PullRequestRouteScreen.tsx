@@ -143,6 +143,7 @@ function PullRequestTabScrollView(props: ScrollViewProps) {
 }
 
 function usePullRequestActivityRows(params: PullRequestParams, filter: ActivityFilter) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const result = useEnvironmentQuery(composerPullRequests.activity(requestTarget(params)));
   const detail = useEnvironmentQuery(composerPullRequests.detail(requestTarget(params)));
@@ -165,7 +166,7 @@ function usePullRequestActivityRows(params: PullRequestParams, filter: ActivityF
         date: "",
         content: (
           <Text className="py-6 text-sm text-foreground-muted">
-            No activity matches these filters.
+            {t("No activity matches these filters.")}
           </Text>
         ),
       });
@@ -194,13 +195,13 @@ function PullRequestIdentity(props: {
         ) : (
           <View className="min-h-8 flex-row items-center gap-1.5">
             <SymbolView name={status.icon} size={14} tintColorClassName={status.tint} />
-            <Text className={`text-xs font-t3-medium ${status.text}`}>{status.label}</Text>
+            <Text className={`text-xs font-t3-medium ${status.text}`}>{t(status.label)}</Text>
           </View>
         )}
         <PullRequestDiffStats additions={pr.additions} deletions={pr.deletions} compact />
         {"changedFiles" in pr ? (
           <Text className="text-2xs text-foreground-muted">
-            {pr.changedFiles} {pr.changedFiles === 1 ? "file" : "files"}
+            {pr.changedFiles} {pr.changedFiles === 1 ? t("file") : t("files")}
           </Text>
         ) : (
           <View className="h-3 w-12 rounded bg-subtle-strong" />
@@ -215,14 +216,17 @@ function PullRequestIdentity(props: {
           {pr.author?.login ?? "Unknown author"}
         </Text>
         <Text className="shrink text-right text-2xs text-foreground-muted" numberOfLines={1}>
-          {t("Updated")}
-          <RelativeTime timestamp={pr.updatedAt} /> ago
+          {t("Updated ")}
+          <RelativeTime timestamp={pr.updatedAt} />
+          {t(" ago")}
         </Text>
       </View>
       <View className="flex-row items-start gap-1.5">
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Copy base branch ${pr.baseBranch}`}
+          accessibilityLabel={t("Copy base branch {baseBranch}", {
+            baseBranch: String(pr.baseBranch),
+          })}
           onPress={() => void Clipboard.setStringAsync(pr.baseBranch)}
           className="min-w-0 shrink active:opacity-70"
           hitSlop={8}
@@ -234,7 +238,9 @@ function PullRequestIdentity(props: {
         </View>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Copy head branch ${pr.headBranch}`}
+          accessibilityLabel={t("Copy head branch {headBranch}", {
+            headBranch: String(pr.headBranch),
+          })}
           onPress={() => void Clipboard.setStringAsync(pr.headBranch)}
           className="min-w-0 shrink active:opacity-70"
           hitSlop={8}
@@ -598,7 +604,9 @@ export function PullRequestRouteScreen({ route }: StaticScreenProps<PullRequestP
         <Toolbar placement="right">
           <Toolbar.Menu
             title={capitalizeTerm(terminology.singular)}
-            accessibilityLabel={`${capitalizeTerm(terminology.singular)} actions`}
+            accessibilityLabel={t("{value0} actions", {
+              value0: String(capitalizeTerm(terminology.singular)),
+            })}
             icon="ellipsis"
           >
             {permissions.verdicts.length ? (
@@ -1268,7 +1276,7 @@ function PullRequestFileRouteContent({ route }: PullRequestFileRouteProps) {
       </Toolbar>
       {route.params.replacingDraftId ? (
         <Text className="px-4 py-2 text-xs text-foreground-muted">
-          Select a current line, then choose “Move draft to this line” from its menu.
+          {t("Select a current line, then choose “Move draft to this line” from its menu.")}
         </Text>
       ) : null}
       {viewed.error ? (
@@ -1280,7 +1288,7 @@ function PullRequestFileRouteContent({ route }: PullRequestFileRouteProps) {
           style={{ paddingTop: Platform.OS === "ios" ? insets.top + 8 : 8 }}
         >
           <Text className="min-w-0 flex-1 text-xs text-foreground-muted">
-            The branch changed. Reload before adding line comments.
+            {t("The branch changed. Reload before adding line comments.")}
           </Text>
           <Button
             label={t("Reload changes")}
@@ -1396,14 +1404,16 @@ function PullRequestFileRouteContent({ route }: PullRequestFileRouteProps) {
           ) : !result.isPending && !result.error && !seekingFile ? (
             <EmptyState
               title={t("Diff unavailable")}
-              detail={`Open this ${terminology.singular} on its provider to view the changes.`}
+              detail={t("Open this {singular} on its provider to view the changes.", {
+                singular: String(t(terminology.singular)),
+              })}
               variant="plain"
             />
           ) : null}
           {result.nextCursor && result.isPending && data.rows.length && !seekingFile ? (
             <View className="flex-row items-center justify-center gap-2 py-2">
               <AppActivityIndicator size="small" />
-              <Text className="text-xs text-foreground-muted">Loading more files…</Text>
+              <Text className="text-xs text-foreground-muted">{t("Loading more files…")}</Text>
             </View>
           ) : null}
           {result.error && result.nextCursor ? (

@@ -235,7 +235,9 @@ export function usePullRequestListFilters(props: {
     },
     {
       id: "checks",
-      title: value.filters.checks ? `${CHECKS[value.filters.checks]} checks` : t("Checks"),
+      title: value.filters.checks
+        ? t("{value0} checks", { value0: String(CHECKS[value.filters.checks]) })
+        : t("Checks"),
       subactions: choices("checks", CHECKS, value.filters.checks ?? "all"),
     },
     {
@@ -373,7 +375,9 @@ export function PullRequestListFilters(props: {
           label={count ? String(count) : t("Filters")}
           icon
           active={count > 0}
-          accessibilityLabel={count ? `Filters, ${count} active` : "More filters"}
+          accessibilityLabel={
+            count ? t("Filters, {count} active", { count: String(count) }) : "More filters"
+          }
           actions={[...more, reset(false)]}
           onSelect={select}
         />
@@ -401,7 +405,11 @@ export function PullRequestListFilters(props: {
         onSelect={select}
       />
       <ListFilterMenu
-        label={selectedLabelCount ? `Labels ${selectedLabelCount}` : t("Labels")}
+        label={
+          selectedLabelCount
+            ? t("Labels {selectedLabelCount}", { selectedLabelCount: String(selectedLabelCount) })
+            : t("Labels")
+        }
         active={selectedLabelCount > 0}
         accessibilityLabel={t("Filter by label")}
         actions={props.filters.labelActions}

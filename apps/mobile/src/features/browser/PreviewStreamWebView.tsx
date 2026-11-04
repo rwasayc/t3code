@@ -254,7 +254,7 @@ function PreviewStreamDocumentView({
     setFileChooser(null);
     void sendFilesToPage(chooser, pick).catch((cause: unknown) =>
       Dialog.alert(
-        "Could not send the files to the page",
+        t("Could not send the files to the page"),
         cause instanceof Error ? cause.message : undefined,
       ),
     );
@@ -270,7 +270,7 @@ function PreviewStreamDocumentView({
       (text) => {
         if (text) command({ type: "text", text });
       },
-      () => Dialog.alert("Could not read the clipboard"),
+      () => Dialog.alert(t("Could not read the clipboard")),
     );
   const clearBootstrapTimer = () => {
     if (bootstrapTimer.current === null) return;
@@ -434,12 +434,15 @@ function PreviewStreamDocumentView({
       {!compact && fileChooser && control?.controller === "you" ? (
         <View className="absolute inset-x-3 top-16 gap-3 rounded-xl border border-secondary-border bg-secondary p-4">
           <AppText className="text-sm text-secondary-foreground">
-            The page asks for {fileChooser.multiple ? "files" : "a file"}.
+            {t("The page asks for ")}
+            {fileChooser.multiple ? t("files") : "a file"}.
           </AppText>
           <View className="flex-row justify-end gap-3">
             <Button label={t("Cancel")} tone="text" onPress={() => answerFileChooser(false)} />
             <Button
-              label={`Choose ${fileChooser.multiple ? "files" : "file"}`}
+              label={t("Choose {value0}", {
+                value0: String(fileChooser.multiple ? t("files") : t("file")),
+              })}
               tone="secondary"
               onPress={() => answerFileChooser(true)}
             />
@@ -481,7 +484,9 @@ function PreviewStreamDocumentView({
               </View>
             </>
           ) : (
-            <AppText className="text-xs text-foreground-muted">Take control to respond.</AppText>
+            <AppText className="text-xs text-foreground-muted">
+              {t("Take control to respond.")}
+            </AppText>
           )}
         </View>
       ) : null}
@@ -502,7 +507,7 @@ function PreviewStreamDocumentView({
           {status === "error" && hostSetup && !compact ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Copy ${hostSetup.command}`}
+              accessibilityLabel={t("Copy {command}", { command: String(hostSetup.command) })}
               className="w-full flex-row items-center gap-2 rounded-xl border border-secondary-border bg-secondary px-4 py-3"
               onPress={() => {
                 void Clipboard.setStringAsync(hostSetup.command).catch(() => undefined);

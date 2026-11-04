@@ -685,7 +685,7 @@ function ThreadRouteContent(
     if (result._tag === "Failure" && !isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not resume thread",
+        t("Could not resume thread"),
         error instanceof Error ? error.message : "Try again.",
       );
     }
@@ -829,7 +829,7 @@ function ThreadRouteContent(
       await recoverFailedThreadDraft(creation);
     } catch (error) {
       Dialog.alert(
-        "Could not restore draft",
+        t("Could not restore draft"),
         error instanceof Error ? error.message : String(error),
       );
       return;

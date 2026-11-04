@@ -105,7 +105,7 @@ export function RenderFailureView(
         {title}
       </Text>
       <Text className="text-center text-sm text-foreground-muted">
-        Try again. If it keeps happening, copy the details for a bug report.
+        {t("Try again. If it keeps happening, copy the details for a bug report.")}
       </Text>
       <Text selectable className="text-center font-mono text-xs text-danger-foreground">
         {props.details.split("\n", 1)[0]?.slice(0, 300)}

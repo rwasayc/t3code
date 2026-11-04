@@ -39,7 +39,7 @@ export function PullRequestOverviewLoading({
               : summary.checksState === "failing"
                 ? "Checks failing"
                 : summary.checksState === "pending"
-                  ? "Checks running"
+                  ? t("Checks running")
                   : t("Checks")
           }
           icon={
@@ -71,9 +71,9 @@ export function PullRequestOverviewLoading({
           compact
           title={
             conflicting
-              ? `Conflicts with ${summary.baseBranch}`
+              ? t("Conflicts with {baseBranch}", { baseBranch: String(summary.baseBranch) })
               : clean
-                ? `No conflicts with ${summary.baseBranch}`
+                ? t("No conflicts with {baseBranch}", { baseBranch: String(summary.baseBranch) })
                 : t("Branch")
           }
           icon={

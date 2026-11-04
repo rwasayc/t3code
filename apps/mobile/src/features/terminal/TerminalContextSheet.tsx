@@ -39,7 +39,11 @@ export function TerminalContextSheet(props: {
       version: 1 as const,
       kind: "terminal" as const,
       contextId: ComposerContextId.make(uuidv4()),
-      label: `${props.terminalLabel} · visible lines ${range.start + 1}–${range.end + 1}`,
+      label: t("{terminalLabel} · visible lines {value1}–{value2}", {
+        terminalLabel: String(props.terminalLabel),
+        value1: String(range.start + 1),
+        value2: String(range.end + 1),
+      }),
       terminalId: props.terminalId,
       terminalLabel: `${props.terminalLabel} (visible output)`,
       lineStart: range.start + 1,
@@ -52,7 +56,10 @@ export function TerminalContextSheet(props: {
         context: { version: 1, records: [record] },
       })
     ) {
-      Dialog.alert("Too many context items", "Remove some context from the draft and try again.");
+      Dialog.alert(
+        t("Too many context items"),
+        t("Remove some context from the draft and try again."),
+      );
       return;
     }
     props.onAttach();
@@ -66,7 +73,7 @@ export function TerminalContextSheet(props: {
         contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 20 }}
       >
         <Text className="pb-4 text-sm text-foreground-muted">
-          Tap the first and last line to select a range.
+          {t("Tap the first and last line to select a range.")}
         </Text>
         <View className="overflow-hidden rounded-xl bg-card-alt">
           {lines.map(
@@ -74,7 +81,10 @@ export function TerminalContextSheet(props: {
               /* oxlint-disable react/no-array-index-key -- Selection is addressed by line number in this captured terminal snapshot. */ <Pressable
                 key={index}
                 accessibilityRole="button"
-                accessibilityLabel={`Line ${index + 1}: ${line}`}
+                accessibilityLabel={t("Line {value0}: {line}", {
+                  value0: String(index + 1),
+                  line: String(line),
+                })}
                 accessibilityState={{ selected: index >= range.start && index <= range.end }}
                 onPress={() => {
                   if (anchor === null) {
@@ -114,7 +124,7 @@ export function TerminalContextSheet(props: {
       >
         {tooLarge ? (
           <Text className="text-sm text-foreground-muted">
-            Select fewer lines to fit the context limit.
+            {t("Select fewer lines to fit the context limit.")}
           </Text>
         ) : null}
         <Button

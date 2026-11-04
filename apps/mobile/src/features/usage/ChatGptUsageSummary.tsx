@@ -25,7 +25,7 @@ export function ChatGptUsageSummary({
       <View className="flex-row items-center justify-between gap-3">
         <View className="flex-row items-center gap-2">
           <ProviderIcon provider="codex" size={16} />
-          <Text className="text-sm text-foreground">ChatGPT shared usage</Text>
+          <Text className="text-sm text-foreground">{t("ChatGPT shared usage")}</Text>
         </View>
         <Pressable
           accessibilityRole="link"
@@ -36,7 +36,8 @@ export function ChatGptUsageSummary({
         </Pressable>
       </View>
       <Text className="text-xs text-foreground-muted">
-        {usage.accounts.join(", ")}. Open ChatGPT with the account you connected.
+        {usage.accounts.join(", ")}
+        {t(". Open ChatGPT with the account you connected.")}
       </Text>
     </View>
   );

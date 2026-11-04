@@ -132,13 +132,27 @@ function TerminalHeader(props: {
                     items: [
                       {
                         id: "font-decrease",
-                        title: `A- ${Math.max(MIN_TERMINAL_FONT_SIZE, props.fontSize - TERMINAL_FONT_SIZE_STEP).toFixed(1)} pt`,
+                        title: t("A- {value0} pt", {
+                          value0: String(
+                            Math.max(
+                              MIN_TERMINAL_FONT_SIZE,
+                              props.fontSize - TERMINAL_FONT_SIZE_STEP,
+                            ).toFixed(1),
+                          ),
+                        }),
                         disabled: props.fontSize <= MIN_TERMINAL_FONT_SIZE,
                         onPress: props.onDecreaseFontSize,
                       },
                       {
                         id: "font-increase",
-                        title: `A+ ${Math.min(MAX_TERMINAL_FONT_SIZE, props.fontSize + TERMINAL_FONT_SIZE_STEP).toFixed(1)} pt`,
+                        title: t("A+ {value0} pt", {
+                          value0: String(
+                            Math.min(
+                              MAX_TERMINAL_FONT_SIZE,
+                              props.fontSize + TERMINAL_FONT_SIZE_STEP,
+                            ).toFixed(1),
+                          ),
+                        }),
                         disabled: props.fontSize >= MAX_TERMINAL_FONT_SIZE,
                         onPress: props.onIncreaseFontSize,
                       },
@@ -165,7 +179,9 @@ function TerminalHeader(props: {
                     disabled: !props.canOperateTerminal,
                     title: t("Open new terminal"),
                     icon: "plus",
-                    subtitle: `Start another shell in ${basename(props.workspaceRoot) ?? "this workspace"}`,
+                    subtitle: t("Start another shell in {value0}", {
+                      value0: String(basename(props.workspaceRoot) ?? "this workspace"),
+                    }),
                     onPress: props.onOpenNewTerminal,
                   },
                 ],
@@ -561,14 +577,14 @@ function ThreadTerminal(props: {
       { kind: "send", key: "esc", label: "esc", data: "\u001b" },
       ...modifierActions,
       { kind: "send", key: "tab", label: "tab", data: "\t" },
-      { kind: "paste", key: "paste", label: "paste" },
-      { kind: "clear", key: "clear", label: "clear" },
+      { kind: "paste", key: "paste", label: t("paste") },
+      { kind: "clear", key: "clear", label: t("clear") },
       { kind: "send", key: "tilde", label: "~", data: "~" },
       { kind: "send", key: "pipe", label: "|", data: "|" },
       { kind: "send", key: "slash", label: "/", data: "/" },
       { kind: "send", key: "dash", label: "-", data: "-" },
     ];
-  }, [hostPlatform]);
+  }, [t, hostPlatform]);
   const keyboardState = useKeyboardState((state) => ({
     height: state.height,
     isVisible: state.isVisible,
@@ -939,7 +955,10 @@ function ThreadTerminal(props: {
                     setCaptureRequest(0);
                     if (text.trim()) setCapturedOutput(text);
                     else
-                      Dialog.alert("No terminal output", "There is no visible output to attach.");
+                      Dialog.alert(
+                        t("No terminal output"),
+                        t("There is no visible output to attach."),
+                      );
                   }}
                   onInput={handleInput}
                   onResize={handleResize}
@@ -978,7 +997,9 @@ function ThreadTerminal(props: {
                         : (nativeColumnMetrics?.safeArea.bottom ?? insets.bottom)),
                   }}
                 >
-                  <Text style={{ color: terminalTheme.foreground }}>Attach visible output</Text>
+                  <Text style={{ color: terminalTheme.foreground }}>
+                    {t("Attach visible output")}
+                  </Text>
                 </Pressable>
               ) : null}
               {isAccessoryVisible ? (
@@ -1008,7 +1029,7 @@ function ThreadTerminal(props: {
                             <ComposerToolbarButton
                               key={action.key}
                               active={active}
-                              label={action.label}
+                              label={t(action.label)}
                               maxWidth={120}
                               minWidth={action.label.length > 1 ? 56 : 44}
                               onPress={() => handleToolbarActionPress(action)}

@@ -62,9 +62,9 @@ export function SettingsNavigationRouteScreen() {
                 <Text>{t(WORKSPACE_TAB_LABELS[tab])}</Text>
                 <Text className="text-xs text-foreground-muted">
                   {hidden.includes(tab)
-                    ? "Hidden"
+                    ? t("Hidden")
                     : enabled.indexOf(tab) < capacity
-                      ? `Tab ${enabled.indexOf(tab) + 1}`
+                      ? t("Tab {value0}", { value0: String(enabled.indexOf(tab) + 1) })
                       : "In Settings"}
                 </Text>
               </View>
@@ -85,7 +85,9 @@ export function SettingsNavigationRouteScreen() {
               />
               <IconButton
                 icon="arrow.up"
-                accessibilityLabel={`Move ${t(WORKSPACE_TAB_LABELS[tab])} up`}
+                accessibilityLabel={t("Move {value0} up", {
+                  value0: String(t(WORKSPACE_TAB_LABELS[tab])),
+                })}
                 disabled={!ready || index === 0}
                 onPress={() =>
                   save({
@@ -101,7 +103,9 @@ export function SettingsNavigationRouteScreen() {
               />
               <IconButton
                 icon="arrow.down"
-                accessibilityLabel={`Move ${t(WORKSPACE_TAB_LABELS[tab])} down`}
+                accessibilityLabel={t("Move {value0} down", {
+                  value0: String(t(WORKSPACE_TAB_LABELS[tab])),
+                })}
                 disabled={!ready || index === order.length - 1}
                 onPress={() =>
                   save({

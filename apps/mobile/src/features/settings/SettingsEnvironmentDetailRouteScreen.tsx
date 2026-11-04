@@ -183,7 +183,7 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
       >
         {!environment ? (
           <Text className="text-base text-foreground-muted">
-            This environment is no longer saved on this device.
+            {t("This environment is no longer saved on this device.")}
           </Text>
         ) : (
           <>
@@ -212,7 +212,7 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
               />
             ) : !connected ? (
               <Text className="px-2 text-sm text-foreground-muted">
-                Connect this environment to manage it.
+                {t("Connect this environment to manage it.")}
               </Text>
             ) : !allowed ? (
               <Text className="px-2 text-sm text-foreground-muted">
@@ -237,12 +237,13 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                 <SettingsSection title="T3 Code">
                   <View className="gap-1 p-4">
                     <Text className="text-base text-foreground">
-                      {t("Version")}
+                      {t("Version ")}
                       {version}
                     </Text>
                     {managedPolicy ? (
                       <Text className="text-sm text-foreground-muted">
-                        Managed by {managedPolicy.organization}
+                        {t("Managed by ")}
+                        {managedPolicy.organization}
                       </Text>
                     ) : null}
                     {updatesDenial ? (
@@ -262,7 +263,9 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                     {checkedRelease && !updatesDenial ? (
                       <Text className="text-sm text-foreground-muted">
                         {checkedRelease.targetVersion
-                          ? `Version ${checkedRelease.targetVersion} is available.`
+                          ? t("Version {targetVersion} is available.", {
+                              targetVersion: String(checkedRelease.targetVersion),
+                            })
                           : "You are up to date."}
                       </Text>
                     ) : null}
@@ -279,7 +282,9 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                   {supportUrl ? (
                     <SettingsActionRow
                       icon="questionmark.bubble"
-                      label={`Get help from ${managedPolicy.organization}`}
+                      label={t("Get help from {organization}", {
+                        organization: String(managedPolicy.organization),
+                      })}
                       onPress={() => void Linking.openURL(supportUrl).catch(() => undefined)}
                     />
                   ) : null}
@@ -305,7 +310,9 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                   supportsEnvironmentUpdate(config.environment.capabilities) ? (
                     <SettingsActionRow
                       icon="arrow.up.circle"
-                      label={`Update to ${checkedRelease.targetVersion}`}
+                      label={t("Update to {targetVersion}", {
+                        targetVersion: String(checkedRelease.targetVersion),
+                      })}
                       disabled={disabled}
                       loading={pending === "server" || running}
                       onPress={requestServerUpdate}
@@ -352,7 +359,9 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                               ? (provider.version ?? "Version unknown")
                               : "Not installed"}
                             {provider.versionAdvisory?.latestVersion
-                              ? ` · Latest ${provider.versionAdvisory.latestVersion}`
+                              ? t(" · Latest {latestVersion}", {
+                                  latestVersion: String(provider.versionAdvisory.latestVersion),
+                                })
                               : ""}
                           </Text>
                           {provider.updateState && provider.updateState.status !== "idle" ? (
@@ -365,7 +374,9 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                               }
                             >
                               {provider.updateState.message ??
-                                `Update ${provider.updateState.status}`}
+                                t("Update {status}", {
+                                  status: String(provider.updateState.status),
+                                })}
                             </Text>
                           ) : null}
                           {provider.compatibilityAdvisory?.message ? (
@@ -381,14 +392,16 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                           {provider.versionAdvisory?.status === "behind_latest" &&
                           !provider.versionAdvisory.canUpdate ? (
                             <Text className="text-sm text-foreground-muted">
-                              Update this provider on the environment's machine.
+                              {t("Update this provider on the environment's machine.")}
                             </Text>
                           ) : null}
                         </View>
                         {canUpdateEnvironmentProvider(provider) ? (
                           <SettingsActionRow
                             icon="arrow.up.circle"
-                            label={`Update ${provider.displayName ?? provider.driver}`}
+                            label={t("Update {value0}", {
+                              value0: String(provider.displayName ?? provider.driver),
+                            })}
                             disabled={busy || !canManageProviders}
                             loading={pending === provider.instanceId}
                             onPress={() => requestProviderUpdate(provider)}

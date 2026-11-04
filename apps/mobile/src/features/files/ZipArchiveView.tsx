@@ -240,13 +240,14 @@ function ZipTreeRowView(props: {
   readonly onToggle: (path: string) => void;
   readonly onOpen: (entry: ZipEntry) => void;
 }) {
+  const { t } = useTranslation();
   const { node, depth } = props.row;
   const entry = node.entry;
   const folder = entry ? null : zipFolderLabel(node.label);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={entry ? entry.path : `${node.path} folder`}
+      accessibilityLabel={entry ? entry.path : t("{path} folder", { path: String(node.path) })}
       accessibilityState={entry ? undefined : { expanded: !props.collapsed }}
       onPress={() => (entry ? props.onOpen(entry) : props.onToggle(node.path))}
       className="mx-2 h-11 flex-row items-center gap-1.5 rounded-lg pr-2.5 active:bg-subtle"
@@ -279,7 +280,7 @@ function ZipTreeRowView(props: {
         {entry
           ? formatAttachmentSize(entry.sizeBytes)
           : props.collapsed
-            ? `${node.fileCount} ${node.fileCount === 1 ? "file" : "files"}`
+            ? `${node.fileCount} ${node.fileCount === 1 ? t("file") : t("files")}`
             : ""}
       </Text>
     </Pressable>
@@ -372,7 +373,7 @@ function ZipArchiveProgress(props: {
         {formatAttachmentSize(props.receivedBytes)}
         {props.totalBytes > 0 ? (
           <Text className="text-xl text-foreground-muted">
-            {` of ${formatAttachmentSize(props.totalBytes)}`}
+            {t(" of {value0}", { value0: String(formatAttachmentSize(props.totalBytes)) })}
           </Text>
         ) : null}
       </Text>
@@ -381,7 +382,11 @@ function ZipArchiveProgress(props: {
         label={t("ZIP download progress")}
       />
       <Text className="text-sm text-foreground-muted">
-        {`Downloading the ZIP so its files can be listed.${timeLeft ? ` ${timeLeft} on this connection.` : ""}`}
+        {t("Downloading the ZIP so its files can be listed.{value0}", {
+          value0: String(
+            timeLeft ? t(" {timeLeft} on this connection.", { timeLeft: String(timeLeft) }) : "",
+          ),
+        })}
       </Text>
       <Button label={t("Cancel")} onPress={props.onCancel} />
     </View>
@@ -458,7 +463,10 @@ function ZipArchiveList(props: {
                 accessibilityLabel={t("Filter files in ZIP")}
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder={`Filter ${fileCount} ${fileCount === 1 ? "file" : "files"}`}
+                placeholder={t("Filter {fileCount} {value1}", {
+                  fileCount: String(fileCount),
+                  value1: String(fileCount === 1 ? t("file") : t("files")),
+                })}
                 placeholderTextColorClassName="accent-placeholder"
                 cursorColorClassName="accent-focus"
                 className="min-w-0 flex-1 font-sans text-[15px] text-foreground"
@@ -494,7 +502,7 @@ function ZipArchiveList(props: {
           query ? (
             <EmptyState
               variant="plain"
-              title={`No files match “${query.trim()}”`}
+              title={t("No files match “{value0}”", { value0: String(query.trim()) })}
               detail={t("The filter checks file names and folder paths.")}
               action={<Button label={t("Clear filter")} onPress={() => setQuery("")} />}
             />
@@ -545,7 +553,7 @@ export function ZipArchiveView(props: {
           name={props.name}
           subtitle={
             archive
-              ? `${archive.fileCount} ${archive.fileCount === 1 ? "file" : "files"}${props.sizeBytes > 0 ? ` · ${formatAttachmentSize(props.sizeBytes)}` : ""}`
+              ? `${archive.fileCount} ${archive.fileCount === 1 ? t("file") : t("files")}${props.sizeBytes > 0 ? ` · ${formatAttachmentSize(props.sizeBytes)}` : ""}`
               : props.subtitle
           }
           tintColor={props.tintColor}
@@ -657,7 +665,9 @@ function ZipEntryView(props: {
       ? {
           status: "failed",
           title: t("Too big to preview"),
-          message: `Previews stop at ${formatAttachmentSize(ARCHIVE_ENTRY_MAX_BYTES)}. Save the file to open it in another app.`,
+          message: t("Previews stop at {value0}. Save the file to open it in another app.", {
+            value0: String(formatAttachmentSize(ARCHIVE_ENTRY_MAX_BYTES)),
+          }),
         }
       : { status: "loading" },
   );
@@ -716,14 +726,14 @@ function ZipEntryView(props: {
         if (controller.signal.aborted) return;
         setBusy(null);
         if (kind === "attach")
-          Dialog.alert("Added to chat", `${entry.name} is attached to your message.`);
+          Dialog.alert(t("Added to chat"), `${entry.name} is attached to your message.`);
       },
       (cause: unknown) => {
         if (controller.signal.aborted) return;
         setBusy(null);
         Dialog.alert(
           kind === "save" ? "Could not save file" : "Could not add file to chat",
-          errorMessage(cause, "Please try again."),
+          errorMessage(cause, t("Please try again.")),
         );
       },
     );
@@ -832,7 +842,7 @@ function ZipEntryView(props: {
           <EmptyState
             variant="plain"
             title={t(content.title)}
-            detail={content.message}
+            detail={t(content.message)}
             action={
               <Button
                 tone="primary"

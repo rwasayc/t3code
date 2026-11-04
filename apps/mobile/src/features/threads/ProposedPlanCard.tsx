@@ -34,7 +34,7 @@ export function ProposedPlanCard(props: {
     const relativePath = path.trim();
     if (!canWrite || !props.workspaceRoot || inFlight.current) return;
     if (!relativePath) {
-      Dialog.alert("Enter a workspace path");
+      Dialog.alert(t("Enter a workspace path"));
       return;
     }
     inFlight.current = true;
@@ -48,10 +48,13 @@ export function ProposedPlanCard(props: {
       setSaving(false);
     });
     if (result._tag === "Success") {
-      Dialog.alert("Plan saved to workspace", result.value.relativePath);
+      Dialog.alert(t("Plan saved to workspace"), result.value.relativePath);
     } else if (!isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
-      Dialog.alert("Could not save plan", error instanceof Error ? error.message : String(error));
+      Dialog.alert(
+        t("Could not save plan"),
+        error instanceof Error ? error.message : String(error),
+      );
     }
   };
 
@@ -77,7 +80,7 @@ export function ProposedPlanCard(props: {
                 "Enter a path relative to the thread's workspace. A file already at that path is replaced.",
               ),
               initialValue: lastPath,
-              confirmText: "Save",
+              confirmText: t("Save"),
               onConfirm: (path) => void save(path),
             })
           }

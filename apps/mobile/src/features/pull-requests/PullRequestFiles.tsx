@@ -100,11 +100,20 @@ function FileRow(props: {
   readonly directory?: string;
   readonly onPress: () => void;
 }) {
+  const { t } = useTranslation();
   const { file } = props;
   return (
     <RowPressable
       accessibilityRole="button"
-      accessibilityLabel={`View diff for ${file.path}, ${file.additions} additions, ${file.deletions} deletions${props.viewed ? ", viewed" : ""}`}
+      accessibilityLabel={t(
+        "View diff for {path}, {additions} additions, {deletions} deletions{value3}",
+        {
+          path: String(file.path),
+          additions: String(file.additions),
+          deletions: String(file.deletions),
+          value3: String(props.viewed ? ", viewed" : ""),
+        },
+      )}
       onPress={props.onPress}
       className="min-h-14 flex-row items-center gap-3 border-b border-border-subtle py-3 active:opacity-70"
     >
@@ -120,7 +129,8 @@ function FileRow(props: {
         ) : null}
         {file.previousPath ? (
           <Text textRole="caption" className="text-foreground-muted" numberOfLines={1}>
-            Renamed from {file.previousPath}
+            {t("Renamed from ")}
+            {file.previousPath}
           </Text>
         ) : null}
       </View>
@@ -198,7 +208,7 @@ function NoVisibleFiles({ files }: { readonly files: ChangedFiles }) {
   }
   return !diff.isPending && !diff.error ? (
     <Text textRole="footnote" className="py-6 text-foreground-muted">
-      No text changes available.
+      {t("No text changes available.")}
     </Text>
   ) : null;
 }
@@ -278,7 +288,7 @@ export function usePullRequestFilesSection(params: PullRequestParams) {
               <PullRequestSectionHeading>{t("Changed files")}</PullRequestSectionHeading>
               {pr ? (
                 <Text textRole="caption" className="text-foreground-muted">
-                  {pr.changedFiles} {pr.changedFiles === 1 ? "file" : "files"}
+                  {pr.changedFiles} {pr.changedFiles === 1 ? t("file") : t("files")}
                 </Text>
               ) : (
                 <View className="h-2.5 w-28 rounded bg-subtle-strong" />

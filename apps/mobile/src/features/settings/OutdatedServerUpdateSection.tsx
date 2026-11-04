@@ -78,7 +78,9 @@ export function OutdatedServerUpdateSection({
     <SettingsSection title="T3 Code">
       <View className="gap-1 p-4">
         <Text className="text-base text-foreground">
-          {release ? `Version ${release.fromVersion}` : "Update required"}
+          {release
+            ? t("Version {fromVersion}", { fromVersion: String(release.fromVersion) })
+            : "Update required"}
         </Text>
         <Text className="text-sm text-foreground-muted">
           {state.status === "running"
@@ -89,7 +91,9 @@ export function OutdatedServerUpdateSection({
                 : "Downloading update…"
             : release
               ? release.targetVersion
-                ? `Version ${release.targetVersion} is available.`
+                ? t("Version {targetVersion} is available.", {
+                    targetVersion: String(release.targetVersion),
+                  })
                 : "No newer version is available yet."
               : "This app needs a newer version of T3 Code on this machine."}
         </Text>
@@ -109,7 +113,11 @@ export function OutdatedServerUpdateSection({
       {release?.targetVersion ? (
         <SettingsActionRow
           icon="arrow.up.circle"
-          label={state.status === "failed" ? "Retry update" : `Update to ${release.targetVersion}`}
+          label={
+            state.status === "failed"
+              ? "Retry update"
+              : t("Update to {targetVersion}", { targetVersion: String(release.targetVersion) })
+          }
           disabled={busy}
           loading={state.status === "running"}
           onPress={requestUpdate}

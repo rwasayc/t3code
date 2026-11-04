@@ -40,11 +40,11 @@ export const CopyTextButton = memo(function CopyTextButton(props: {
         try {
           if (props.onCopy) await props.onCopy();
           else if (!(await tryCopyTextWithHaptic(props.text))) {
-            Dialog.alert("Could not copy", "Try again.");
+            Dialog.alert(t("Could not copy"), t("Try again."));
             return;
           }
         } catch {
-          Dialog.alert("Could not copy", "Try again.");
+          Dialog.alert(t("Could not copy"), t("Try again."));
           return;
         }
         setCopiedAtMs(Date.now());

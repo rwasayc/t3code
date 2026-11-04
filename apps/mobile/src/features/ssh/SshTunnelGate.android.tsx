@@ -38,11 +38,11 @@ function reachesTunnelOrigin(httpBaseUrl: string): boolean {
 async function redeemPairingCode(code: string): Promise<string | null> {
   try {
     const outcome = await pairEnvironment(buildPairingUrl(TUNNEL_HTTP_ORIGIN, code));
-    if (!outcome.ok) return outcome.error ?? "配对失败，请重试。";
+    if (!outcome.ok) return outcome.error ?? "Pairing failed. Try again.";
     await stripStoredPairingCode();
     return null;
   } catch {
-    return "配对失败，请重试。";
+    return "Pairing failed. Try again.";
   }
 }
 

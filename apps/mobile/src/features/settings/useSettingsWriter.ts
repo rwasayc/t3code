@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { EnvironmentId, ServerSettingsPatch } from "@t3tools/contracts";
 import {
   isAtomCommandInterrupted,
@@ -10,6 +11,7 @@ import { useAtomCommand } from "../../state/use-atom-command";
 import type { ScopedMobileSettingsTarget } from "./settings-scoped-server";
 
 export function useSettingsWriter() {
+  const { t } = useTranslation();
   const updateSettings = useAtomCommand(serverEnvironment.updateSettings, {
     label: "environment settings update",
     reportFailure: true,
@@ -38,7 +40,7 @@ export function useSettingsWriter() {
     );
     const failures = outcomes.filter((outcome) => outcome !== null);
     if (failures.length > 0) {
-      Dialog.alert("Could not save settings", failures.join("\n\n"));
+      Dialog.alert(t("Could not save settings"), failures.join("\n\n"));
     }
   };
 }

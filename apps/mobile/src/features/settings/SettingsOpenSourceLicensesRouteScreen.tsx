@@ -80,7 +80,7 @@ export function SettingsOpenSourceLicensesRouteScreen() {
       <SettingsScreen title={t("Open source licenses")}>
         <View className="flex-1 items-center justify-center px-6">
           <Text className="text-center text-base text-foreground-muted">
-            License notices are unavailable in this build.
+            {t("License notices are unavailable in this build.")}
           </Text>
         </View>
       </SettingsScreen>
@@ -142,7 +142,7 @@ export function SettingsOpenSourceLicensesRouteScreen() {
         ListEmptyComponent={
           <View className="items-center px-6 py-12">
             <Text className="text-center text-base text-foreground-muted">
-              No licenses match that search.
+              {t("No licenses match that search.")}
             </Text>
           </View>
         }
@@ -184,7 +184,7 @@ export function SettingsOpenSourceLicenseRouteScreen({ route }: LicenseDetailPro
       <SettingsScreen title={t("License notice")}>
         <View className="flex-1 items-center justify-center px-6">
           <Text className="text-center text-base text-foreground-muted">
-            This license notice is unavailable.
+            {t("This license notice is unavailable.")}
           </Text>
         </View>
       </SettingsScreen>
@@ -214,7 +214,7 @@ export function SettingsOpenSourceLicenseRouteScreen({ route }: LicenseDetailPro
               onPress={() => void Linking.openURL(sourceUrl)}
               className="min-h-12 flex-row items-center gap-2 self-start py-2 active:opacity-60"
             >
-              <Text className="font-t3-medium text-primary-text">Project source</Text>
+              <Text className="font-t3-medium text-primary-text">{t("Project source")}</Text>
               <SymbolView
                 name="arrow.up.right"
                 size={16}

@@ -59,7 +59,9 @@ export function BranchNamingSettings(props: {
     <SettingsSection
       title={t("Worktree branch naming")}
       trailing={
-        props.mode === null ? <Text className="text-xs text-foreground-muted">Mixed</Text> : null
+        props.mode === null ? (
+          <Text className="text-xs text-foreground-muted">{t("Mixed")}</Text>
+        ) : null
       }
     >
       {BranchNamingMode.literals.map((mode, index) => (
@@ -76,14 +78,14 @@ export function BranchNamingSettings(props: {
       {props.mode === "static" ? (
         <View className="gap-2 px-4 py-3">
           <Text className="text-sm text-foreground-muted">
-            Use t3 or t3/ for t3/add-search. Leave empty for no prefix.
+            {t("Use t3 or t3/ for t3/add-search. Leave empty for no prefix.")}
           </Text>
           <AppTextInput
             key={props.prefix}
             accessibilityLabel={t("Branch prefix")}
             onChangeText={(text) => edit("branchNamePrefix", text)}
             defaultValue={props.prefix ?? ""}
-            placeholder={props.prefix === null ? "Mixed" : "No prefix"}
+            placeholder={props.prefix === null ? t("Mixed") : "No prefix"}
             editable={!props.disabled.prefix}
             autoCapitalize="none"
             autoCorrect={false}
@@ -95,7 +97,7 @@ export function BranchNamingSettings(props: {
       {props.mode === "custom" ? (
         <View className="gap-2 px-4 py-3">
           <Text className="text-sm text-foreground-muted">
-            Append instructions to the naming prompt.
+            {t("Append instructions to the naming prompt.")}
           </Text>
           <AppTextInput
             key={props.instructions}

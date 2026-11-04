@@ -602,16 +602,16 @@ function ThreadDetailBody(
     });
     setForceStoppingKey((current) => (current === threadKey ? null : current));
     if (result._tag === "Failure") {
-      if (!isAtomCommandInterrupted(result)) Dialog.alert("Could not force stop the agent");
+      if (!isAtomCommandInterrupted(result)) Dialog.alert(t("Could not force stop the agent"));
       return;
     }
     const others = result.value.sharedWithThreadIds.length;
     if (result.value.outcome === "releasing") {
-      Dialog.alert("Turn stopped; the agent is still shutting down");
+      Dialog.alert(t("Turn stopped; the agent is still shutting down"));
     }
     if (result.value.outcome === "shared") {
       Dialog.alert(
-        "Turn stopped; the agent process kept running",
+        t("Turn stopped; the agent process kept running"),
         `It is shared with ${others === 0 ? "other" : others} working ${others === 1 ? "thread" : "threads"}. Stop those to free it.`,
       );
     }
@@ -710,7 +710,7 @@ function ThreadDetailBody(
     if (result._tag === "Failure" && !isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not update thread",
+        t("Could not update thread"),
         error instanceof Error ? error.message : "Try again.",
       );
     }
@@ -738,7 +738,8 @@ function ThreadDetailBody(
         action:
           unresponsive && canForceStop
             ? {
-                label: forceStoppingKey === selectedThreadKey ? "Force stopping..." : "Force stop",
+                label:
+                  forceStoppingKey === selectedThreadKey ? "Force stopping..." : t("Force stop"),
                 accessibilityLabel: t("Force stop the agent"),
                 disabled: forceStoppingKey === selectedThreadKey,
                 onPress: () =>
@@ -747,7 +748,7 @@ function ThreadDetailBody(
                     message: t(
                       "It has not answered Stop. Force stop ends the turn and kills the agent's processes, unless other working threads share them.",
                     ),
-                    confirmText: "Force stop",
+                    confirmText: t("Force stop"),
                     destructive: true,
                     onConfirm: () => void forceStop(runStop.runId),
                   }),
@@ -776,7 +777,7 @@ function ThreadDetailBody(
       return {
         kind: "child-input",
         label: childThreadInputsTitle(childThreadInputs),
-        accessibilityLabel: `Open ${childInput.hasPendingApprovals ? "approval" : "question"} from ${childInput.title}`,
+        accessibilityLabel: `Open ${childInput.hasPendingApprovals ? "approval" : t("question")} from ${childInput.title}`,
         onPress: () => {
           Keyboard.dismiss();
           openLinkedThread({ environmentId: childInput.environmentId, threadId: childInput.id });
@@ -1249,8 +1250,8 @@ function ThreadDetailBody(
             if (feedbackTarget?.supportsFeedback) {
               if (hasAttachmentsOrContext) {
                 Dialog.alert(
-                  "Approval feedback",
-                  "Send approval feedback without attachments or added context.",
+                  t("Approval feedback"),
+                  t("Send approval feedback without attachments or added context."),
                 );
                 return false;
               }
@@ -1330,7 +1331,7 @@ function ThreadDetailBody(
     if (AsyncResult.isFailure(edited)) {
       const error = squashAtomCommandFailure(edited);
       Dialog.alert(
-        "Could not edit message",
+        t("Could not edit message"),
         error instanceof Error ? error.message : "Please try again.",
       );
       return;

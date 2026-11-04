@@ -206,18 +206,21 @@ export function ComposerContextSheet(props: {
       >
         {terminal ? (
           <Text className="text-sm text-foreground-muted">
-            Lines {terminal.lineStart}–{terminal.lineEnd}
+            {t("Lines ")}
+            {terminal.lineStart}–{terminal.lineEnd}
           </Text>
         ) : null}
         {!record ? (
           <Text className="text-foreground">
-            Context unavailable. The reference was copied without its payload. Copy it again from
-            the original message or remove it.
+            {t(
+              "Context unavailable. The reference was copied without its payload. Copy it again from the original message or remove it.",
+            )}
           </Text>
         ) : "payload" in record ? (
           <Text className="text-foreground">
-            This context type is not supported by this version of the app. Its payload will be
-            preserved when sent.
+            {t(
+              "This context type is not supported by this version of the app. Its payload will be preserved when sent.",
+            )}
           </Text>
         ) : (
           <>
@@ -379,7 +382,7 @@ export function ComposerContextSheet(props: {
             className="rounded-xl bg-subtle p-4"
           >
             <Text className="text-foreground">
-              {t("Open")}
+              {t("Open ")}
               {changeRequestTerm}
             </Text>
           </Pressable>
@@ -394,7 +397,9 @@ export function ComposerContextSheet(props: {
         ) : null}
         {props.onOpenPullRequest && !pullRequestUrl ? (
           <Button
-            label={`Open ${changeRequestTerm}`}
+            label={t("Open {changeRequestTerm}", {
+              changeRequestTerm: String(t(changeRequestTerm)),
+            })}
             tone="secondary"
             onPress={props.onOpenPullRequest}
             fullWidth

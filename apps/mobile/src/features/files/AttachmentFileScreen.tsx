@@ -100,7 +100,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     const message = pendingNativeError.current;
     pendingNativeError.current = null;
     if (nativeViewer === null) {
-      if (message) Dialog.alert("Could not open document", message);
+      if (message) Dialog.alert(t("Could not open document"), message);
       return;
     }
     if (message) {
@@ -157,7 +157,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     uri
       ? ({
           id: "share",
-          title: sharing ? "Opening share sheet…" : "Save or share",
+          title: sharing ? "Opening share sheet…" : t("Save or share"),
           icon: "square.and.arrow.up",
           inline: false,
           onPress: () => void share(),

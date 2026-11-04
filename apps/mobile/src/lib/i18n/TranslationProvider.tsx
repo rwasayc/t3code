@@ -1,5 +1,5 @@
 import { useMemo, useSyncExternalStore, type ReactNode } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { AsyncResult } from "effect/reactivity";
 
@@ -23,7 +23,7 @@ export function TranslationProvider(props: { readonly children: ReactNode }) {
     ? (preferences.value.appLanguage ?? "system")
     : "system";
   const locale = useSyncExternalStore(subscribeSystemLocale, systemLocale);
-  const language = resolveAppLanguage(preference, locale);
+  const language = Platform.OS === "android" ? resolveAppLanguage(preference, locale) : "en";
   const ready = AsyncResult.isSuccess(preferences) && !preferences.waiting;
   const value = useMemo(
     () => ({

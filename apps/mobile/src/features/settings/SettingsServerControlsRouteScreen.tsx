@@ -332,8 +332,8 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     ).map((choice, index) => (
                       <SettingsChoiceRow
                         key={choice.mode ?? "inherit"}
-                        label={choice.label}
-                        description={choice.description}
+                        label={t(choice.label)}
+                        description={t(choice.description)}
                         selected={
                           !isMixed("defaultThreadEnvMode") &&
                           uniform("defaultThreadEnvMode") === choice.mode
@@ -356,7 +356,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     {runtimeModeChoices.map((choice, index) => (
                       <SettingsChoiceRow
                         key={choice.mode}
-                        label={choice.label}
+                        label={t(choice.label)}
                         description={choice.disabledReason ?? choice.description}
                         selected={uniform("defaultRuntimeMode") === choice.mode}
                         separated={index > 0}
@@ -379,8 +379,8 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     {STREAMING_CHOICES.map((choice, index) => (
                       <SettingsChoiceRow
                         key={choice.mode}
-                        label={choice.label}
-                        description={choice.description}
+                        label={t(choice.label)}
+                        description={t(choice.description)}
                         selected={uniform("responseStreamingMode") === choice.mode}
                         separated={index > 0}
                         disabled={disabledFor("responseStreamingMode")}
@@ -471,8 +471,8 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     ).map((choice, index) => (
                       <SettingsChoiceRow
                         key={choice.mode ?? "inherit"}
-                        label={choice.label}
-                        description={choice.description}
+                        label={t(choice.label)}
+                        description={t(choice.description)}
                         selected={
                           !isMixed("worktreeSubmodules") &&
                           uniform("worktreeSubmodules") === choice.mode
@@ -566,6 +566,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
 }
 
 function MixedValuesLabel(props: { readonly projectSelected: boolean }) {
+  const { t } = useTranslation();
   return (
     <Text
       accessibilityLabel={
@@ -575,13 +576,14 @@ function MixedValuesLabel(props: { readonly projectSelected: boolean }) {
       }
       className="px-2 text-sm text-foreground-muted android:px-4"
     >
-      Mixed
+      {t("Mixed")}
     </Text>
   );
 }
 
 /** Locked settings are refused when saved; say so before the user tries. */
 function ManagedPolicyNotice(props: { readonly targets: readonly ScopedMobileSettingsTarget[] }) {
+  const { t } = useTranslation();
   const organizations = [
     ...new Set(
       props.targets.flatMap((target) => {
@@ -595,7 +597,9 @@ function ManagedPolicyNotice(props: { readonly targets: readonly ScopedMobileSet
   if (organizations.length === 0) return null;
   return (
     <Text className="px-2 text-sm text-foreground-muted android:px-4">
-      Some settings are managed by {organizations.join(", ")} and cannot be changed here.
+      {t("Some settings are managed by ")}
+      {organizations.join(", ")}
+      {t(" and cannot be changed here.")}
     </Text>
   );
 }

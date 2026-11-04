@@ -262,7 +262,7 @@ function ArchivedThreadRow(props: {
       onSwipeableClose={props.onSwipeableClose}
       onSwipeableWillOpen={props.onSwipeableWillOpen}
       primaryAction={{
-        accessibilityLabel: `Unarchive ${props.thread.title}`,
+        accessibilityLabel: t("Unarchive {title}", { title: String(props.thread.title) }),
         icon: "arrow.uturn.backward",
         label: t("Unarchive"),
         onPress: props.onUnarchive,
@@ -280,7 +280,7 @@ function ArchiveError(props: { readonly message: string; readonly onRetry: () =>
   return (
     <View className="rounded-[20px] border border-danger-border bg-danger p-4">
       <Text className="text-base font-t3-bold text-danger-foreground">
-        Could not load every archive
+        {t("Could not load every archive")}
       </Text>
       <Text className="mt-1 text-sm text-foreground-muted">{props.message}</Text>
       <View className="mt-3">
@@ -389,7 +389,7 @@ export function ArchivedThreadsScreen(props: {
       return (
         <View className="items-center py-16">
           <AppActivityIndicator colorClassName="accent-icon" />
-          <Text className="mt-3 text-sm text-foreground-muted">Loading archive...</Text>
+          <Text className="mt-3 text-sm text-foreground-muted">{t("Loading archive...")}</Text>
         </View>
       );
     }

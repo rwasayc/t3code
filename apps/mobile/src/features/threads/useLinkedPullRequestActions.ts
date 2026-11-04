@@ -92,11 +92,13 @@ export function useLinkedPullRequestActions(input: {
   const promptLink = () => {
     const { singular } = terminology;
     Dialog.prompt({
-      title: `Link ${singular}`,
-      message: `Paste a ${singular} URL, or enter 123 / #123 for this thread's repository.`,
-      placeholder: `${capitalizeTerm(singular)} URL or #42`,
+      title: t("Link {singular}", { singular: String(t(singular)) }),
+      message: t("Paste a {singular} URL, or enter 123 / #123 for this thread's repository.", {
+        singular: String(t(singular)),
+      }),
+      placeholder: t("{value0} URL or #42", { value0: String(capitalizeTerm(singular)) }),
       initialValue: "",
-      confirmText: "Link",
+      confirmText: t("Link"),
       onConfirm: (reference) => {
         const resolved = resolveLinkPullRequestInput({
           reference,
@@ -121,7 +123,7 @@ export function useLinkedPullRequestActions(input: {
     const watching = link.watch !== undefined;
     return [
       { id: "copy", title: t("Copy link"), image: "link" },
-      { id: "browser", title: "Open in browser", image: "safari" },
+      { id: "browser", title: t("Open in browser"), image: "safari" },
       ...((watching ? canWatch : canStartWatch) && open
         ? [
             {

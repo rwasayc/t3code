@@ -234,7 +234,9 @@ export function FloatingWorkingControl(props: {
       {agents !== null ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Open agents, ${agents.accessibilityLabel}`}
+          accessibilityLabel={t("Open agents, {accessibilityLabel}", {
+            accessibilityLabel: String(agents.accessibilityLabel),
+          })}
           accessibilityHint="Opens this turn's subagents"
           onPress={props.onOpenAgents}
           onLayout={(event) => setAgentsWidth(settleWidth(event.nativeEvent.layout.width))}
@@ -250,7 +252,9 @@ export function FloatingWorkingControl(props: {
       {hasQueue ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Open queue, ${props.queuedCount} messages`}
+          accessibilityLabel={t("Open queue, {queuedCount} messages", {
+            queuedCount: String(props.queuedCount),
+          })}
           accessibilityHint="Opens queued messages to send now, edit, or remove"
           onPress={props.onOpenQueue}
           onLayout={(event) => setQueueWidth(settleWidth(event.nativeEvent.layout.width))}
@@ -262,7 +266,8 @@ export function FloatingWorkingControl(props: {
           ) : null}
           <SymbolView name="list.number" size={13} tintColorClassName="accent-foreground-muted" />
           <Text className="shrink font-t3-medium text-xs tabular-nums" numberOfLines={1}>
-            {props.queuedCount} queued
+            {props.queuedCount}
+            {t(" queued")}
           </Text>
         </Pressable>
       ) : null}
@@ -372,7 +377,7 @@ function CompactingLabel(props: { readonly onLayout: (event: LayoutChangeEvent) 
         tintColorClassName="foreground"
         type="monochrome"
       />
-      <Text className="font-t3-medium text-xs text-foreground">Compacting…</Text>
+      <Text className="font-t3-medium text-xs text-foreground">{t("Compacting…")}</Text>
     </StatusLabelRow>
   );
 }
@@ -607,7 +612,7 @@ function WorkingTimer(props: { readonly startedAt: string }) {
       numberOfLines={1}
       style={{ fontVariant: ["tabular-nums"], fontWeight: "500" }}
     >
-      {t("Working")}
+      {t("Working ")}
       {formatWorkingDuration(props.startedAt, nowMs)}
     </SystemText>
   );

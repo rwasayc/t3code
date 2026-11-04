@@ -156,8 +156,9 @@ export function EnvironmentRoutesSection({
           session?.authenticated ? (
             <>
               <Text className="text-sm text-foreground-muted">
-                Applies to the route marked In use. Other routes may have different permissions and
-                have not been checked.
+                {t(
+                  "Applies to the route marked In use. Other routes may have different permissions and have not been checked.",
+                )}
               </Text>
               {AUTH_SCOPE_OPTIONS.map(({ scope, title }) => (
                 <Text key={scope} className="text-sm text-foreground">
@@ -263,7 +264,7 @@ function RouteRow(props: {
       {props.editing && props.onRemove ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Remove ${label} route`}
+          accessibilityLabel={t("Remove {label} route", { label: String(label) })}
           hitSlop={8}
           onPress={props.onRemove}
           className="active:opacity-70"
@@ -313,7 +314,9 @@ function RouteRow(props: {
           </View>
           {address !== null ? (
             <Text numberOfLines={1} className="text-sm text-foreground-muted">
-              {isLearned(route) ? `${address} · found automatically` : address}
+              {isLearned(route)
+                ? t("{address} · found automatically", { address: String(address) })
+                : address}
             </Text>
           ) : null}
         </View>

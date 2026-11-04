@@ -37,7 +37,7 @@ export function SettingsDragHandle(props: {
         collapsable={false}
         accessible
         accessibilityRole="adjustable"
-        accessibilityLabel={`Reorder ${props.title}`}
+        accessibilityLabel={t("Reorder {title}", { title: String(props.title) })}
         accessibilityActions={[
           ...(props.canMoveUp ? [{ name: "decrement", label: t("Move up") }] : []),
           ...(props.canMoveDown ? [{ name: "increment", label: t("Move down") }] : []),

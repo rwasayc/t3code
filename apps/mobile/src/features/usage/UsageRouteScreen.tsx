@@ -358,13 +358,13 @@ function UsageScreen(props: {
                 <ChatGptUsageSummary selectedEnvironmentIds={selectedEnvironmentIds} />
                 {merged.duplicateSources.length > 0 ? (
                   <Text className="text-sm text-foreground-muted">
-                    Counted once across environments sharing a transcript directory:{" "}
+                    {t("Counted once across environments sharing a transcript directory:")}{" "}
                     {merged.duplicateSources.join(", ")}
                   </Text>
                 ) : null}
                 {isPending ? (
                   <Text className="py-16 text-center text-base text-foreground-muted">
-                    Scanning provider transcripts…
+                    {t("Scanning provider transcripts…")}
                   </Text>
                 ) : selectedEnvironments.length === 0 ? (
                   <Text className="py-16 text-center text-base text-foreground-muted">
@@ -485,6 +485,7 @@ function CursorEnableAction({
   readonly onEnabled: () => void;
   readonly buttonText?: string;
 }) {
+  const { t } = useTranslation();
   const updateSettings = useAtomCommand(serverEnvironment.updateSettings, {
     label: "enable Cursor account usage",
   });
@@ -501,7 +502,7 @@ function CursorEnableAction({
     <Button
       label={buttonText}
       tone="primary"
-      accessibilityLabel={`Enable Cursor usage from ${label}`}
+      accessibilityLabel={t("Enable Cursor usage from {label}", { label: String(label) })}
       accessibilityHint={CURSOR_KEYCHAIN_COPY}
       disabled={pending}
       onPress={() => void enable()}
@@ -588,6 +589,7 @@ function ChartCard(props: {
   /** Grows the chart past `height` to match a taller neighbouring column. */
   readonly fill?: boolean;
 }) {
+  const { t } = useTranslation();
   const { merged, metric } = props;
   const colors = useProviderColors();
   const hasActivity = props.daily.some((period) => period.totalTokens > 0);
@@ -597,7 +599,7 @@ function ChartCard(props: {
     <UsageDailyChart days={props.days} daily={props.daily} metric={metric} height={height} />
   ) : (
     <View style={{ height }} className="items-center justify-center">
-      <Text className="text-base text-foreground-muted">No activity in this window.</Text>
+      <Text className="text-base text-foreground-muted">{t("No activity in this window.")}</Text>
     </View>
   );
 
@@ -669,7 +671,7 @@ function UsageSummary(props: { readonly merged: MergedUsage; readonly metric: Us
       <Text className="text-sm text-foreground-muted">
         {metric === "cost"
           ? "* if billed at full API rate"
-          : `Across ${formatCount(merged.sessions)} sessions`}
+          : t("Across {value0} sessions", { value0: String(formatCount(merged.sessions)) })}
       </Text>
     </View>
   );
@@ -773,8 +775,14 @@ function ProviderSection(props: {
             )}
             <Text className="text-sm text-foreground-muted">
               {metric === "cost"
-                ? `${formatPercent(share)} of cost · ${formatTokens(provider.totalTokens)} tokens`
-                : `${formatPercent(share)} of tokens · ${formatUsd(provider.costUsd)}`}
+                ? t("{value0} of cost · {value1} tokens", {
+                    value0: String(formatPercent(share)),
+                    value1: String(formatTokens(provider.totalTokens)),
+                  })
+                : t("{value0} of tokens · {value1}", {
+                    value0: String(formatPercent(share)),
+                    value1: String(formatUsd(provider.costUsd)),
+                  })}
             </Text>
           </View>
         );
@@ -804,7 +812,10 @@ function TotalsSection(props: {
           columns={props.columns}
           label={t("Processed tokens")}
           value={formatTokens(merged.totalTokens)}
-          detail={`${formatTokens(periodAverage)} per active ${props.isPast24Hours ? "hour" : "day"}`}
+          detail={t("{value0} per active {value1}", {
+            value0: String(formatTokens(periodAverage)),
+            value1: String(props.isPast24Hours ? "hour" : "day"),
+          })}
         />
         <MetricCell
           columns={props.columns}
@@ -812,7 +823,9 @@ function TotalsSection(props: {
           value={formatUsd(merged.costQuality.cacheSavingsUsd)}
           detail={
             merged.costUsd > 0
-              ? `${(merged.costQuality.cacheSavingsUsd / merged.costUsd).toFixed(1)}x the raw cost`
+              ? t("{value0}x the raw cost", {
+                  value0: String((merged.costQuality.cacheSavingsUsd / merged.costUsd).toFixed(1)),
+                })
               : "vs full input rates"
           }
         />
@@ -820,19 +833,23 @@ function TotalsSection(props: {
           columns={props.columns}
           label={t("Cached input")}
           value={formatTokens(merged.cachedInputTokens)}
-          detail={`${formatPercent(cachedShare)} of observed input`}
+          detail={t("{value0} of observed input", { value0: String(formatPercent(cachedShare)) })}
         />
         <MetricCell
           columns={props.columns}
           label={t("Uncached input")}
           value={formatTokens(merged.uncachedInputTokens)}
-          detail={`${formatTokens(merged.cacheCreationTokens)} cache writes`}
+          detail={t("{value0} cache writes", {
+            value0: String(formatTokens(merged.cacheCreationTokens)),
+          })}
         />
         <MetricCell
           columns={props.columns}
           label={t("Output")}
           value={formatTokens(merged.outputTokens)}
-          detail={`incl. ${formatTokens(merged.reasoningTokens)} reasoning`}
+          detail={t("incl. {value0} reasoning", {
+            value0: String(formatTokens(merged.reasoningTokens)),
+          })}
         />
         <MetricCell
           columns={props.columns}
@@ -988,12 +1005,20 @@ function ModelsSection(props: {
               </Text>
               <Text className="text-sm text-foreground-muted">
                 {metric === "tokens"
-                  ? `${formatPercent(model.tokenShare)} of tokens · ${
-                      isModelCostUnknown(model) ? "no known rates" : formatUsd(model.costUsd)
-                    }`
+                  ? t("{value0} of tokens · {value1}", {
+                      value0: String(formatPercent(model.tokenShare)),
+                      value1: String(
+                        isModelCostUnknown(model) ? "no known rates" : formatUsd(model.costUsd),
+                      ),
+                    })
                   : isModelCostUnknown(model)
-                    ? `no known rates · ${formatTokens(model.totalTokens)} tokens`
-                    : `${formatPercent(model.costShare)} of cost · ${formatTokens(model.totalTokens)} tokens`}
+                    ? t("no known rates · {value0} tokens", {
+                        value0: String(formatTokens(model.totalTokens)),
+                      })
+                    : t("{value0} of cost · {value1} tokens", {
+                        value0: String(formatPercent(model.costShare)),
+                        value1: String(formatTokens(model.totalTokens)),
+                      })}
               </Text>
             </View>
             <Text className="text-base tabular-nums text-foreground">

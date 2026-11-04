@@ -32,7 +32,9 @@ export function PullRequestActivityFilters({
       >
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Activity type, ${kinds.find((kind) => kind.id === value.kind)?.title}`}
+          accessibilityLabel={t("Activity type, {value0}", {
+            value0: String(kinds.find((kind) => kind.id === value.kind)?.title),
+          })}
           className="min-h-11 flex-row items-center gap-2 active:opacity-60"
         >
           <Text className="text-sm font-t3-semibold">
@@ -59,11 +61,16 @@ export function PullRequestActivityFilters({
         >
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Filter activity, ${hiddenCount} hidden`}
+            accessibilityLabel={t("Filter activity, {hiddenCount} hidden", {
+              hiddenCount: String(hiddenCount),
+            })}
             className="min-h-11 flex-row items-center gap-1.5 active:opacity-60"
           >
             {hiddenCount > 0 ? (
-              <Text className="text-xs text-foreground-muted">{hiddenCount} hidden</Text>
+              <Text className="text-xs text-foreground-muted">
+                {hiddenCount}
+                {t(" hidden")}
+              </Text>
             ) : null}
             <SymbolView
               name="line.3.horizontal.decrease"

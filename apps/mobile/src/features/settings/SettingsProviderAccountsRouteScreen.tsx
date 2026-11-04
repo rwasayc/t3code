@@ -55,15 +55,18 @@ export function SettingsProviderAccountsRouteScreen() {
           contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
         >
           {selectedTargets.length === 0 ? (
-            <Text className="text-foreground-muted">Select a connected environment.</Text>
+            <Text className="text-foreground-muted">{t("Select a connected environment.")}</Text>
           ) : (
             selectedTargets.map((environment) => (
               <SettingsSection key={environment.environmentId} title={environment.label}>
                 {!permittedEnvironments.has(environment.environmentId) ? (
                   <View className="gap-1 p-4">
-                    <Text className="text-base text-foreground">Limited permissions</Text>
+                    <Text className="text-base text-foreground">{t("Limited permissions")}</Text>
                     <Text className="text-sm text-foreground-muted">
-                      {`This session can view ${environment.label}'s providers but can't change their settings.`}
+                      {t(
+                        "This session can view {label}'s providers but can't change their settings.",
+                        { label: String(environment.label) },
+                      )}
                     </Text>
                   </View>
                 ) : (
@@ -82,7 +85,7 @@ export function SettingsProviderAccountsRouteScreen() {
                       canManageProvider,
                     ) ? (
                       <Text className="p-4 text-foreground-muted">
-                        Configure a provider with in-app sign-in in web or desktop Settings.
+                        {t("Configure a provider with in-app sign-in in web or desktop Settings.")}
                       </Text>
                     ) : null}
                   </>
@@ -248,7 +251,7 @@ function ProviderAccount({
   }
   function signOut() {
     Dialog.alert(
-      "Sign out?",
+      t("Sign out?"),
       `Running threads sharing this sign-in on ${environment.label} will stop. Thread history is kept.`,
       [
         { text: "Cancel", style: "cancel" },
@@ -317,7 +320,7 @@ function ProviderAccount({
     <ControlPill
       variant="pill"
       label={t("Cancel")}
-      accessibilityLabel={`Cancel ${name} sign-in`}
+      accessibilityLabel={t("Cancel {name} sign-in", { name: String(name) })}
       disabled={disabled}
       onPress={() => {
         void run(() => cancel({ environmentId, input: { instanceId, flowId: state.flowId! } }));
@@ -327,18 +330,21 @@ function ProviderAccount({
     <Menu
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`${name} account options`}
+      accessibilityLabel={t("{name} account options", { name: String(name) })}
       title={name}
       actions={accountActions}
       onPressAction={({ nativeEvent }) => onMenuAction(nativeEvent.event)}
     >
-      <ControlPill icon="ellipsis" accessibilityLabel={`${name} account options`} />
+      <ControlPill
+        icon="ellipsis"
+        accessibilityLabel={t("{name} account options", { name: String(name) })}
+      />
     </Menu>
   ) : canSignIn && !signedIn && methodActions.length > 1 && !signInDisabled ? (
     <Menu
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`Sign in to ${name}`}
+      accessibilityLabel={t("Sign in to {name}", { name: String(name) })}
       title={t("Sign in with")}
       actions={methodActions}
       onPressAction={({ nativeEvent }) => onMenuAction(nativeEvent.event)}
@@ -346,14 +352,18 @@ function ProviderAccount({
       <ControlPill
         variant="primary"
         label={t("Sign in")}
-        accessibilityLabel={`Sign in to ${name}`}
+        accessibilityLabel={t("Sign in to {name}", { name: String(name) })}
       />
     </Menu>
   ) : canSignIn && !signedIn ? (
     <ControlPill
       variant="primary"
       label={usesCredentials ? t("Connect") : t("Sign in")}
-      accessibilityLabel={usesCredentials ? `Connect to ${name}` : `Sign in to ${name}`}
+      accessibilityLabel={
+        usesCredentials
+          ? t("Connect to {name}", { name: String(name) })
+          : t("Sign in to {name}", { name: String(name) })
+      }
       disabled={signInDisabled}
       onPress={() => startSignIn()}
     />
@@ -379,7 +389,9 @@ function ProviderAccount({
         <View className="gap-2 px-4 pb-3">
           {interaction?.type === "deviceCode" ? (
             <Text selectable className="text-foreground">
-              Enter code {interaction.userCode} on the sign-in page.
+              {t("Enter code ")}
+              {interaction.userCode}
+              {t(" on the sign-in page.")}
             </Text>
           ) : null}
           {interaction?.type === "terminal" ? (

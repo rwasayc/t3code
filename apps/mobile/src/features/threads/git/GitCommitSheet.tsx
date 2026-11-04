@@ -107,7 +107,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
         >
           {isDefaultRef ? (
             <Text className="text-sm text-warning-foreground">
-              You’re on the default branch. You can create a new branch when committing.
+              {t("You’re on the default branch. You can create a new branch when committing.")}
             </Text>
           ) : null}
           <View className="gap-2">
@@ -122,7 +122,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
               className="min-h-24 rounded-xl bg-subtle px-4 py-3 text-base"
             />
             <Text className="text-xs text-foreground-muted">
-              Leave empty to generate a message automatically.
+              {t("Leave empty to generate a message automatically.")}
             </Text>
           </View>
           <View>
@@ -130,7 +130,10 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
               <View className="flex-1 gap-1">
                 <Text className="text-base font-t3-bold text-foreground">{t("Changed files")}</Text>
                 <Text className="text-xs text-foreground-muted">
-                  {selectedFiles.length} of {allFiles.length} selected · +
+                  {selectedFiles.length}
+                  {t(" of ")}
+                  {allFiles.length}
+                  {t(" selected · +")}
                   {formatDiffCount(selectedInsertions)} −{formatDiffCount(selectedDeletions)}
                 </Text>
               </View>
@@ -148,7 +151,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
             </View>
             {allFiles.length === 0 ? (
               <Text className="py-4 text-sm text-foreground-muted">
-                No changed files to commit.
+                {t("No changed files to commit.")}
               </Text>
             ) : (
               allFiles.map((file) => {

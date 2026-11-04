@@ -154,7 +154,9 @@ export function ThreadMarkdownImageView(props: {
             {failed ? (
               <Text className="px-3 text-center text-xs text-foreground-muted">
                 {props.unavailableDetail
-                  ? `Image unavailable. ${props.unavailableDetail}`
+                  ? t("Image unavailable. {unavailableDetail}", {
+                      unavailableDetail: String(props.unavailableDetail),
+                    })
                   : t("Image unavailable")}
               </Text>
             ) : (
@@ -250,12 +252,13 @@ function ThreadMarkdownImageRequest(props: {
 }
 
 function ThreadMarkdownImageLoading() {
+  const { t } = useTranslation();
   return (
     <View
       pointerEvents="none"
       style={[StyleSheet.absoluteFill, { alignItems: "center", justifyContent: "center" }]}
     >
-      <Text className="text-xs text-foreground-muted">Loading image…</Text>
+      <Text className="text-xs text-foreground-muted">{t("Loading image…")}</Text>
     </View>
   );
 }

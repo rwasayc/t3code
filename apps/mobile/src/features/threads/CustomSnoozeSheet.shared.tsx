@@ -47,7 +47,7 @@ export function CustomSnoozeSheet(props: {
             {t("Custom snooze")}
           </AppText>
           <AppText className="text-base text-foreground-secondary">
-            Choose when snoozed threads return to your inbox.
+            {t("Choose when snoozed threads return to your inbox.")}
           </AppText>
           <SegmentedControl
             options={
@@ -74,7 +74,7 @@ export function CustomSnoozeSheet(props: {
                   className="min-h-12 flex-row items-center justify-between rounded-xl bg-subtle px-3"
                   onPress={() => setPicker(value)}
                 >
-                  <AppText>{value === "date" ? "Date" : "Time"}</AppText>
+                  <AppText>{value === "date" ? "Date" : t("Time")}</AppText>
                   <AppText>
                     {value === "date"
                       ? date.toLocaleDateString()
@@ -105,7 +105,7 @@ export function CustomSnoozeSheet(props: {
             </View>
           ) : (
             <View className="gap-3">
-              <AppText>Snooze for</AppText>
+              <AppText>{t("Snooze for")}</AppText>
               <TextInput
                 accessibilityLabel={t("Duration")}
                 className="min-h-12 rounded-xl bg-subtle px-3 text-base text-foreground"

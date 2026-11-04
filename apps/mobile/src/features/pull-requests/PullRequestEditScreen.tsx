@@ -139,9 +139,9 @@ export function PullRequestEditScreen({ route }: StaticScreenProps<PullRequestEd
         autoFocus
         accessibilityLabel={
           params.field === "title"
-            ? `${capitalizeTerm(singular)} title`
+            ? t("{value0} title", { value0: String(capitalizeTerm(singular)) })
             : params.field === "body"
-              ? `${capitalizeTerm(singular)} description`
+              ? t("{value0} description", { value0: String(capitalizeTerm(singular)) })
               : t("Comment")
         }
         placeholder={params.field === "title" ? t("Title") : "Write in Markdown…"}

@@ -138,7 +138,7 @@ function OpenVideoPreviewModal(props: {
         {playback.uri === null && !playback.unavailable ? (
           <View className="flex-1 items-center justify-center gap-3 px-6">
             <AppActivityIndicator color="#ffffff" />
-            <AppText className="text-sm text-white/80">Loading video...</AppText>
+            <AppText className="text-sm text-white/80">{t("Loading video...")}</AppText>
           </View>
         ) : (
           <MediaVideoPlayer

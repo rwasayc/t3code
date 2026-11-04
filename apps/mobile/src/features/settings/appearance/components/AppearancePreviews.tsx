@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../../lib/i18n/useTranslation";
 import { Platform, ScrollView, type StyleProp, type TextStyle, View } from "react-native";
 
 import { AppText as Text } from "../../../../components/ui/AppText";
@@ -19,6 +20,7 @@ export function AppearancePreviewSeparator() {
 }
 
 export function TextAppearancePreview(props: { readonly fontSize: number }) {
+  const { t } = useTranslation();
   const sizes = resolveMarkdownFontSizes(props.fontSize);
 
   return (
@@ -27,19 +29,20 @@ export function TextAppearancePreview(props: { readonly fontSize: number }) {
         className="text-foreground"
         style={{ fontSize: sizes.m, lineHeight: sizes.bodyLineHeight }}
       >
-        The quick brown fox jumps over the lazy dog.
+        {t("The quick brown fox jumps over the lazy dog.")}
       </Text>
       <Text
         className="text-foreground-muted"
         style={{ fontSize: sizes.s, lineHeight: Math.round(sizes.s * 1.4) }}
       >
-        Messages, labels, and headings scale with this size.
+        {t("Messages, labels, and headings scale with this size.")}
       </Text>
     </View>
   );
 }
 
 export function TerminalAppearancePreview(props: { readonly fontSize: number }) {
+  const { t } = useTranslation();
   const { themeAppearance: scheme, themeId } = useAppearancePreferences();
   const theme = getMobileTerminalTheme(themeId, scheme);
   const lineHeight = Math.round(props.fontSize * 1.6);
@@ -85,7 +88,7 @@ export function TerminalAppearancePreview(props: { readonly fontSize: number }) 
         <Text style={span(theme.background, { backgroundColor: theme.palette[2] })}>
           {" READY "}
         </Text>
-        <Text style={span(theme.mutedForeground)}> watching for changes</Text>{" "}
+        <Text style={span(theme.mutedForeground)}>{t(" watching for changes")}</Text>{" "}
         <Text style={span(theme.cursorForeground)}>▏</Text>
       </Text>
     </View>

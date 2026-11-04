@@ -152,16 +152,16 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
               />
             </Pressable>
 
-            <Text className="text-lg font-t3-bold text-foreground">Add Comment</Text>
+            <Text className="text-lg font-t3-bold text-foreground">{t("Add Comment")}</Text>
 
             <View className="h-12 w-12" />
           </View>
 
           {!target ? (
             <View className="rounded-[22px] border border-border bg-card px-4 py-5">
-              <Text className="text-base font-t3-bold text-foreground">No selection</Text>
+              <Text className="text-base font-t3-bold text-foreground">{t("No selection")}</Text>
               <Text className="mt-1 text-sm leading-normal text-foreground-muted">
-                Select a diff line or range first.
+                {t("Select a diff line or range first.")}
               </Text>
             </View>
           ) : (

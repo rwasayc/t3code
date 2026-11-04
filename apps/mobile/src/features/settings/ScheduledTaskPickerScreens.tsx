@@ -17,7 +17,9 @@ function MissingTaskDraft() {
   const { t } = useTranslation();
   return (
     <SettingsScreen title={t("Scheduled task")}>
-      <Text className="p-5 text-base text-foreground-muted">Open a scheduled task form first.</Text>
+      <Text className="p-5 text-base text-foreground-muted">
+        {t("Open a scheduled task form first.")}
+      </Text>
     </SettingsScreen>
   );
 }

@@ -313,7 +313,7 @@ function FileContent(props: {
     <View className="flex-1 bg-sheet" style={{ paddingTop: reservedHeaderInset }}>
       {props.truncated ? (
         <FilePreviewNotice title={t("Partial file")}>
-          Preview limited to the first 1 MB of a truncated file.
+          {t("Preview limited to the first 1 MB of a truncated file.")}
         </FilePreviewNotice>
       ) : null}
       {props.activeMode === "preview" && delimiter ? (
@@ -867,7 +867,7 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
       isBrowserFile && typeof assetPreviewUri === "string"
         ? ({
             id: "open-browser",
-            title: Platform.OS === "ios" ? "Open in Safari" : "Open in browser",
+            title: Platform.OS === "ios" ? "Open in Safari" : t("Open in browser"),
             icon: "safari",
             inline: false,
             onPress: () => tryOpenExternalUrl(assetPreviewUri, "file-preview"),

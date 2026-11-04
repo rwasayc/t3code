@@ -202,8 +202,8 @@ function useThreadGitControlModel(props: ThreadGitMenuProps) {
     ) {
       if (props.hasThread === false) {
         Dialog.alert(
-          "Choose a feature branch",
-          "Switch branches before publishing changes from this draft.",
+          t("Choose a feature branch"),
+          t("Switch branches before publishing changes from this draft."),
         );
         return;
       }
@@ -380,7 +380,7 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
           {
             description:
               props.hasThread === false
-                ? "Available after the first message"
+                ? t("Available after the first message")
                 : "Turn diffs and worktree changes",
             disabled: !model.isRepo || props.hasThread === false,
             icon: { name: "text.bubble", type: "sfSymbol" },
@@ -402,7 +402,7 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
           {
             description:
               props.hasThread === false
-                ? "Available after the first message"
+                ? t("Available after the first message")
                 : "Commit, files, branches",
             disabled: props.hasThread === false,
             icon: { name: "ellipsis", type: "sfSymbol" },

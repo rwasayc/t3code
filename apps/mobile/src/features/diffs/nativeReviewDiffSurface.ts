@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import {
   createElement,
   useCallback,
@@ -275,6 +276,7 @@ function getExpoViewConfig(moduleName: string) {
 }
 
 function NativeReviewDiffView(props: NativeReviewDiffViewProps) {
+  const { t } = useTranslation();
   const [failedRowsJson, setFailedRowsJson] = useState<string | null>(null);
   const onRowsFailure = useCallback(() => setFailedRowsJson(props.rowsJson), [props.rowsJson]);
   if (failedRowsJson !== null && failedRowsJson !== props.rowsJson) setFailedRowsJson(null);
@@ -293,8 +295,8 @@ function NativeReviewDiffView(props: NativeReviewDiffViewProps) {
         ],
       },
       createElement(EmptyState, {
-        title: "Could not display diff",
-        detail: "Try loading the diff view again.",
+        title: t("Could not display diff"),
+        detail: t("Try loading the diff view again."),
         variant: "plain",
         actionLabel: "Retry diff",
         onAction: () => {

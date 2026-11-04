@@ -26,7 +26,8 @@ export function ProjectCloneBanner(props: {
         <AppActivityIndicator size="small" />
         <View className="min-w-0 flex-1">
           <Text className="font-t3-medium text-sm" numberOfLines={1}>
-            Cloning {name}
+            {t("Cloning ")}
+            {name}
           </Text>
           <Text className="text-xs text-foreground-muted" numberOfLines={1}>
             {projectCloneProgressSummary(clone)}
@@ -51,7 +52,9 @@ export function ProjectCloneBanner(props: {
         )}
         numberOfLines={1}
       >
-        {cancelled ? `Cancelled cloning ${name}` : `Failed to clone ${name}`}
+        {cancelled
+          ? t("Cancelled cloning {name}", { name: String(name) })
+          : t("Failed to clone {name}", { name: String(name) })}
       </Text>
       {clone.error ? (
         <Text className="mt-0.5 text-xs text-danger-foreground" numberOfLines={3}>

@@ -61,8 +61,9 @@ export function SettingsFollowUpRouteScreen() {
         ))}
       </SettingsSection>
       <Text className="px-2 text-sm text-foreground-muted">
-        Long-press the send button to use the other option for a single message. With a hardware
-        keyboard, hold Command while sending.
+        {t(
+          "Long-press the send button to use the other option for a single message. With a hardware keyboard, hold Command while sending.",
+        )}
       </Text>
     </ScrollView>
   );

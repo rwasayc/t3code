@@ -91,7 +91,7 @@ export function BrowserTabMenu({
     },
     {
       id: "zoom",
-      title: `Zoom (${Math.round(zoomFactor * 100)}%)`,
+      title: t("Zoom ({value0}%)", { value0: String(Math.round(zoomFactor * 100)) }),
       image: "plus.magnifyingglass",
       subactions: [
         { id: "zoom:in", title: t("Zoom in"), image: "plus.magnifyingglass" },
@@ -123,13 +123,13 @@ export function BrowserTabMenu({
 
   const run = async (change: Omit<PreviewAdjustInput, "threadId" | "tabId">) => {
     const result = await adjust({ environmentId, input: { ...target, ...change } });
-    if (result._tag === "Failure") Dialog.alert("Could not change this browser tab");
+    if (result._tag === "Failure") Dialog.alert(t("Could not change this browser tab"));
   };
 
   const onAction = (id: string) => {
     if (id === "close") {
       void close({ environmentId, input: target }).then((result) => {
-        if (result._tag === "Failure") Dialog.alert("Could not close this browser tab");
+        if (result._tag === "Failure") Dialog.alert(t("Could not close this browser tab"));
       });
       return;
     }
@@ -150,7 +150,7 @@ export function BrowserTabMenu({
       if (!option) return;
       void resize({ environmentId, input: { ...target, viewport: option.setting } }).then(
         (result) => {
-          if (result._tag === "Failure") Dialog.alert("Could not change the viewport");
+          if (result._tag === "Failure") Dialog.alert(t("Could not change the viewport"));
         },
       );
     }

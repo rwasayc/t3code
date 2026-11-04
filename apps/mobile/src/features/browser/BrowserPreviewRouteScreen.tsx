@@ -103,7 +103,7 @@ function BrowserPreviewScreen({
   }, [focused, loaded, tabs.length, onClose]);
   const onPictureInPicture = (state: PreviewPictureInPictureState, detail?: string) => {
     setPictureInPicture({ supported: state.supported, active: state.active });
-    if (detail) Dialog.alert("Picture in picture is unavailable", detail);
+    if (detail) Dialog.alert(t("Picture in picture is unavailable"), detail);
   };
   const selectTab = (next: string) => {
     setPictureInPicture(NO_PICTURE_IN_PICTURE);
@@ -226,7 +226,7 @@ function BrowserAddressBar({
     try {
       onCommand({ type: "navigate", url: normalizePreviewUrl(value) });
     } catch {
-      Dialog.alert("Could not open this address", "Enter an http or https URL.");
+      Dialog.alert(t("Could not open this address"), t("Enter an http or https URL."));
     }
   };
   return (

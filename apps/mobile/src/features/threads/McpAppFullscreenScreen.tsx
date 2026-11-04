@@ -136,7 +136,9 @@ export function McpAppFullscreenScreen({ route }: McpAppFullscreenScreenProps) {
       >
         {app === undefined ? (
           detail.data === undefined ? null : (
-            <Text className="m-6 text-sm text-foreground-muted">This app cannot be shown.</Text>
+            <Text className="m-6 text-sm text-foreground-muted">
+              {t("This app cannot be shown.")}
+            </Text>
           )
         ) : size.width > 0 ? (
           <ThreadMcpApp

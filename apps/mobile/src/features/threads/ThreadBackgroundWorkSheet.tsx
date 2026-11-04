@@ -58,7 +58,7 @@ export function ThreadBackgroundWorkSheet({ route }: StaticScreenProps<Backgroun
     >
       {presentation === null ? (
         <Text className="pt-6 text-center text-sm text-foreground-muted">
-          Nothing running in the background.
+          {t("Nothing running in the background.")}
         </Text>
       ) : (
         presentation.items.map((item) => (
@@ -109,6 +109,7 @@ function BackgroundWorkRow(props: {
   readonly item: PendingBackgroundWorkItem;
   readonly onOpen: (threadId: ThreadId) => void;
 }) {
+  const { t } = useTranslation();
   const { item } = props;
   const childThreadId = item.childThreadId;
   const row = (
@@ -135,7 +136,7 @@ function BackgroundWorkRow(props: {
   ) : (
     <Pressable
       accessibilityRole="link"
-      accessibilityLabel={`Open subagent ${item.label}`}
+      accessibilityLabel={t("Open subagent {label}", { label: String(item.label) })}
       onPress={() => props.onOpen(childThreadId)}
       className="active:opacity-70"
     >

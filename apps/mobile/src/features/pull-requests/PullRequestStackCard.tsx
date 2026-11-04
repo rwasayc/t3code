@@ -44,7 +44,11 @@ export function PullRequestStackCard(props: {
         title={t("Stack")}
         icon={PullRequestGlyph.stack}
         value={`${position} of ${stack.layers.length}`}
-        accessibilityLabel={`Stack, ${position} of ${stack.layers.length}${props.state.isFresh ? "" : ", showing saved stack"}`}
+        accessibilityLabel={t("Stack, {position} of {length}{value2}", {
+          position: String(position),
+          length: String(stack.layers.length),
+          value2: String(props.state.isFresh ? "" : ", showing saved stack"),
+        })}
         expanded={expanded}
         onPress={() => setExpanded(!expanded)}
         last={!expanded}
@@ -64,7 +68,11 @@ export function PullRequestStackCard(props: {
                   icon={status.icon}
                   tint={status.tint}
                   value={selected ? "Current" : status.label}
-                  detail={`#${layer.number} · ${index + 1} of ${stack.layers.length}`}
+                  detail={t("#{number} · {value1} of {length}", {
+                    number: String(layer.number),
+                    value1: String(index + 1),
+                    length: String(stack.layers.length),
+                  })}
                   onPress={
                     selected
                       ? undefined
@@ -81,7 +89,9 @@ export function PullRequestStackCard(props: {
             );
           })}
           <Text className="px-4 py-3 text-xs text-foreground-muted">
-            Base: {stack.base}. Open a layer to review it or merge the stack through that layer.
+            {t("Base: ")}
+            {stack.base}
+            {t(". Open a layer to review it or merge the stack through that layer.")}
           </Text>
         </View>
       ) : null}

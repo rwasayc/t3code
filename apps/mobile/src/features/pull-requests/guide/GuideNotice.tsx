@@ -59,7 +59,7 @@ export function GuideNotice({ state }: { readonly state: ReturnType<typeof useRe
         )}
         {notice.kind === "writing" && state.data?.run?._tag === "Running" ? (
           <Text className="shrink text-xs text-foreground-muted">
-            Started{" "}
+            {t("Started")}{" "}
             {new Date(state.data.run.startedAt).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

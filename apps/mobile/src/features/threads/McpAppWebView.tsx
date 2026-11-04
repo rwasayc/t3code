@@ -489,7 +489,9 @@ export function ThreadMcpApp(props: {
         className="items-center justify-center rounded-lg border border-border"
       >
         <Text className="text-sm text-foreground-muted">
-          The {app.server} app is open full screen
+          {t("The ")}
+          {app.server}
+          {t(" app is open full screen")}
         </Text>
       </View>
     );
@@ -501,7 +503,11 @@ export function ThreadMcpApp(props: {
         style={{ height, marginBottom: ROW_BOTTOM_MARGIN }}
         className="items-center justify-center gap-2 rounded-lg border border-border"
       >
-        <Text className="text-sm text-foreground-muted">The {app.server} app was closed</Text>
+        <Text className="text-sm text-foreground-muted">
+          {t("The ")}
+          {app.server}
+          {t(" app was closed")}
+        </Text>
         <View className="items-center">
           <Button
             label={t("Show app")}
@@ -521,7 +527,9 @@ export function ThreadMcpApp(props: {
       {navigatedAway ? (
         <View className="flex-1 items-center justify-center">
           <Text className="text-sm text-foreground-muted">
-            The {app.server} app left its page and was stopped
+            {t("The ")}
+            {app.server}
+            {t(" app left its page and was stopped")}
           </Text>
         </View>
       ) : uri !== null && !crashed ? (
@@ -531,7 +539,7 @@ export function ThreadMcpApp(props: {
           onContentProcessDidTerminate={restart}
           onRenderProcessGone={restart}
           source={source!}
-          accessibilityLabel={`${app.server} app`}
+          accessibilityLabel={t("{server} app", { server: String(app.server) })}
           style={{ flex: 1, backgroundColor: "transparent" }}
           nestedScrollEnabled
           originWhitelist={["*"]}
@@ -566,7 +574,11 @@ export function ThreadMcpApp(props: {
         />
       ) : asset._tag === "Failure" || crashed ? (
         <View className="flex-1 items-center justify-center">
-          <Text className="text-sm text-foreground-muted">Unable to load the {app.server} app</Text>
+          <Text className="text-sm text-foreground-muted">
+            {t("Unable to load the ")}
+            {app.server}
+            {t(" app")}
+          </Text>
         </View>
       ) : null}
       {uri !== null && !loaded && !crashed && !navigatedAway ? (

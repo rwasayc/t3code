@@ -117,11 +117,11 @@ export function PullRequestInlineCommentScreen({ route }: StaticScreenProps<Inli
         style={{ textAlignVertical: "top" }}
       />
       <Text className="text-xs text-foreground-muted">
-        Saved comments are private until you submit your review.
+        {t("Saved comments are private until you submit your review.")}
       </Text>
       {stale ? (
         <Text className="text-sm text-danger-foreground">
-          The branch changed. Return to the current diff and select the line again.
+          {t("The branch changed. Return to the current diff and select the line again.")}
         </Text>
       ) : null}
       {store.error || detail.error ? (
@@ -131,7 +131,7 @@ export function PullRequestInlineCommentScreen({ route }: StaticScreenProps<Inli
         <Button
           label={t("Delete draft")}
           onPress={() =>
-            Dialog.alert("Delete this draft?", "Your other review comments will be kept.", [
+            Dialog.alert(t("Delete this draft?"), t("Your other review comments will be kept."), [
               { text: "Cancel", style: "cancel" },
               {
                 text: "Delete",

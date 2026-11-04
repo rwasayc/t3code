@@ -1062,7 +1062,8 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
   const exitLine =
     failedExitCode === null ? null : (
       <Text className="mt-1.5 font-mono text-2xs leading-normal text-danger-foreground">
-        exit {failedExitCode}
+        {t("exit ")}
+        {failedExitCode}
       </Text>
     );
   const toolPresentation = resolveWorkEntryToolPresentation(row.workEntry);
@@ -1093,7 +1094,13 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
         accessibilityRole={
           notifiedSubagentThreadId !== undefined ? "link" : canExpand ? "button" : undefined
         }
-        accessibilityLabel={failed ? `${accessiblePreview}, tool call failed` : accessiblePreview}
+        accessibilityLabel={
+          failed
+            ? t("{accessiblePreview}, tool call failed", {
+                accessiblePreview: String(accessiblePreview),
+              })
+            : accessiblePreview
+        }
         accessibilityHint={
           notifiedSubagentThreadId !== undefined
             ? "Opens this agent's thread. Long press to copy."

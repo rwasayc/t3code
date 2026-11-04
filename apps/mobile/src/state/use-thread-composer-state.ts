@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { useComposerAttachmentActions } from "./use-composer-attachment-actions";
 import * as Dialog from "../components/ui/Dialog";
 import { AuthOrchestrationOperateScope } from "@t3tools/contracts";
@@ -186,6 +187,7 @@ export function updateThreadDraftModelSelection(
 }
 
 export function useThreadComposerState() {
+  const { t } = useTranslation();
   const {
     selectedThread: selectedThreadShell,
     selectedThreadCreation,
@@ -414,7 +416,7 @@ export function useThreadComposerState() {
       edit.existingAttachments.length === 0 &&
       draft.attachments.length === 0
     ) {
-      Dialog.alert("Add a message", "A queued message cannot be left empty.");
+      Dialog.alert(t("Add a message"), t("A queued message cannot be left empty."));
       return;
     }
     if (
@@ -422,7 +424,7 @@ export function useThreadComposerState() {
       PROVIDER_SEND_TURN_MAX_ATTACHMENTS
     ) {
       Dialog.alert(
-        "Too many attachments",
+        t("Too many attachments"),
         `Remove attachments until there are at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS}.`,
       );
       return;
@@ -445,7 +447,7 @@ export function useThreadComposerState() {
       finishSave(false);
       const error = squashAtomCommandFailure(prepared);
       Dialog.alert(
-        "Could not save the queued message",
+        t("Could not save the queued message"),
         error instanceof Error ? error.message : "Your edit is still in the composer.",
       );
       return;
@@ -481,8 +483,8 @@ export function useThreadComposerState() {
       // The run left the queue during the save; its exit already told the composer what happened.
       if (!finishSave(false)) return;
       Dialog.alert(
-        "Could not save the queued message",
-        "It may have already started. Your edit is still in the composer.",
+        t("Could not save the queued message"),
+        t("It may have already started. Your edit is still in the composer."),
       );
       return;
     }
@@ -545,7 +547,7 @@ export function useThreadComposerState() {
     // Recovery preserves over-cap attachments; require trimming or outbox delivery would reject indefinitely.
     if (attachments.length > PROVIDER_SEND_TURN_MAX_ATTACHMENTS) {
       Dialog.alert(
-        "Too many attachments",
+        t("Too many attachments"),
         `Remove attachments until there are at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS}.`,
       );
       return null;
@@ -553,7 +555,7 @@ export function useThreadComposerState() {
 
     const contextBlockReason = composerContextSendBlockReason(draft.context);
     if (contextBlockReason) {
-      Dialog.alert("Too much context", contextBlockReason);
+      Dialog.alert(t("Too much context"), contextBlockReason);
       return null;
     }
 
@@ -582,7 +584,10 @@ export function useThreadComposerState() {
       if (!readEnvironmentScope(selectedThreadShell.environmentId, AuthOrchestrationOperateScope))
         return null;
       if (thread.activeProviderThreadId === null) {
-        Dialog.alert("Start a Codex thread first", "Send a message before you submit feedback.");
+        Dialog.alert(
+          t("Start a Codex thread first"),
+          t("Send a message before you submit feedback."),
+        );
         return null;
       }
       const metadata = makeQueuedMessageMetadata();

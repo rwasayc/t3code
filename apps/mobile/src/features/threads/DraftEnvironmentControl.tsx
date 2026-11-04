@@ -31,7 +31,8 @@ export function DraftEnvironmentControl(props: {
         tintColorClassName="accent-icon-muted"
       />
       <Text className="shrink text-sm text-foreground-muted" numberOfLines={1}>
-        on {props.label}
+        {t("on ")}
+        {props.label}
       </Text>
       <SymbolView name="chevron.right" size={11} tintColorClassName="accent-icon-muted" />
       {disconnected ? <ConnectionStatusDot state="error" pulse={false} size={6} /> : null}

@@ -134,7 +134,7 @@ export function PullRequestDescription(props: {
             ) : null}
           </View>
         ) : (
-          <Text className="text-sm text-foreground-muted">No description provided.</Text>
+          <Text className="text-sm text-foreground-muted">{t("No description provided.")}</Text>
         )}
         {props.footer}
       </View>

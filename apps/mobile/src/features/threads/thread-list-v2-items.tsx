@@ -264,6 +264,7 @@ const SHELF_LABEL = { working: "Working", snoozed: "Snoozed", settled: "Settled"
 function ThreadListV2ShelfHeader(
   props: ThreadListV2ShelfHeaderProps & { readonly kind: keyof typeof SHELF_LABEL },
 ) {
+  const { t } = useTranslation();
   const label = SHELF_LABEL[props.kind];
   return (
     <ThreadListV2Section
@@ -274,7 +275,7 @@ function ThreadListV2ShelfHeader(
         expanded: props.expanded,
         disabled: props.disabled,
         onToggle: props.onToggle,
-        accessibilityLabel: `${props.count} ${props.kind} ${props.count === 1 ? "thread" : "threads"}`,
+        accessibilityLabel: `${props.count} ${props.kind} ${props.count === 1 ? t("thread") : t("threads")}`,
         accessibilityHint: `${props.expanded ? "Collapses" : "Expands"} the ${props.kind} threads.`,
       }}
     />
@@ -306,6 +307,7 @@ export const ThreadListV2ShowMoreRow = memo(function ThreadListV2ShowMoreRow(pro
   readonly state?: "loading" | "failed";
   readonly onPress: () => void;
 }) {
+  const { t } = useTranslation();
   const label =
     props.state === "loading"
       ? "Loading"
@@ -317,7 +319,9 @@ export const ThreadListV2ShowMoreRow = memo(function ThreadListV2ShowMoreRow(pro
       accessibilityRole="button"
       accessibilityLabel={
         props.state === undefined
-          ? `Show ${Math.min(props.hiddenCount, THREAD_LIST_V2_SETTLED_PAGE_COUNT)} more settled threads`
+          ? t("Show {value0} more settled threads", {
+              value0: String(Math.min(props.hiddenCount, THREAD_LIST_V2_SETTLED_PAGE_COUNT)),
+            })
           : label
       }
       disabled={props.state === "loading"}
@@ -502,7 +506,7 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
                 : rowAppearance.tertiaryForegroundClassName,
             )}
           >
-            Sends on reconnect
+            {t("Sends on reconnect")}
           </Text>
         </View>
       ) : null}
@@ -998,7 +1002,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
           thread.title,
         );
         void copyThreadReference(target).then((didCopy) => {
-          if (!didCopy) Dialog.alert(target.failureTitle, "Try copying this thread again.");
+          if (!didCopy) Dialog.alert(target.failureTitle, t("Try copying this thread again."));
         });
       }
       if (nativeEvent.event === "copy-thread-id") {
@@ -1019,12 +1023,13 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
         handleSnooze(snoozeSelection.preset.snoozedUntil);
       } else if (snoozeSelection._tag === "expired") {
         Dialog.alert(
-          "Could not snooze thread",
-          "That snooze time has passed. Choose another time.",
+          t("Could not snooze thread"),
+          t("That snooze time has passed. Choose another time."),
         );
       }
     },
     [
+      t,
       onNewThreadOnBranch,
       thread,
       handleArchive,
@@ -1048,7 +1053,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
   const primaryAction = useMemo(() => {
     if (swipeActions.primary === "archive") {
       return {
-        accessibilityLabel: `Archive ${thread.title}`,
+        accessibilityLabel: t("Archive {title}", { title: String(thread.title) }),
         icon: "archivebox" as const,
         label: t("Archive"),
         onPress: handleArchive,
@@ -1056,7 +1061,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
     }
     if (swipeActions.primary === "unsnooze") {
       return {
-        accessibilityLabel: `Wake ${thread.title} now`,
+        accessibilityLabel: t("Wake {title} now", { title: String(thread.title) }),
         icon: "clock" as const,
         label: t("Wake"),
         onPress: handleUnsnooze,
@@ -1064,13 +1069,13 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
     }
     return swipeActions.primary === "unsettle"
       ? {
-          accessibilityLabel: `Un-settle ${thread.title}`,
+          accessibilityLabel: t("Un-settle {title}", { title: String(thread.title) }),
           icon: "arrow.uturn.backward" as const,
           label: t("Un-settle"),
           onPress: handleUnsettle,
         }
       : {
-          accessibilityLabel: `Settle ${thread.title}`,
+          accessibilityLabel: t("Settle {title}", { title: String(thread.title) }),
           icon: "checkmark" as const,
           label: t("Settle"),
           onPress: handleSettle,
@@ -1088,7 +1093,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
     () =>
       swipeActions.secondary === "snooze"
         ? {
-            accessibilityLabel: `Choose when to snooze ${thread.title}`,
+            accessibilityLabel: t("Choose when to snooze {title}", { title: String(thread.title) }),
             icon: "clock" as const,
             label: t("Snooze"),
             menu: {
@@ -1182,7 +1187,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
                     : "text-warning-foreground",
                 )}
               >
-                Woke
+                {t("Woke")}
               </Text>
             </Pressable>
           ) : statusLabel ? (

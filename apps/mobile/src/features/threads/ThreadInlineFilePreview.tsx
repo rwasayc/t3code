@@ -34,7 +34,7 @@ function FileCardHeader(props: PreviewProps) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Open ${props.source.name}`}
+      accessibilityLabel={t("Open {name}", { name: String(props.source.name) })}
       onPress={props.onOpen}
       onLongPress={props.onLongPress}
       className="h-[72px] flex-row items-center gap-3 p-3 active:bg-subtle"

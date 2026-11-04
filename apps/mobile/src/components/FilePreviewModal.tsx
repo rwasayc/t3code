@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import * as Dialog from "./ui/Dialog";
 import { useContext, useEffect, useEffectEvent, useState } from "react";
 
@@ -72,6 +73,7 @@ function ResolvedFilePreview(props: {
   readonly onRequestClose: () => void;
   readonly onOpenError?: (error: unknown) => void;
 }) {
+  const { t } = useTranslation();
   // Freeze the group at opening; streaming messages and URL refreshes must not reopen the viewer.
   const [items] = useState(() => filePreviewGallery(props.source, []));
   const selectedKey = filePreviewKey(props.source);
@@ -82,7 +84,7 @@ function ResolvedFilePreview(props: {
   );
   const onResolutionError = useEffectEvent((error: PreviewResolutionError) => {
     if (props.onOpenError) props.onOpenError(error.cause);
-    else Dialog.alert("Could not open preview", error.fallbackMessage);
+    else Dialog.alert(t("Could not open preview"), error.fallbackMessage);
     props.onRequestClose();
   });
   // Resolves once per presentation and holds local file leases until it closes.
@@ -126,7 +128,7 @@ function ResolvedFilePreview(props: {
   if (!gallery || !selected) return null;
   const onOpenError = (error: unknown) => {
     if (props.onOpenError) return props.onOpenError(error);
-    Dialog.alert("Could not open preview", nativeViewerErrorMessage(error), [
+    Dialog.alert(t("Could not open preview"), nativeViewerErrorMessage(error), [
       { text: "Cancel", style: "cancel" },
       ...(selected.kind === "document"
         ? [
@@ -143,7 +145,9 @@ function ResolvedFilePreview(props: {
                 const sharing = /^(file|content):/.test(selected.uri)
                   ? shareLocalAttachment({ ...input, uri: selected.uri })
                   : downloadAndShareAttachment({ ...input, url: selected.uri });
-                void sharing.catch(() => Dialog.alert("Could not share file", "Please try again."));
+                void sharing.catch(() =>
+                  Dialog.alert(t("Could not share file"), t("Please try again.")),
+                );
               },
             },
           ]

@@ -46,7 +46,7 @@ export function NativeChildWorkSheet(props: {
         }}
       >
         <Text className="font-sans text-xs text-foreground-secondary">
-          Read only. These subagents cannot take messages.
+          {t("Read only. These subagents cannot take messages.")}
         </Text>
         {query.error !== null ? (
           <Text selectable className="font-sans text-sm text-danger-foreground">
@@ -56,7 +56,7 @@ export function NativeChildWorkSheet(props: {
           <Text className="font-sans text-sm text-foreground-secondary">{t("Loading…")}</Text>
         ) : children.length === 0 ? (
           <Text className="font-sans text-sm text-foreground-secondary">
-            The provider has no record of which subagents this call started.
+            {t("The provider has no record of which subagents this call started.")}
           </Text>
         ) : (
           children.map((child) => <NativeChild key={child.conversationId} child={child} />)
@@ -75,6 +75,7 @@ export function NativeChildWorkSheet(props: {
 }
 
 function NativeChild(props: { readonly child: OrchestrationV2NativeChildWork }) {
+  const { t } = useTranslation();
   const { child } = props;
   return (
     <View className="gap-2">
@@ -84,11 +85,13 @@ function NativeChild(props: { readonly child: OrchestrationV2NativeChildWork }) 
       </Text>
       {child.truncated ? (
         <Text className="font-sans text-xs text-foreground-secondary">
-          Earlier steps are not shown.
+          {t("Earlier steps are not shown.")}
         </Text>
       ) : null}
       {child.steps === null ? (
-        <Text className="font-sans text-xs text-foreground-secondary">No transcript yet.</Text>
+        <Text className="font-sans text-xs text-foreground-secondary">
+          {t("No transcript yet.")}
+        </Text>
       ) : (
         <View className="gap-2 border-l border-border ps-3">
           {child.steps.map((step) => (

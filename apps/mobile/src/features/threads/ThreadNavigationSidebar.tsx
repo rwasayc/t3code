@@ -349,7 +349,7 @@ function ThreadNavigationSidebarPane(
         {
           id: "environment:all",
           title: t("All environments"),
-          subtitle: "Show threads from every environment",
+          subtitle: t("Show threads from every environment"),
           state: options.selectedEnvironmentId === null ? "on" : "off",
         },
         ...environments.map((environment) => ({
@@ -372,7 +372,7 @@ function ThreadNavigationSidebarPane(
               {
                 id: "project:all",
                 title: t("All projects"),
-                subtitle: "Show threads from every project",
+                subtitle: t("Show threads from every project"),
                 state: selectedProjectKey === null ? "on" : "off",
               },
               ...projectFilterOptions.map((project) => ({
@@ -663,14 +663,17 @@ function ThreadNavigationSidebarPane(
   const filterIcon = filterCustomized
     ? "line.3.horizontal.decrease.circle.fill"
     : "line.3.horizontal.decrease.circle";
-  const filterMenu = buildHomeListFilterMenu({
-    environments,
-    projects: projectFilterOptions,
-    selectedEnvironmentId: options.selectedEnvironmentId,
-    selectedProjectKey,
-    onEnvironmentChange: setSelectedEnvironmentId,
-    onProjectChange: setSelectedProjectKey,
-  });
+  const filterMenu = buildHomeListFilterMenu(
+    {
+      environments,
+      projects: projectFilterOptions,
+      selectedEnvironmentId: options.selectedEnvironmentId,
+      selectedProjectKey,
+      onEnvironmentChange: setSelectedEnvironmentId,
+      onProjectChange: setSelectedProjectKey,
+    },
+    t,
+  );
   const nativeHeaderItems = createSidebarHeaderItems({
     filterIcon,
     filterMenu,
@@ -693,7 +696,7 @@ function ThreadNavigationSidebarPane(
               ? "Searching thread messages…"
               : t("No matching threads")
             : selectedProjectScope !== null
-              ? `No threads in ${selectedProjectScope.title}`
+              ? t("No threads in {title}", { title: String(selectedProjectScope.title) })
               : t("No threads yet")}
     </Text>
   );

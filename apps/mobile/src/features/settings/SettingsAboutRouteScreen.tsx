@@ -69,7 +69,7 @@ function AppSettingsSection() {
     await settlePromise(() =>
       runAppUpdateCheck({
         applyMode: "immediate",
-        onFailure: (message) => Dialog.alert("Update failed", message),
+        onFailure: (message) => Dialog.alert(t("Update failed"), message),
         onStateChange: (state) =>
           setCheckState({
             state,
@@ -137,7 +137,7 @@ function AppSettingsSection() {
       <SettingsRow icon="doc.text" label={t("Legal")} fullScreenTarget="SettingsLegal" />
       {updateCheckAvailable ? (
         <Pressable
-          accessibilityLabel={`Version ${versionLabel}`}
+          accessibilityLabel={t("Version {versionLabel}", { versionLabel: String(versionLabel) })}
           accessibilityRole="text"
           disabled={busy}
           onPress={handleVersionPress}

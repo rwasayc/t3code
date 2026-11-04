@@ -86,7 +86,9 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
           accessibilityRole="button"
           accessibilityLabel={
             backgroundSetup
-              ? `Background setup is still running: ${scriptName}. Show setup progress.`
+              ? t("Background setup is still running: {scriptName}. Show setup progress.", {
+                  scriptName: String(scriptName),
+                })
               : "Worktree setup details"
           }
           accessibilityState={{ expanded: detailsOpen }}
@@ -150,11 +152,17 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
 }
 
 export function WorktreeWorkingHeader({ startedAt }: { startedAt: string }) {
+  const { t } = useTranslation();
   const now = useVisibleSecondClock(true);
   return (
     <View className="py-1">
       <View className="min-h-11 flex-row items-center border-b border-border px-1">
-        <HeaderLabel label={`Working for ${elapsed(startedAt, null, now) ?? "0s"}`} active />
+        <HeaderLabel
+          label={t("Working for {value0}", {
+            value0: String(elapsed(startedAt, null, now) ?? "0s"),
+          })}
+          active
+        />
       </View>
     </View>
   );

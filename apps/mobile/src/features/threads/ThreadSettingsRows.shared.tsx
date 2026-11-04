@@ -83,10 +83,10 @@ export function ModelRowContent(
               </View>
             ) : null}
             {props.option.isHidden ? (
-              <Text className="text-xs text-foreground-muted">Hidden</Text>
+              <Text className="text-xs text-foreground-muted">{t("Hidden")}</Text>
             ) : null}
             {props.option.isUnavailable ? (
-              <Text className="text-xs text-foreground">Unavailable</Text>
+              <Text className="text-xs text-foreground">{t("Unavailable")}</Text>
             ) : null}
           </View>
           {props.option.subtitle ? (
@@ -102,7 +102,11 @@ export function ModelRowContent(
       </Pressable>
       {props.onToggleHidden ? (
         <Pressable
-          accessibilityLabel={`${props.option.isHidden ? t("Show") : t("Hide")} model: ${props.option.providerLabel}, ${props.option.label}`}
+          accessibilityLabel={t("{value0} model: {providerLabel}, {label}", {
+            value0: String(props.option.isHidden ? t("Show") : t("Hide")),
+            providerLabel: String(props.option.providerLabel),
+            label: String(props.option.label),
+          })}
           accessibilityRole="button"
           accessibilityState={{ disabled: props.hiddenUpdatePending === true }}
           className="min-h-11 min-w-11 items-center justify-center"
@@ -118,9 +122,11 @@ export function ModelRowContent(
         </Pressable>
       ) : null}
       <Pressable
-        accessibilityLabel={`${props.isFavorite ? "Remove from" : "Add to"} favorites: ${
-          props.option.providerLabel
-        }, ${props.option.label}`}
+        accessibilityLabel={t("{value0} favorites: {providerLabel}, {label}", {
+          value0: String(props.isFavorite ? "Remove from" : "Add to"),
+          providerLabel: String(props.option.providerLabel),
+          label: String(props.option.label),
+        })}
         accessibilityRole="button"
         accessibilityState={{ disabled: !props.favoritesLoaded, selected: props.isFavorite }}
         className="min-h-11 min-w-11 items-center justify-center"

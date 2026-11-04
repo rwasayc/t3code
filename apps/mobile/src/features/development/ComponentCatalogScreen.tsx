@@ -54,7 +54,7 @@ export function ComponentCatalogScreen() {
     Dialog.confirm({
       title: t("Discard changes?"),
       message: "This example only changes local catalog state.",
-      confirmText: "Discard",
+      confirmText: t("Discard"),
       destructive: true,
       onConfirm: () => setText(""),
     });
@@ -247,7 +247,7 @@ export function ComponentCatalogScreen() {
                   Dialog.prompt({
                     title: "Rename example",
                     initialValue: text,
-                    confirmText: "Rename",
+                    confirmText: t("Rename"),
                     onConfirm: setText,
                   })
                 }

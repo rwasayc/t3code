@@ -355,7 +355,11 @@ export function CommandPalette(props: {
         kind: "action",
         title: t("Triage an issue"),
         // Mobile has no triage hero, so name the machine before it starts.
-        detail: `On ${savedConnectionsById[triageEnvironmentId]?.environmentLabel ?? "this machine"}`,
+        detail: t("On {value0}", {
+          value0: String(
+            savedConnectionsById[triageEnvironmentId]?.environmentLabel ?? "this machine",
+          ),
+        }),
         searchTerms: ["triage", "bug", "issue", "report", "broken", "debug", "help", "support"],
         run: () => void startTriage(triageEnvironmentId),
       });
@@ -370,7 +374,7 @@ export function CommandPalette(props: {
       actions.unshift({
         key: "newThread",
         kind: "action",
-        title: `New thread in ${activeProject.title}`,
+        title: t("New thread in {title}", { title: String(activeProject.title) }),
         searchTerms: ["new task", "chat", "create"],
         run: () =>
           selectDetail({
@@ -412,7 +416,11 @@ export function CommandPalette(props: {
       kind: "project",
       project,
       title: project.title,
-      detail: `New thread · ${savedConnectionsById[project.environmentId]?.environmentLabel ?? project.environmentId}`,
+      detail: t("New thread · {value0}", {
+        value0: String(
+          savedConnectionsById[project.environmentId]?.environmentLabel ?? project.environmentId,
+        ),
+      }),
       searchTerms: [project.workspaceRoot, "new thread", "project"],
       run: () =>
         selectDetail({
@@ -691,7 +699,7 @@ export function CommandPalette(props: {
                 ListFooterComponent={
                   results.length > 0 && search.isPending && !query.startsWith(">") ? (
                     <Text className="px-5 pt-2 text-xs text-foreground-muted">
-                      Searching messages…
+                      {t("Searching messages…")}
                     </Text>
                   ) : undefined
                 }
@@ -702,7 +710,7 @@ export function CommandPalette(props: {
                         className="px-5 pt-2 text-xs text-foreground-muted"
                         style={{ height: SECTION_LABEL_HEIGHT }}
                       >
-                        In messages
+                        {t("In messages")}
                       </Text>
                     ) : null}
                     <PaletteRow

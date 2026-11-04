@@ -56,13 +56,14 @@ export function PullRequestGuideContent({
   readonly params: PullRequestParams;
   readonly visible?: boolean;
 }) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const state = useReviewGuide(params, visible);
   const { guide, stale } = reviewGuideState(state.data);
   return (
     <Animated.View layout={PR_ROW_LAYOUT} className="w-full max-w-[760px] self-center">
       {!state.enabled ? (
-        <Text>Review guides are disabled for this server.</Text>
+        <Text>{t("Review guides are disabled for this server.")}</Text>
       ) : (
         <>
           <GuideNotice state={state} />
@@ -136,14 +137,14 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
     <View className="flex-1 bg-screen">
       <NativeStackScreenOptions
         options={{
-          title: `Stop ${route.params.position + 1}`,
+          title: t("Stop {value0}", { value0: String(route.params.position + 1) }),
           headerTitle: `Stop ${route.params.position + 1} of ${guide?.stops.length ?? "…"}`,
         }}
       />
       {Platform.OS === "android" ? (
         <AppBar
           embedded
-          title={`Stop ${route.params.position + 1}`}
+          title={t("Stop {value0}", { value0: String(route.params.position + 1) })}
           onBack={() => navigation.goBack()}
           trailing={
             <Menu
@@ -186,9 +187,9 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
         >
           <View className="w-full max-w-[760px] self-center gap-5">
             {!state.enabled ? (
-              <Text>Review guides are disabled for this server.</Text>
+              <Text>{t("Review guides are disabled for this server.")}</Text>
             ) : changedGuide ? (
-              <Text>This guide was rewritten. Go back to start the new tour.</Text>
+              <Text>{t("This guide was rewritten. Go back to start the new tour.")}</Text>
             ) : !stop ? (
               <Text>{state.error ?? "Loading stop…"}</Text>
             ) : (
@@ -209,7 +210,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 ) : null}
                 {stale ? (
                   <Text className="text-sm text-foreground-muted">
-                    Excerpts are hidden until the guide is rewritten for the current head.
+                    {t("Excerpts are hidden until the guide is rewritten for the current head.")}
                   </Text>
                 ) : (
                   stop.excerpts.map((excerpt) => (
@@ -233,7 +234,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 {diff.error ? <Text className="text-danger-foreground">{diff.error}</Text> : null}
                 {notes.length ? (
                   <View className="gap-4">
-                    <Text className="font-t3-semibold">Notes on this stop</Text>
+                    <Text className="font-t3-semibold">{t("Notes on this stop")}</Text>
                     {notes.map(({ marker, note }) => (
                       <View key={marker} className="flex-row gap-3">
                         <View className="h-7 w-7 items-center justify-center rounded-lg bg-grouped-card">
@@ -271,7 +272,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 ) : null}
                 {stop.questions.length ? (
                   <View className="gap-3">
-                    <Text className="font-t3-semibold">Questions to consider</Text>
+                    <Text className="font-t3-semibold">{t("Questions to consider")}</Text>
                     {stop.questions.map((question) => (
                       <PullRequestMarkdown key={question} lineBreaks={false} markdown={question} />
                     ))}
@@ -306,7 +307,10 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="text-xs text-foreground-muted">
                       {guide && position < guide.stops.length - 1
-                        ? `Next · ${position + 2} of ${guide.stops.length}`
+                        ? t("Next · {value0} of {length}", {
+                            value0: String(position + 2),
+                            length: String(guide.stops.length),
+                          })
                         : "End of guide"}
                     </Text>
                     <Text className="text-base font-t3-semibold">

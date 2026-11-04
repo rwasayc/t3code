@@ -750,18 +750,22 @@ export function HomeScreen(props: HomeScreenProps) {
     hasSearchQuery && threadSearch.isPending ? undefined : hasSearchQuery ? (
       <EmptyState
         title={t("No results")}
-        detail={`No threads matching "${props.searchQuery}".`}
+        detail={t('No threads matching "{searchQuery}".', {
+          searchQuery: String(props.searchQuery),
+        })}
         variant={Platform.OS === "android" ? "plain" : undefined}
       />
     ) : v2ScopedProjectGroup !== null ? (
       <EmptyState
-        title={`No threads in ${v2ScopedProjectGroup.title}`}
+        title={t("No threads in {title}", { title: String(v2ScopedProjectGroup.title) })}
         detail={t("Choose another project or create a new task.")}
         variant={Platform.OS === "android" ? "plain" : undefined}
       />
     ) : selectedEnvironmentLabel ? (
       <EmptyState
-        title={`No threads in ${selectedEnvironmentLabel}`}
+        title={t("No threads in {selectedEnvironmentLabel}", {
+          selectedEnvironmentLabel: String(selectedEnvironmentLabel),
+        })}
         detail={t("Choose another environment or create a new task.")}
         variant={Platform.OS === "android" ? "plain" : undefined}
       />

@@ -101,12 +101,15 @@ export function SettingsProjectOverviewRouteScreen() {
         >
           {selectedProjectKey === null ? (
             <Text className="px-2 text-base text-foreground-muted">
-              Choose a project with the filter above to manage its name, checkouts and removal.
+              {t(
+                "Choose a project with the filter above to manage its name, checkouts and removal.",
+              )}
             </Text>
           ) : !group || members.length === 0 ? (
             <Text className="px-2 text-base text-foreground-muted">
-              This project has no checkout on the selected connected environments. Change the filter
-              above.
+              {t(
+                "This project has no checkout on the selected connected environments. Change the filter above.",
+              )}
             </Text>
           ) : (
             <ProjectOverviewContent
@@ -187,7 +190,7 @@ function ProjectOverviewContent(props: {
     setIsOrganizing(true);
     for (const member of allMembers) {
       if (!readEnvironmentScope(member.environmentId, AuthOrchestrationOperateScope)) {
-        Dialog.alert("Failed to update project", "This connection can no longer change it.");
+        Dialog.alert(t("Failed to update project"), t("This connection can no longer change it."));
         break;
       }
       const result = await organizeProject({
@@ -219,7 +222,7 @@ function ProjectOverviewContent(props: {
       (entry) => entry.environmentId === denied.environmentId,
     );
     Dialog.alert(
-      "Failed to remove project",
+      t("Failed to remove project"),
       `This connection cannot change projects in ${environment?.label ?? "this environment"}.`,
     );
     return false;
@@ -242,9 +245,9 @@ function ProjectOverviewContent(props: {
       unloadedThreadCount: readUnloadedThreadCount(members, threads),
     });
     Dialog.confirm({
-      title: plan.targetKind === "checkout" ? "Remove checkout" : t("Remove project"),
+      title: plan.targetKind === "checkout" ? t("Remove checkout") : t("Remove project"),
       message: plan.confirmationMessage,
-      confirmText: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
+      confirmText: plan.targetKind === "checkout" ? t("Remove checkout") : t("Remove project"),
       destructive: true,
       onCancel: finishRemoval,
       onConfirm: () => {
@@ -323,7 +326,9 @@ function ProjectOverviewContent(props: {
             {displayName}
           </Text>
           <Text className="text-sm text-foreground-muted">
-            {props.members.length === 1 ? "1 checkout" : `${props.members.length} checkouts`}
+            {props.members.length === 1
+              ? "1 checkout"
+              : t("{length} checkouts", { length: String(props.members.length) })}
           </Text>
         </View>
       </View>
@@ -424,7 +429,7 @@ function ProjectOverviewContent(props: {
           icon="trash"
           label={
             props.hasOtherMembers
-              ? "Remove checkout"
+              ? t("Remove checkout")
               : props.members.length > 1
                 ? "Remove this project everywhere"
                 : t("Remove project")
@@ -433,7 +438,10 @@ function ProjectOverviewContent(props: {
             props.hasOtherMembers
               ? "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched."
               : props.members.length > 1
-                ? `Deletes all ${props.members.length} checkout entries and their threads on every machine. Files on disk are not touched.`
+                ? t(
+                    "Deletes all {length} checkout entries and their threads on every machine. Files on disk are not touched.",
+                    { length: String(props.members.length) },
+                  )
                 : "Deletes the project entry and its threads. Files on disk are not touched."
           }
           tone="danger"
@@ -451,16 +459,19 @@ function RemoveCheckoutAction(props: {
   readonly disabled: boolean;
   readonly onPress: () => void;
 }) {
+  const { t } = useTranslation();
   const canRemove = useEnvironmentScope(props.member.environmentId, AuthOrchestrationOperateScope);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Remove checkout ${props.member.workspaceRoot}`}
+      accessibilityLabel={t("Remove checkout {workspaceRoot}", {
+        workspaceRoot: String(props.member.workspaceRoot),
+      })}
       disabled={props.disabled || !canRemove}
       onPress={props.onPress}
       className="self-start rounded-full border border-border bg-card px-3 py-1.5 disabled:opacity-40"
     >
-      <Text className="font-t3-medium text-xs text-danger-foreground">Remove checkout</Text>
+      <Text className="font-t3-medium text-xs text-danger-foreground">{t("Remove checkout")}</Text>
     </Pressable>
   );
 }

@@ -96,7 +96,7 @@ export function T3ConnectProfilePage() {
       cause,
     });
     Dialog.alert(
-      "Could not deregister server",
+      t("Could not deregister server"),
       traceId ? `${message}\n\nTrace ID: ${traceId}` : message,
       traceId
         ? [
@@ -134,7 +134,7 @@ export function T3ConnectProfilePage() {
         />
       }
     >
-      <ClerkSectionHeader>Registered servers</ClerkSectionHeader>
+      <ClerkSectionHeader>{t("Registered servers")}</ClerkSectionHeader>
 
       {environmentsState.error ? (
         <>
@@ -177,7 +177,9 @@ export function T3ConnectProfilePage() {
                   }
                 >
                   <Pressable
-                    accessibilityLabel={`Actions for ${environment.label}`}
+                    accessibilityLabel={t("Actions for {label}", {
+                      label: String(environment.label),
+                    })}
                     accessibilityRole="button"
                     disabled={deregisteringEnvironmentId !== null}
                     className="size-[30px] items-center justify-center active:opacity-60 disabled:opacity-50"
@@ -199,12 +201,12 @@ export function T3ConnectProfilePage() {
       ) : (
         <ClerkRow
           title={t("No servers registered")}
-          subtitle="Link a server from its local Settings to reach it through T3 Connect."
+          subtitle={t("Link a server from its local Settings to reach it through T3 Connect.")}
         />
       )}
 
       <Text className="px-6 pt-6 text-xs leading-normal text-clerk-foreground-muted">
-        Connections on this device are managed in Settings.
+        {t("Connections on this device are managed in Settings.")}
       </Text>
     </ScrollView>
   );

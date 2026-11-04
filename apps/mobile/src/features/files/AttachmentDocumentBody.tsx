@@ -66,7 +66,7 @@ export function AttachmentDocumentBody(props: {
       <View className="flex-1 bg-sheet">
         {content.truncated ? (
           <FilePreviewNotice title={t("Partial file")}>
-            Preview limited to the first 1 MB. Save or share the file to read it in full.
+            {t("Preview limited to the first 1 MB. Save or share the file to read it in full.")}
           </FilePreviewNotice>
         ) : null}
         {table && document.activeMode === "table" ? (

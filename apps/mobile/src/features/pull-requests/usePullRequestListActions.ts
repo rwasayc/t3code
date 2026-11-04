@@ -158,7 +158,7 @@ export function usePullRequestListActions(
     return [
       {
         id: "open",
-        title: `Open ${terminology.singular}`,
+        title: t("Open {singular}", { singular: String(t(terminology.singular)) }),
         image: Platform.OS === "ios" ? "arrow.up.right" : "open_in_new",
       },
       ...(writableEnvironments.has(entry.environmentId) && entry.state === "open"

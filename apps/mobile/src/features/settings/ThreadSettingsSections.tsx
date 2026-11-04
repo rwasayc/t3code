@@ -120,7 +120,9 @@ export function AutoSettleSettingsRows(props: {
           <SettingsSwitchRow
             icon="clock"
             label={t("Resume after usage limits")}
-            subtitle="Automatically resume threads when their usage limits reset. You can cancel auto-resume in each thread."
+            subtitle={t(
+              "Automatically resume threads when their usage limits reset. You can cancel auto-resume in each thread.",
+            )}
             value={uniformMobileSetting(displayTargets, "autoResumeLimitedThreads")}
             disabled={disabledFor("autoResumeLimitedThreads")}
             onValueChange={(value) => writeToAll({ autoResumeLimitedThreads: value })}
@@ -128,7 +130,9 @@ export function AutoSettleSettingsRows(props: {
           <SettingsSwitchRow
             icon="clock"
             label={t("Snooze until limits reset")}
-            subtitle="Snooze threads until their usage limits reset. Enable auto-resume to continue the agent after the reset."
+            subtitle={t(
+              "Snooze threads until their usage limits reset. Enable auto-resume to continue the agent after the reset.",
+            )}
             value={uniformMobileSetting(displayTargets, "snoozeLimitedThreads")}
             disabled={disabledFor("snoozeLimitedThreads")}
             onValueChange={(value) => writeToAll({ snoozeLimitedThreads: value })}
@@ -155,7 +159,9 @@ export function AutoSettleSettingsRows(props: {
         {afterDays !== null ? (
           <View className="flex-row items-center gap-4 px-4 py-4 android:min-h-14 android:py-3">
             <View className="w-[22px] android:w-6" />
-            <Text className="flex-1 text-foreground text-lg android:text-base">Inactive days</Text>
+            <Text className="flex-1 text-foreground text-lg android:text-base">
+              {t("Inactive days")}
+            </Text>
             <AutoSettleDaysField
               value={afterDays}
               disabled={disabledFor("sidebarAutoSettleAfterDays")}
@@ -167,7 +173,7 @@ export function AutoSettleSettingsRows(props: {
       {!props.pending && mismatches.length > 0 ? (
         <SettingsSection title={t("Across environments")}>
           <View className="gap-3 p-4">
-            <Text className="text-base text-foreground">Auto-settle defaults differ</Text>
+            <Text className="text-base text-foreground">{t("Auto-settle defaults differ")}</Text>
             <Text className="text-sm text-foreground-muted">
               {mismatches.map((mismatch) => mismatch.label).join(", ")}
             </Text>
@@ -202,9 +208,9 @@ export function WorkingSectionSettings() {
         />
       </SettingsSection>
       <Text className="px-2 text-sm text-foreground-muted">
-        Fold working and monitoring threads into a Working section. They return to the top of the
-        list when they need you. While this is on, active threads are ordered by time and cannot be
-        moved.
+        {t(
+          "Fold working and monitoring threads into a Working section. They return to the top of the list when they need you. While this is on, active threads are ordered by time and cannot be moved.",
+        )}
       </Text>
     </View>
   );
@@ -222,7 +228,7 @@ export function NewThreadSettingsSection() {
       <SettingsSwitchRow
         icon="square.and.pencil"
         label={t("Use last project")}
-        subtitle="Start new threads in the last project you used on this device."
+        subtitle={t("Start new threads in the last project you used on this device.")}
         value={useLastProject}
         onValueChange={(value) => savePreferences({ useLastProjectForNewThreads: value })}
       />
@@ -256,7 +262,9 @@ function BetaSettingsSection() {
               key={environment.environmentId}
               icon="link"
               label={environment.label}
-              {...(managed ? { subtitle: `Managed by ${policy?.organization}.` } : {})}
+              {...(managed
+                ? { subtitle: t("Managed by {value0}.", { value0: String(policy?.organization) }) }
+                : {})}
               value={environment.serverConfig?.settings.linkedEnvironmentsEnabled === true}
               disabled={managed || !writable.has(environment.environmentId)}
               onValueChange={(value) =>
@@ -270,8 +278,9 @@ function BetaSettingsSection() {
         })}
       </SettingsSection>
       <Text className="px-2 text-sm text-foreground-muted">
-        Let agents on a machine work on your other machines, and theirs on it. Turn it on for each
-        machine. While it is off, nothing new starts over a link; tasks already running finish.
+        {t(
+          "Let agents on a machine work on your other machines, and theirs on it. Turn it on for each machine. While it is off, nothing new starts over a link; tasks already running finish.",
+        )}
       </Text>
     </View>
   );
@@ -295,8 +304,9 @@ function LegacySettingsSection() {
         />
       </SettingsSection>
       <Text className="px-2 text-sm text-foreground-muted">
-        Opt into retired interfaces kept for compatibility. Plan Mode restores the Build/Plan
-        control; otherwise every task runs in Build mode.
+        {t(
+          "Opt into retired interfaces kept for compatibility. Plan Mode restores the Build/Plan control; otherwise every task runs in Build mode.",
+        )}
       </Text>
     </View>
   );

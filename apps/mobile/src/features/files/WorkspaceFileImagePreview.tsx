@@ -27,7 +27,9 @@ function ResolvedWorkspaceFileImagePreview(props: {
       <MediaActionsMenu media={mediaActions} style={{ flex: 1 }}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Open full-screen preview of ${props.accessibilityLabel}`}
+          accessibilityLabel={t("Open full-screen preview of {accessibilityLabel}", {
+            accessibilityLabel: String(props.accessibilityLabel),
+          })}
           accessibilityHint={
             mediaActions.actions.length > 0 ? "Touch and hold for media actions" : undefined
           }

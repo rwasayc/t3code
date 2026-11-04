@@ -12,7 +12,7 @@ export function useReviewHeaderPresentation(
     menuIcon: "ellipsis.circle",
     refreshAction: {
       id: "refresh",
-      title: "Refresh current diff",
+      title: t("Refresh current diff"),
       disabled: !props.selectedSection || props.selectedSection.isLoading,
       onPress: () => {
         void props.onRefresh();

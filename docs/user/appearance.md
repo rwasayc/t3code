@@ -23,7 +23,7 @@ of the selected theme.
 
 ## Language
 
-On mobile, choose **Settings → Appearance → Language** to follow the system language or select
+On Android, choose **Settings → Appearance → Language** to follow the system language or select
 **简体中文** or **English**. Changes apply immediately and are saved on this device. Chinese
 system locales use Simplified Chinese; other system languages use English. Messages, code,
 file names, and project names keep their original text.

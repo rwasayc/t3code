@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { NativeThemeHost } from "./NativeThemeHost.android";
 import {
   AlertDialog,
@@ -142,6 +143,7 @@ export function Host() {
 }
 
 function DialogPresentation(props: DialogPresentationProps) {
+  const { t } = useTranslation();
   const { themeVariables: colors } = useAppearancePreferences();
   const titleTypography = useScaledTextRole("title");
   const bodyTypography = useScaledTextRole("footnote");
@@ -153,7 +155,7 @@ function DialogPresentation(props: DialogPresentationProps) {
     props.onConfirm(value);
   };
   const actions = props.alertActions ?? [
-    { text: props.request.cancelText ?? "Cancel", onPress: props.onCancel },
+    { text: props.request.cancelText ?? t("Cancel"), onPress: props.onCancel },
     {
       text: props.request.confirmText,
       style: props.request.destructive ? ("destructive" as const) : ("default" as const),
@@ -184,7 +186,7 @@ function DialogPresentation(props: DialogPresentationProps) {
               : colors["--color-foreground"],
         }}
       >
-        <Text style={bodyTypography}>{action.text ?? ""}</Text>
+        <Text style={bodyTypography}>{t(action.text ?? "")}</Text>
       </Component>
     );
   };

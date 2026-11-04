@@ -55,8 +55,10 @@ export function SubagentStopButton(props: {
         onPress={() =>
           Dialog.confirm({
             title: workflow ? "Stop workflow?" : "Stop agent?",
-            message: workflow ? `Every running agent in ${label} stops.` : `Stop ${label}?`,
-            confirmText: "Stop",
+            message: workflow
+              ? t("Every running agent in {label} stops.", { label: String(label) })
+              : t("Stop {label}?", { label: String(label) }),
+            confirmText: t("Stop"),
             destructive: true,
             onConfirm: () => void stop(),
           })

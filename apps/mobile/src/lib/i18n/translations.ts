@@ -16,7 +16,8 @@ export function translate(
   message: string,
   values?: Readonly<Record<string, string | number>>,
 ): string {
-  const translated = language === "zh-CN" ? (ZH_CN[message] ?? message) : message;
+  const translated =
+    language === "zh-CN" ? (ZH_CN[message] ?? ZH_CN[message.trim()] ?? message) : message;
   if (!values) return translated;
   return translated.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
     Object.hasOwn(values, name) ? String(values[name]) : placeholder,

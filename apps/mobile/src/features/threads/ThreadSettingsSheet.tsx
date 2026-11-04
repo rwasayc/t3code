@@ -167,6 +167,7 @@ function ProviderHeader(props: {
   readonly modelCount: number;
   readonly onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   const content = (
     <>
       <ProviderIcon iconUrl={props.iconUrl} provider={props.driver} size={15} />
@@ -193,7 +194,10 @@ function ProviderHeader(props: {
   if (props.collapsible) {
     return (
       <Pressable
-        accessibilityLabel={`${props.label}, ${props.modelCount} models`}
+        accessibilityLabel={t("{label}, {modelCount} models", {
+          label: String(props.label),
+          modelCount: String(props.modelCount),
+        })}
         accessibilityRole="button"
         accessibilityState={{ expanded: !props.collapsed }}
         className="mx-4 mt-1 min-h-11 flex-row items-center gap-2 rounded-xl px-1 pt-2 active:opacity-60 android:min-h-12"
@@ -335,6 +339,7 @@ const ThreadSettingsSessionContext = createContext<ThreadSettingsSessionValue | 
 function ThreadSettingsSessionProvider(
   props: ThreadSettingsSessionProps & { readonly children: ReactNode },
 ) {
+  const { t } = useTranslation();
   const registry = use(RegistryContext);
   const preferences = useAtomValue(mobilePreferencesAtom);
   const configs = useAtomValue(environmentServerConfigsAtom);
@@ -530,8 +535,8 @@ function ThreadSettingsSessionProvider(
     if (pendingModel) {
       if (!canCommitPendingModel(pendingModel, props.providerGroups)) {
         Dialog.alert(
-          "Model unavailable",
-          "Set up this provider on web or desktop, or select another model.",
+          t("Model unavailable"),
+          t("Set up this provider on web or desktop, or select another model."),
         );
         return false;
       }
@@ -866,7 +871,7 @@ function ThreadSettingsOptionsItem(props: {
                 layout={THREAD_SETTINGS_OPTIONS_LAYOUT_TRANSITION}
               >
                 <DisclosureRow
-                  label={descriptor.label}
+                  label={t(descriptor.label)}
                   value={
                     session.promptTraits.ultrathinkPromptControlled &&
                     descriptor.id === session.promptTraits.primarySelectDescriptor?.id
@@ -890,7 +895,7 @@ function ThreadSettingsOptionsItem(props: {
               layout={THREAD_SETTINGS_OPTIONS_LAYOUT_TRANSITION}
             >
               <SwitchRow
-                label={descriptor.label}
+                label={t(descriptor.label)}
                 value={descriptor.currentValue ?? false}
                 onValueChange={(value) => session.applyOptionChange(descriptor.id, value)}
               />
@@ -901,16 +906,18 @@ function ThreadSettingsOptionsItem(props: {
           <DisclosureRow
             isLast
             label={t("Runtime")}
-            value={
+            value={t(
               session.runtimeModeChoices.find((choice) => choice.mode === session.runtimeMode)
-                ?.label
-            }
+                ?.label ?? "",
+            )}
             onPress={() => props.onOpenSubmenu({ kind: "runtime" })}
           />
         </Animated.View>
       </Animated.View>
 
-      <Text className="px-5 pb-2 pt-7 text-sm font-t3-medium text-foreground-muted">Catalog</Text>
+      <Text className="px-5 pb-2 pt-7 text-sm font-t3-medium text-foreground-muted">
+        {t("Catalog")}
+      </Text>
       <View className="mx-4 overflow-hidden rounded-2xl bg-grouped-card">
         <SwitchRow
           label={t("Manage hidden models")}
@@ -947,7 +954,7 @@ function ThreadSettingsMainContent(props: {
     void refreshProviderCatalog(session.environmentId).then((result) => {
       setIsRefreshingProviders(false);
       const error = providerCatalogRefreshError(result);
-      if (error) Dialog.alert("Could not refresh models", error);
+      if (error) Dialog.alert(t("Could not refresh models"), error);
     });
   };
   const [listLoaded, setListLoaded] = useState(false);
@@ -1091,6 +1098,7 @@ function ThreadSettingsChoiceContent(props: {
   readonly submenu: ThreadSettingsSubmenuPage;
   readonly onSelected: () => void;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const session = useThreadSettingsSession();
   const descriptorId = props.submenu.kind === "descriptor" ? props.submenu.id : null;
@@ -1107,8 +1115,8 @@ function ThreadSettingsChoiceContent(props: {
       ? {
           rows: session.runtimeModeChoices.map((choice) => ({
             id: choice.mode,
-            label: choice.label,
-            description: choice.disabledReason ?? choice.description,
+            label: t(choice.label),
+            description: t(choice.disabledReason ?? choice.description),
             disabled: choice.disabledReason !== undefined,
             selected: choice.mode === session.runtimeMode,
             onPress: () => {
@@ -1122,8 +1130,8 @@ function ThreadSettingsChoiceContent(props: {
         ? {
             rows: selectableChoices(activeDescriptor).map((choice) => ({
               id: choice.id,
-              label: choice.label,
-              description: choice.description,
+              label: t(choice.label),
+              description: choice.description ? t(choice.description) : undefined,
               disabled: false,
               selected:
                 choice.id ===
@@ -1142,8 +1150,10 @@ function ThreadSettingsChoiceContent(props: {
                   activeDescriptor.id === session.promptTraits.primarySelectDescriptor?.id
                 ) {
                   Dialog.alert(
-                    "Reasoning controlled by prompt",
-                    'Your prompt contains "ultrathink" in the text. Remove it to change this option.',
+                    t("Reasoning controlled by prompt"),
+                    t(
+                      'Your prompt contains "ultrathink" in the text. Remove it to change this option.',
+                    ),
                   );
                   return;
                 }

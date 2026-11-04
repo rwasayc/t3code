@@ -135,7 +135,7 @@ export function PullRequestReviewSheet({
   return (
     <SheetContent
       title={reviewing ? t("Submit review") : t("Add comment")}
-      subtitle={`#${params.number}${reviewing && result.data?.headSha ? ` · reviewing ${result.data.headSha.slice(0, 7)}` : ` · ${params.repository}`}`}
+      subtitle={`#${params.number}${reviewing && result.data?.headSha ? t(" · reviewing {value0}", { value0: String(result.data.headSha.slice(0, 7)) }) : ` · ${params.repository}`}`}
       busy={submission.busy}
       footer={
         <Button
@@ -192,8 +192,8 @@ export function PullRequestReviewSheet({
       {reviewing && store.draft.comments.length ? (
         <View className="gap-2">
           <Text className="text-sm font-t3-medium">
-            {store.draft.comments.length} pending line{" "}
-            {store.draft.comments.length === 1 ? "comment" : "comments"}
+            {store.draft.comments.length}
+            {t(" pending line")} {store.draft.comments.length === 1 ? "comment" : "comments"}
           </Text>
           {store.draft.comments.map((draft) => (
             <Pressable
@@ -238,14 +238,16 @@ export function PullRequestReviewSheet({
       ) : null}
       {reviewing && stale ? (
         <Text className="text-sm text-danger-foreground">
-          The branch changed since you wrote a comment. Choose its current line before submitting.
+          {t(
+            "The branch changed since you wrote a comment. Choose its current line before submitting.",
+          )}
         </Text>
       ) : null}
       {reviewing && !canSubmitComments ? (
         <Text className="text-sm text-danger-foreground">
-          You can no longer submit line comments on this{" "}
-          {sourceControlClients.get(result.data?.provider).changeRequest.singular}. Your drafts are
-          kept here.
+          {t("You can no longer submit line comments on this")}{" "}
+          {sourceControlClients.get(result.data?.provider).changeRequest.singular}
+          {t(". Your drafts are kept here.")}
         </Text>
       ) : null}
       {submission.error || result.error || store.error ? (

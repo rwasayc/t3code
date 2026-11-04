@@ -130,7 +130,8 @@ function EnvironmentPickerRow(props: {
           )}
           {state.retryAt ? (
             <Text className="text-sm text-foreground-muted">
-              Next reconnect at {new Date(state.retryAt).toLocaleTimeString()}
+              {t("Next reconnect at ")}
+              {new Date(state.retryAt).toLocaleTimeString()}
             </Text>
           ) : null}
           {connection?.phase !== "connected" ? (
@@ -304,7 +305,7 @@ export function NewTaskBranchPickerRouteScreen() {
       if (navigation.isFocused() && !isAtomCommandInterrupted(result)) {
         const error = squashAtomCommandFailure(result);
         Dialog.alert(
-          "Could not switch branch",
+          t("Could not switch branch"),
           error instanceof Error ? error.message : "The branch could not be checked out.",
         );
       }

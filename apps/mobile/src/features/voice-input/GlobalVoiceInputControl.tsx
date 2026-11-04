@@ -112,7 +112,10 @@ function EdgeDictationPill(props: {
             style={[{ width: COLLAPSED_WIDTH }, collapsedStyle]}
           >
             <Pressable
-              accessibilityLabel={`${presentation.statusLabel}, dictating into ${label}`}
+              accessibilityLabel={t("{statusLabel}, dictating into {label}", {
+                statusLabel: String(presentation.statusLabel),
+                label: String(label),
+              })}
               accessibilityHint="Shows dictation controls"
               accessibilityRole="button"
               className="flex-1 flex-row items-center justify-center gap-1.5 active:opacity-70"

@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import * as Dialog from "./ui/Dialog";
 import { requireNativeModule } from "expo";
 import { useEffect, useEffectEvent, useId } from "react";
@@ -26,12 +27,14 @@ function NativeFilePreview(props: {
   readonly onRequestClose: () => void;
   readonly onOpenError?: (error: unknown) => void;
 }) {
+  const { t } = useTranslation();
   const { uri, name, sourceIdentifier, gallery } = props.source;
   const identifier = useId();
   const onRequestClose = useEffectEvent(props.onRequestClose);
   const onOpenError = useEffectEvent((error: unknown) => {
     if (props.onOpenError) props.onOpenError(error);
-    else Dialog.alert("Could not open preview", "The file could not be loaded. Please try again.");
+    else
+      Dialog.alert(t("Could not open preview"), "The file could not be loaded. Please try again.");
   });
 
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- presents the native file preview and dismisses it on cleanup

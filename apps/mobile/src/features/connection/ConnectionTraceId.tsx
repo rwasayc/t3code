@@ -21,7 +21,7 @@ export function ConnectionTraceId({
         accessibilityHint={
           activation === "longPress" ? "Long press to copy the trace ID" : "Copies the trace ID"
         }
-        accessibilityLabel={`Copy trace ID ${traceId}`}
+        accessibilityLabel={t("Copy trace ID {traceId}", { traceId: String(traceId) })}
         accessibilityRole="button"
         accessibilityActions={[{ name: "activate", label: t("Copy trace ID") }]}
         onAccessibilityAction={(event) => {

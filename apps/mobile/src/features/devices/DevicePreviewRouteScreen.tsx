@@ -143,7 +143,7 @@ export function DevicePreviewScreen({
       },
     }).finally(() => setShuttingDown(false));
     if (result._tag === "Failure") {
-      Dialog.alert("Could not shut down device", String(Cause.squash(result.cause)));
+      Dialog.alert(t("Could not shut down device"), String(Cause.squash(result.cause)));
     }
   };
 
@@ -155,7 +155,7 @@ export function DevicePreviewScreen({
       )
       .map((host) => ({
         id: `retry-${host.id}`,
-        title: `Retry ${host.label}`,
+        title: t("Retry {label}", { label: String(host.label) }),
         icon: "arrow.clockwise" as const,
         onPress: () => {
           void retryHost({ environmentId, input: { retryHostId: host.id } });
@@ -179,7 +179,7 @@ export function DevicePreviewScreen({
       icon: "info.circle",
       onPress: () =>
         Dialog.alert(
-          "Device tool versions",
+          t("Device tool versions"),
           deviceToolUpdateOwnership +
             "\n\n" +
             deviceToolUpdatePolicy(
@@ -441,7 +441,9 @@ function OpenDevicePreview({
       ) : (
         <>
           <AppActivityIndicator color={themeVariables["--color-icon"]} />
-          <AppText className="text-sm text-foreground-muted">Connecting to device...</AppText>
+          <AppText className="text-sm text-foreground-muted">
+            {t("Connecting to device...")}
+          </AppText>
         </>
       )}
     </View>

@@ -26,9 +26,13 @@ export function GuideOutline({
     <View>
       <View className="mb-5 flex-row items-center justify-between">
         <View className="flex-row items-baseline gap-2">
-          <Text className="text-base font-t3-semibold">{guide.stops.length} stops</Text>
+          <Text className="text-base font-t3-semibold">
+            {guide.stops.length}
+            {t(" stops")}
+          </Text>
           <Text className="text-sm text-foreground-muted">
-            through {files.size} {files.size === 1 ? "file" : "files"}
+            {t("through ")}
+            {files.size} {files.size === 1 ? t("file") : t("files")}
           </Text>
         </View>
         <Menu
@@ -72,7 +76,10 @@ export function GuideOutline({
           <Pressable
             key={`${guide.headSha}:${JSON.stringify(stop)}`}
             accessibilityRole="button"
-            accessibilityLabel={`Stop ${position + 1}: ${stop.title}`}
+            accessibilityLabel={t("Stop {value0}: {title}", {
+              value0: String(position + 1),
+              title: String(stop.title),
+            })}
             onPress={() => onOpen(position)}
             className="flex-row gap-4 active:opacity-60"
           >

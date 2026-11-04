@@ -104,7 +104,7 @@ export function ThreadAgentsSheet({ route }: StaticScreenProps<AgentsTarget>) {
     >
       {subagents.length === 0 ? (
         <Text className="pt-6 text-center text-sm text-foreground-muted">
-          No agents in this turn.
+          {t("No agents in this turn.")}
         </Text>
       ) : (
         subagents.map((subagent) => {

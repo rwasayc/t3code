@@ -57,7 +57,9 @@ export function PullRequestRoutingSettings() {
             <View key={environmentId}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`${entry.target.label} pull request routing`}
+                accessibilityLabel={t("{label} pull request routing", {
+                  label: String(entry.target.label),
+                })}
                 accessibilityState={{ expanded: expanded === environmentId }}
                 className="flex-row items-center gap-3 p-4"
                 onPress={() => setExpanded(expanded === environmentId ? null : environmentId)}
@@ -71,7 +73,7 @@ export function PullRequestRoutingSettings() {
                   </Text>
                 </View>
                 <Text className="text-sm text-foreground-muted">
-                  {options.find((option) => option.value === selected)?.label}
+                  {t(options.find((option) => option.value === selected)?.label ?? "")}
                 </Text>
                 <SymbolView
                   name={expanded === environmentId ? "chevron.up" : "chevron.down"}
@@ -83,8 +85,8 @@ export function PullRequestRoutingSettings() {
                 ? options.map((option) => (
                     <ListChoiceRow
                       key={option.value}
-                      label={option.label}
-                      description={option.description}
+                      label={t(option.label)}
+                      description={t(option.description)}
                       selected={selected === option.value}
                       disabled={disabled}
                       onPress={() => {
@@ -93,8 +95,8 @@ export function PullRequestRoutingSettings() {
                           setSaving(false);
                           if (result._tag === "Failure")
                             Dialog.alert(
-                              "Could not save pull request routing permission",
-                              "Try again before leaving this screen.",
+                              t("Could not save pull request routing permission"),
+                              t("Try again before leaving this screen."),
                             );
                         });
                       }}
@@ -106,8 +108,9 @@ export function PullRequestRoutingSettings() {
         })}
       </SettingsSection>
       <Text className="px-2 text-sm text-foreground-muted">
-        Choose environments you trust to share PR data and use each other's source control access.
-        Enable both environments. This applies only to this client.
+        {t(
+          "Choose environments you trust to share PR data and use each other's source control access. Enable both environments. This applies only to this client.",
+        )}
       </Text>
     </View>
   );

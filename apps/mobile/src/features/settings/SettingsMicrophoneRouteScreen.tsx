@@ -241,9 +241,9 @@ function MicrophoneSettings() {
           })}
         </SettingsSection>
         <Text className="px-2 text-sm text-foreground-muted">
-          Voice input prefers the first connected microphone in this list. Wired and Bluetooth
-          devices are added by name after you use voice input with them connected; until then, the
-          Other row ranks them. Swipe a device left to forget it.
+          {t(
+            "Voice input prefers the first connected microphone in this list. Wired and Bluetooth devices are added by name after you use voice input with them connected; until then, the Other row ranks them. Swipe a device left to forget it.",
+          )}
           {Platform.OS === "android"
             ? " Android may use another input when the preferred microphone cannot be routed."
             : null}
@@ -287,7 +287,12 @@ function MicrophoneRow(props: {
     <View className="flex-row items-center bg-grouped-card">
       <View
         accessible
-        accessibilityLabel={`${title}, ${kind.label}, ${props.position} of ${props.count}`}
+        accessibilityLabel={t("{title}, {label}, {position} of {count}", {
+          title: String(title),
+          label: String(kind.label),
+          position: String(props.position),
+          count: String(props.count),
+        })}
         accessibilityActions={onForget ? [{ name: "forget", label: t("Forget") }] : undefined}
         onAccessibilityAction={({ nativeEvent }) => {
           if (nativeEvent.actionName === "forget") onForget?.();
@@ -329,7 +334,7 @@ function MicrophoneRow(props: {
           fullSwipeWidth={windowWidth - 40}
           onDelete={onForget}
           primaryAction={{
-            accessibilityLabel: `Forget ${title}`,
+            accessibilityLabel: t("Forget {title}", { title: String(title) }),
             destructive: true,
             icon: "trash",
             label: t("Forget"),

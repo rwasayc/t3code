@@ -144,7 +144,7 @@ export function useSettingsEnvironmentMenu(): AppBarMenu {
       },
       ...availableTargets.map((entry) => ({
         id: `environment:${entry.environmentId}`,
-        title: `Environment · ${entry.label}`,
+        title: t("Environment · {label}", { label: String(entry.label) }),
         icon: ENVIRONMENT_MACHINE_SYMBOLS[resolveEnvironmentMachineKind(entry.serverConfig)],
         subtitle: entry.displayUrl ?? undefined,
         selected: selectedIds === null || selectedIds.has(entry.environmentId),
@@ -158,7 +158,7 @@ export function useSettingsEnvironmentMenu(): AppBarMenu {
       },
       ...selectableProjectGroups.map((group) => ({
         id: `project:${group.key}`,
-        title: `Project · ${projectMenuLabel(group)}`,
+        title: t("Project · {value0}", { value0: String(projectMenuLabel(group)) }),
         selected: selectedProjectKey === group.key,
         onPress: () => selectProject(group.key),
       })),

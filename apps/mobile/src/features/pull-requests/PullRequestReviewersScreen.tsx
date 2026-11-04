@@ -177,7 +177,9 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
           ListHeaderComponent={
             <View className="gap-3 px-4 py-4">
               <Text className="text-xs text-foreground-muted">
-                Tap someone to request a review. Tap a requested reviewer to remove the request.
+                {t(
+                  "Tap someone to request a review. Tap a requested reviewer to remove the request.",
+                )}
               </Text>
               {Platform.OS === "android" ? (
                 <TextInput
@@ -192,7 +194,8 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
               ) : null}
               {!allowed ? (
                 <Text className="text-xs text-foreground-muted">
-                  Requesting reviews requires write access and an open {singular}.
+                  {t("Requesting reviews requires write access and an open ")}
+                  {singular}.
                 </Text>
               ) : null}
               {error ? (
@@ -227,7 +230,7 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                   <AppActivityIndicator />
                 ) : item.isRequested ? (
                   <View className="flex-row items-center gap-1.5">
-                    <Text className="text-xs text-foreground-muted">Requested</Text>
+                    <Text className="text-xs text-foreground-muted">{t("Requested")}</Text>
                     <SymbolView name="checkmark" size={14} tintColorClassName="accent-icon" />
                   </View>
                 ) : (
@@ -259,8 +262,9 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
           ListFooterComponent={
             result.data?.truncated ? (
               <Text className="px-4 py-4 text-xs text-foreground-muted">
-                The provider has more reviewers than it returned. Find additional reviewers on the
-                provider.
+                {t(
+                  "The provider has more reviewers than it returned. Find additional reviewers on the provider.",
+                )}
               </Text>
             ) : undefined
           }
@@ -277,13 +281,14 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
               <AppActivityIndicator />
             ) : (
               <Text className="text-danger-foreground">
-                {detail.error ?? `Couldn't load this ${singular}.`}
+                {detail.error ??
+                  t("Couldn't load this {singular}.", { singular: String(t(singular)) })}
               </Text>
             )
           ) : (
             <>
               <Text className="text-sm text-foreground-muted">
-                This provider accepts a reviewer ID but cannot list candidates.
+                {t("This provider accepts a reviewer ID but cannot list candidates.")}
               </Text>
               <TextInput
                 accessibilityLabel={t("Reviewer ID")}
