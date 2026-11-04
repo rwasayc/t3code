@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Toolbar } from "../../components/ui/Toolbar";
 import * as Dialog from "../../components/ui/Dialog";
 import { NativeStackScreenOptions } from "../../native/StackHeader";
@@ -42,6 +43,7 @@ export type AttachmentFileRouteParams = {
 type AttachmentFileScreenProps = StaticScreenProps<AttachmentFileRouteParams>;
 
 export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { appearance, setCodeWordBreak } = useAppearancePreferences();
   const iconColor = useUniwindTheme()["--color-icon"];
@@ -98,7 +100,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     const message = pendingNativeError.current;
     pendingNativeError.current = null;
     if (nativeViewer === null) {
-      if (message) Dialog.alert("Could not open document", message);
+      if (message) Dialog.alert(t("Could not open document"), message);
       return;
     }
     if (message) {
@@ -119,7 +121,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     renderedMode
       ? ({
           id: "preview",
-          title: renderedMode === "table" ? "Table" : "Preview",
+          title: renderedMode === "table" ? "Table" : t("Preview"),
           icon: renderedMode === "table" ? "tablecells" : "eye",
           inline: true,
           onPress: () => setRendered(true),
@@ -128,7 +130,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     renderedMode
       ? ({
           id: "source",
-          title: "Source",
+          title: t("Source"),
           icon: "doc.text",
           inline: true,
           onPress: () => setRendered(false),
@@ -155,7 +157,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     uri
       ? ({
           id: "share",
-          title: sharing ? "Opening share sheet…" : "Save or share",
+          title: sharing ? "Opening share sheet…" : t("Save or share"),
           icon: "square.and.arrow.up",
           inline: false,
           onPress: () => void share(),
@@ -164,7 +166,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     uri
       ? ({
           id: "open-viewer",
-          title: "Open in file viewer",
+          title: t("Open in file viewer"),
           icon: "arrow.up.left.and.arrow.down.right",
           inline: false,
           onPress: () => {
@@ -176,7 +178,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     draftKey
       ? ({
           id: "remove",
-          title: "Remove from draft",
+          title: t("Remove from draft"),
           icon: "trash",
           inline: false,
           destructive: true,
@@ -248,16 +250,16 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
             <Menu
               actions={androidMenuActions}
               isAnchoredToRight
-              title="File actions"
+              title={t("File actions")}
               onPressAction={handleAndroidMenuAction}
             >
-              <AndroidHeaderIconButton accessibilityLabel="File actions" icon="ellipsis" />
+              <AndroidHeaderIconButton accessibilityLabel={t("File actions")} icon="ellipsis" />
             </Menu>
           }
         />
       ) : null}
       <Toolbar placement="right">
-        <Toolbar.Menu accessibilityLabel="File actions" icon="ellipsis">
+        <Toolbar.Menu accessibilityLabel={t("File actions")} icon="ellipsis">
           {renderedMode ? (
             <Toolbar.Menu inline>
               {menuActions

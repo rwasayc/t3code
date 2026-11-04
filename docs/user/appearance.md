@@ -21,6 +21,13 @@ Android uses **Material You Layout** by default unless you have turned it off in
 It changes shapes, spacing, and controls independently
 of the selected theme.
 
+## Language
+
+On Android, choose **Settings → Appearance → Language** to follow the system language or select
+**简体中文** or **English**. Changes apply immediately and are saved on this device. Chinese
+system locales use Simplified Chinese; other system languages use English. Messages, code,
+file names, and project names keep their original text.
+
 ## Composer context
 
 Git-backed projects show branch and worktree controls below the composer while you create a thread.

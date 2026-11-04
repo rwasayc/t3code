@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import {
   formatProviderSubagentStatus,
   type ProviderSubagentStatus,
@@ -21,6 +22,7 @@ export function ProviderSubagentBar(props: {
   /** Set for providers whose children T3 reads on demand instead of streaming. */
   readonly inspect: { readonly environmentId: EnvironmentId; readonly threadId: ThreadId } | null;
 }) {
+  const { t } = useTranslation();
   const [inspecting, setInspecting] = useState(false);
   const live = props.status !== null && isOrchestrationV2WorkActive(props.status.status);
   const nowMs = useVisibleSecondClock(live);
@@ -33,7 +35,10 @@ export function ProviderSubagentBar(props: {
       {}
       <View
         accessible
-        accessibilityLabel={`${modelDescription} subagent, ${statusLabel}. It runs on its own and cannot take messages.`}
+        accessibilityLabel={t(
+          "{modelDescription} subagent, {statusLabel}. It runs on its own and cannot take messages.",
+          { modelDescription: String(modelDescription), statusLabel: String(statusLabel) },
+        )}
         className="min-w-0 flex-1 gap-0.5"
       >
         <View className="min-w-0 flex-row items-center gap-1.5">
@@ -61,14 +66,15 @@ export function ProviderSubagentBar(props: {
           className="font-sans text-xs text-foreground-secondary"
           style={{ fontVariant: ["tabular-nums"] }}
         >
-          {statusLabel} · Runs on its own
+          {statusLabel}
+          {t(" · Runs on its own")}
         </Text>
       </View>
       {props.inspect ? (
-        <Button label="Work" tone="secondary" onPress={() => setInspecting(true)} />
+        <Button label={t("Work")} tone="secondary" onPress={() => setInspecting(true)} />
       ) : null}
       {props.onOpenParent ? (
-        <Button label="Open parent" tone="secondary" onPress={props.onOpenParent} />
+        <Button label={t("Open parent")} tone="secondary" onPress={props.onOpenParent} />
       ) : null}
       {props.inspect && inspecting ? (
         <NativeChildWorkSheet {...props.inspect} onClose={() => setInspecting(false)} />

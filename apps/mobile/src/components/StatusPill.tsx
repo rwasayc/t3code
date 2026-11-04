@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { View } from "react-native";
 
 import { AppText as Text } from "./ui/AppText";
@@ -14,6 +15,7 @@ export function StatusPill(
     readonly size?: "default" | "compact";
   },
 ) {
+  const { t } = useTranslation();
   const size = props.size ?? "default";
   return (
     <View
@@ -30,7 +32,7 @@ export function StatusPill(
           props.textClassName,
         )}
       >
-        {props.label}
+        {t(props.label)}
       </Text>
     </View>
   );

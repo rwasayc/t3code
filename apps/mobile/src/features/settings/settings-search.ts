@@ -15,6 +15,13 @@ const SETTINGS_SEARCH_TERMS = {
   ],
   SettingsNotifications: ["push", "alerts", "live activity", "agent activity"],
   SettingsAppearance: [
+    "language",
+    "locale",
+    "语言",
+    "中文",
+    "英文",
+    "主题",
+    "字号",
     "theme",
     "dark mode",
     "light mode",

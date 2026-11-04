@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import { RegistryContext, useAtomMount, useAtomValue } from "@effect/atom-react";
 import { normalizeProviderAccentColor } from "@t3tools/client-runtime/state/provider-instance-display";
@@ -52,6 +53,7 @@ function WindowRow(props: {
   readonly color: string | null;
   readonly now: number;
 }) {
+  const { t } = useTranslation();
   const { window, now } = props;
   const remaining = remainingPercent(window);
   const timeLeft = paceRemainingPercent(window, now);
@@ -88,7 +90,8 @@ function WindowRow(props: {
       <View className="flex-row items-baseline justify-between gap-3">
         <Text className="text-sm text-foreground">{window.label}</Text>
         <Text className="text-sm font-t3-medium tabular-nums text-foreground">
-          {remaining}% left
+          {remaining}
+          {t("% left")}
         </Text>
       </View>
       <View
@@ -169,6 +172,7 @@ export function AccountLimits(props: {
   readonly trailing?: ReactNode;
   readonly footer?: ReactNode;
 }) {
+  const { t } = useTranslation();
   const { limits, now, dense = false } = props;
   const providerColor = useBarColor(props.driver);
   const color = normalizeProviderAccentColor(props.accentColor) ?? providerColor;
@@ -212,7 +216,7 @@ export function AccountLimits(props: {
           className="min-h-11 justify-center"
           onPress={() => void Linking.openURL(externalUsage.url).catch(() => undefined)}
         >
-          <Text className="text-sm font-t3-medium text-primary">Manage usage</Text>
+          <Text className="text-sm font-t3-medium text-primary">{t("Manage usage")}</Text>
         </Pressable>
       ) : null}
       {props.footer}
@@ -234,6 +238,7 @@ export function ResetCredits(props: {
   readonly now: number;
   readonly dense?: boolean;
 }) {
+  const { t } = useTranslation();
   const { environmentId, input, credits, now, dense = false } = props;
   const canManageProviders = useEnvironmentScope(environmentId, AuthProvidersManageScope);
   const consume = useAtomCommand(serverEnvironment.consumeResetCredit, {
@@ -273,8 +278,10 @@ export function ResetCredits(props: {
   const confirm = () => {
     if (!readEnvironmentScope(environmentId, AuthProvidersManageScope)) return;
     Dialog.alert(
-      "Use a reset credit?",
-      "This redeems one credit on your account and clears the current rate-limit windows. It cannot be undone.",
+      t("Use a reset credit?"),
+      t(
+        "This redeems one credit on your account and clears the current rate-limit windows. It cannot be undone.",
+      ),
       [
         { text: "Cancel", style: "cancel" },
         { text: "Use credit", onPress: () => void redeem() },
@@ -310,7 +317,7 @@ export function ResetCredits(props: {
       ) : null}
       {!canManageProviders ? (
         <Text className="text-xs text-foreground-tertiary">
-          This connection cannot manage provider accounts.
+          {t("This connection cannot manage provider accounts.")}
         </Text>
       ) : null}
       {status ? <Text className="text-sm text-foreground">{status}</Text> : null}

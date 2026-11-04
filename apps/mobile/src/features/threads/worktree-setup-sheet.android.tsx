@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Host, ModalBottomSheet, RNHostView } from "@expo/ui/jetpack-compose";
 import { View, useWindowDimensions } from "react-native";
 import { withUniwind } from "uniwind";
@@ -9,6 +10,7 @@ const NativeBottomSheet = withUniwind(ModalBottomSheet, {
 });
 
 export function WorktreeSetupSheet({ children, height, onClose }: WorktreeSetupSheetProps) {
+  const { t } = useTranslation();
   const window = useWindowDimensions();
   return (
     <Host style={{ position: "absolute", width: 0, height: 0 }}>
@@ -26,9 +28,9 @@ export function WorktreeSetupSheet({ children, height, onClose }: WorktreeSetupS
           >
             <AppBar
               sheet
-              title="Worktree setup"
+              title={t("Worktree setup")}
               actions={[
-                { accessibilityLabel: "Close setup details", icon: "xmark", onPress: onClose },
+                { accessibilityLabel: t("Close setup details"), icon: "xmark", onPress: onClose },
               ]}
             />
             {children}

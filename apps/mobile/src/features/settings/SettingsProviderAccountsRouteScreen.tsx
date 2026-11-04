@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import {
   isAtomCommandInterrupted,
@@ -37,6 +38,7 @@ import { SettingsSection } from "./components/SettingsSection";
 import { useSettingsEnvironmentFilter, type SettingsTarget } from "./settings-environment-filter";
 
 export function SettingsProviderAccountsRouteScreen() {
+  const { t } = useTranslation();
   const environmentMenu = useSettingsEnvironmentMenu();
   const { selectedTargets } = useSettingsEnvironmentFilter();
   const permittedEnvironments = useEnvironmentsWithScope(selectedTargets, AuthProvidersManageScope);
@@ -45,7 +47,7 @@ export function SettingsProviderAccountsRouteScreen() {
   return (
     <>
       <SettingsEnvironmentFilterHeader />
-      <SettingsScreen title="Providers" menus={[environmentMenu]}>
+      <SettingsScreen title={t("Providers")} menus={[environmentMenu]}>
         <ScreenScrollView
           className="flex-1"
           contentInsetAdjustmentBehavior="automatic"
@@ -53,15 +55,18 @@ export function SettingsProviderAccountsRouteScreen() {
           contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
         >
           {selectedTargets.length === 0 ? (
-            <Text className="text-foreground-muted">Select a connected environment.</Text>
+            <Text className="text-foreground-muted">{t("Select a connected environment.")}</Text>
           ) : (
             selectedTargets.map((environment) => (
               <SettingsSection key={environment.environmentId} title={environment.label}>
                 {!permittedEnvironments.has(environment.environmentId) ? (
                   <View className="gap-1 p-4">
-                    <Text className="text-base text-foreground">Limited permissions</Text>
+                    <Text className="text-base text-foreground">{t("Limited permissions")}</Text>
                     <Text className="text-sm text-foreground-muted">
-                      {`This session can view ${environment.label}'s providers but can't change their settings.`}
+                      {t(
+                        "This session can view {label}'s providers but can't change their settings.",
+                        { label: String(environment.label) },
+                      )}
                     </Text>
                   </View>
                 ) : (
@@ -80,7 +85,7 @@ export function SettingsProviderAccountsRouteScreen() {
                       canManageProvider,
                     ) ? (
                       <Text className="p-4 text-foreground-muted">
-                        Configure a provider with in-app sign-in in web or desktop Settings.
+                        {t("Configure a provider with in-app sign-in in web or desktop Settings.")}
                       </Text>
                     ) : null}
                   </>
@@ -119,6 +124,7 @@ function ProviderAccount({
   readonly provider: ServerProvider;
   readonly divider: boolean;
 }) {
+  const { t } = useTranslation();
   const environmentId = environment.environmentId;
   const instanceId = provider.instanceId;
   const target = { environmentId, input: { instanceId } };
@@ -245,7 +251,7 @@ function ProviderAccount({
   }
   function signOut() {
     Dialog.alert(
-      "Sign out?",
+      t("Sign out?"),
       `Running threads sharing this sign-in on ${environment.label} will stop. Thread history is kept.`,
       [
         { text: "Cancel", style: "cancel" },
@@ -271,7 +277,7 @@ function ProviderAccount({
       ? [
           {
             id: "change",
-            title: "Change account",
+            title: t("Change account"),
             image: "person.crop.circle",
             attributes: { disabled: signInDisabled },
             ...(methodActions.length > 1
@@ -289,7 +295,7 @@ function ProviderAccount({
       ? [
           {
             id: "signOut",
-            title: "Sign out",
+            title: t("Sign out"),
             image: "rectangle.portrait.and.arrow.right",
             attributes: { destructive: true, disabled: disabled || state === null },
           },
@@ -303,7 +309,7 @@ function ProviderAccount({
   ) : needsExternalSetup && provider.setup?.documentationUrl ? (
     <ControlPill
       variant="pill"
-      label="Docs"
+      label={t("Docs")}
       onPress={() => {
         void Linking.openURL(provider.setup!.documentationUrl!).catch(() =>
           setError("Could not open the provider docs."),
@@ -313,8 +319,8 @@ function ProviderAccount({
   ) : active && state?.flowId ? (
     <ControlPill
       variant="pill"
-      label="Cancel"
-      accessibilityLabel={`Cancel ${name} sign-in`}
+      label={t("Cancel")}
+      accessibilityLabel={t("Cancel {name} sign-in", { name: String(name) })}
       disabled={disabled}
       onPress={() => {
         void run(() => cancel({ environmentId, input: { instanceId, flowId: state.flowId! } }));
@@ -324,29 +330,40 @@ function ProviderAccount({
     <Menu
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`${name} account options`}
+      accessibilityLabel={t("{name} account options", { name: String(name) })}
       title={name}
       actions={accountActions}
       onPressAction={({ nativeEvent }) => onMenuAction(nativeEvent.event)}
     >
-      <ControlPill icon="ellipsis" accessibilityLabel={`${name} account options`} />
+      <ControlPill
+        icon="ellipsis"
+        accessibilityLabel={t("{name} account options", { name: String(name) })}
+      />
     </Menu>
   ) : canSignIn && !signedIn && methodActions.length > 1 && !signInDisabled ? (
     <Menu
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`Sign in to ${name}`}
-      title="Sign in with"
+      accessibilityLabel={t("Sign in to {name}", { name: String(name) })}
+      title={t("Sign in with")}
       actions={methodActions}
       onPressAction={({ nativeEvent }) => onMenuAction(nativeEvent.event)}
     >
-      <ControlPill variant="primary" label="Sign in" accessibilityLabel={`Sign in to ${name}`} />
+      <ControlPill
+        variant="primary"
+        label={t("Sign in")}
+        accessibilityLabel={t("Sign in to {name}", { name: String(name) })}
+      />
     </Menu>
   ) : canSignIn && !signedIn ? (
     <ControlPill
       variant="primary"
-      label={usesCredentials ? "Connect" : "Sign in"}
-      accessibilityLabel={usesCredentials ? `Connect to ${name}` : `Sign in to ${name}`}
+      label={usesCredentials ? t("Connect") : t("Sign in")}
+      accessibilityLabel={
+        usesCredentials
+          ? t("Connect to {name}", { name: String(name) })
+          : t("Sign in to {name}", { name: String(name) })
+      }
       disabled={signInDisabled}
       onPress={() => startSignIn()}
     />
@@ -372,7 +389,9 @@ function ProviderAccount({
         <View className="gap-2 px-4 pb-3">
           {interaction?.type === "deviceCode" ? (
             <Text selectable className="text-foreground">
-              Enter code {interaction.userCode} on the sign-in page.
+              {t("Enter code ")}
+              {interaction.userCode}
+              {t(" on the sign-in page.")}
             </Text>
           ) : null}
           {interaction?.type === "terminal" ? (
@@ -385,7 +404,7 @@ function ProviderAccount({
               {field("input", "Terminal response", true)}
               <SettingsActionRow
                 icon="arrow.up"
-                label="Send response"
+                label={t("Send response")}
                 disabled={disabled}
                 onPress={() => {
                   void send({ type: "terminal", data: `${values.input ?? ""}\r` }).then((sent) => {
@@ -402,7 +421,7 @@ function ProviderAccount({
               ))}
               <SettingsActionRow
                 icon="person.crop.circle"
-                label="Connect"
+                label={t("Connect")}
                 disabled={disabled}
                 onPress={() => {
                   void send({ type: "credentials", values }).then((sent) => {
@@ -417,7 +436,7 @@ function ProviderAccount({
               {field("callback", "Final localhost URL", false)}
               <SettingsActionRow
                 icon="arrow.right"
-                label="Continue"
+                label={t("Continue")}
                 disabled={disabled || !values.callback?.trim()}
                 onPress={() => {
                   if (!state?.flowId) return;
@@ -443,7 +462,7 @@ function ProviderAccount({
       {url ? (
         <SettingsActionRow
           icon="globe"
-          label="Open sign-in page"
+          label={t("Open sign-in page")}
           disabled={disabled}
           onPress={() => {
             void (async () => {

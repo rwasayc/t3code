@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { VoiceInputPhase, VoiceInputState } from "@t3tools/client-runtime/voice-input";
 import { memo, useState, type ReactNode } from "react";
 import { Linking, Pressable, Text as SystemText, View, type LayoutChangeEvent } from "react-native";
@@ -323,6 +324,7 @@ export function ComposerDictationError(props: {
   readonly error: string | null;
   readonly onDismiss: () => void;
 }) {
+  const { t } = useTranslation();
   if (!props.error) return null;
   return (
     <View className="min-w-0 flex-row items-center gap-2 px-4 py-3">
@@ -330,7 +332,7 @@ export function ComposerDictationError(props: {
         {props.error}
       </Text>
       <Pressable
-        accessibilityLabel="Dismiss voice input error"
+        accessibilityLabel={t("Dismiss voice input error")}
         accessibilityRole="button"
         className="size-7 items-center justify-center active:opacity-70"
         hitSlop={8}
@@ -392,11 +394,12 @@ export function ComposerDictationCancelAction(props: {
   readonly presentation: VoiceComposerPresentation;
   readonly onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   if (props.presentation.leadingAction !== "cancel") return null;
   return (
     <VoiceActionButton
       size={props.size}
-      accessibilityLabel="Cancel dictation"
+      accessibilityLabel={t("Cancel dictation")}
       icon="xmark"
       onPress={props.onCancel}
     />
@@ -413,13 +416,14 @@ export function ComposerDictationPrimaryAction(props: {
   readonly onConfirm: () => void;
   readonly onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   if (props.presentation.trailingAction === "confirm") {
     return (
       <VoiceActionButton
         size={props.size}
         accessibilityLabel={
           props.presentation.confirmationEnabled
-            ? "Finish dictation"
+            ? t("Finish dictation")
             : (props.presentation.statusLabel ?? "Preparing voice input")
         }
         disabled={!props.presentation.confirmationEnabled}

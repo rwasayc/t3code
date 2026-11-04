@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { Button } from "./ui/Button";
 import * as Dialog from "./ui/Dialog";
 import { useEffect, useEffectEvent } from "react";
@@ -16,6 +17,7 @@ function PdfDocumentPreview(props: {
   readonly source: ResolvedFilePreviewSource;
   readonly onRequestClose: () => void;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   return (
     <Modal
@@ -32,7 +34,7 @@ function PdfDocumentPreview(props: {
           <Text className="flex-1 font-t3-semibold text-foreground" numberOfLines={1}>
             {props.source.name ?? "PDF"}
           </Text>
-          <ControlPill label="Close" variant="pill" onPress={props.onRequestClose} />
+          <ControlPill label={t("Close")} variant="pill" onPress={props.onRequestClose} />
         </View>
         <PdfPreview uri={props.source.uri} />
       </View>
@@ -45,14 +47,15 @@ function DocumentPreview(props: {
   readonly onRequestClose: () => void;
   readonly onOpenError?: (error: unknown) => void;
 }) {
+  const { t } = useTranslation();
   const { uri, name } = props.source;
   const onRequestClose = useEffectEvent(props.onRequestClose);
   const onOpenError = useEffectEvent((error: unknown) => {
     if (props.onOpenError) props.onOpenError(error);
     else
       Dialog.alert(
-        "Could not open document",
-        "A compatible viewer must be installed. Check your connection and try again.",
+        t("Could not open document"),
+        t("A compatible viewer must be installed. Check your connection and try again."),
       );
   });
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- opens the attachment in an external viewer and aborts the open on cleanup
@@ -82,12 +85,12 @@ function DocumentPreview(props: {
     <Modal transparent animationType="fade" onRequestClose={props.onRequestClose}>
       <View className="flex-1 items-center justify-center bg-backdrop p-6">
         <View className="w-full max-w-sm gap-4 rounded-2xl bg-sheet-solid p-6">
-          <Text className="font-t3-semibold text-foreground">Opening document…</Text>
+          <Text className="font-t3-semibold text-foreground">{t("Opening document…")}</Text>
           <Text className="text-foreground-muted" numberOfLines={2}>
             {name ?? "Document"}
           </Text>
           <View className="items-end">
-            <Button label="Cancel" tone="text" onPress={props.onRequestClose} />
+            <Button label={t("Cancel")} tone="text" onPress={props.onRequestClose} />
           </View>
         </View>
       </View>

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { splitPullRequestBody } from "@t3tools/client-runtime/pull-request-markdown";
 import {
   PullRequestImageAttachment,
@@ -27,6 +28,7 @@ export function PullRequestDescription(props: {
   readonly onExpandedChange: (expanded: boolean) => void;
   readonly footer?: ReactNode;
 }) {
+  const { t } = useTranslation();
   const { expanded, onExpandedChange } = props;
   const [bodyHeight, setBodyHeight] = useState(0);
   const mediaContext = useContext(PullRequestMediaContext);
@@ -53,7 +55,7 @@ export function PullRequestDescription(props: {
   return (
     <View className="gap-5">
       <View className="gap-3">
-        <PullRequestSectionHeading>Description</PullRequestSectionHeading>
+        <PullRequestSectionHeading>{t("Description")}</PullRequestSectionHeading>
         {props.markdown.trim() ? (
           <View className="overflow-hidden">
             <View
@@ -132,13 +134,13 @@ export function PullRequestDescription(props: {
             ) : null}
           </View>
         ) : (
-          <Text className="text-sm text-foreground-muted">No description provided.</Text>
+          <Text className="text-sm text-foreground-muted">{t("No description provided.")}</Text>
         )}
         {props.footer}
       </View>
       {content.attachments.length ? (
         <View className="gap-3">
-          <PullRequestSectionHeading>Attachments</PullRequestSectionHeading>
+          <PullRequestSectionHeading>{t("Attachments")}</PullRequestSectionHeading>
           <ScrollView
             horizontal
             keyboardShouldPersistTaps="always"

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { AsyncResult } from "effect/reactivity";
 
@@ -14,6 +15,7 @@ export function DatabaseStorageNotice({
 }: {
   readonly targets: readonly SettingsTarget[];
 }) {
+  const { t } = useTranslation();
   const recommendations = useAtomValue(
     serverEnvironment.databaseCompactionRecommendations(
       JSON.stringify(targets.map((target) => target.environmentId)),
@@ -30,8 +32,10 @@ export function DatabaseStorageNotice({
   if (visible.length === 0) return null;
   return (
     <SettingsSection
-      title="Reclaim database space"
-      footer="Old history is cleaned up automatically, but these databases still hold the freed space. Run the command on each machine to return it to disk; it pauses and restarts the background service. Quit the desktop app first if it hosts the environment."
+      title={t("Reclaim database space")}
+      footer={t(
+        "Old history is cleaned up automatically, but these databases still hold the freed space. Run the command on each machine to return it to disk; it pauses and restarts the background service. Quit the desktop app first if it hosts the environment.",
+      )}
     >
       {visible.map(({ environmentId, status }) => (
         <SettingsActionRow
@@ -45,7 +49,7 @@ export function DatabaseStorageNotice({
       ))}
       <SettingsActionRow
         icon="xmark"
-        label="Dismiss"
+        label={t("Dismiss")}
         onPress={() =>
           updatePreferences({
             transform: (current) => ({

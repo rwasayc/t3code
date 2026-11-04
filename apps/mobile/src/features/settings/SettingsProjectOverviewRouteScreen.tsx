@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { AppText as Text, AppTextInput } from "../../components/ui/AppText";
 import { Button } from "../../components/ui/Button";
@@ -49,6 +50,7 @@ import { DEFAULT_SETTINGS_PAGE } from "../workspace/workspace-tab-navigation";
 import { readUnloadedThreadCount } from "../../state/olderSettledShelf";
 
 export function SettingsProjectOverviewRouteScreen() {
+  const { t } = useTranslation();
   const environmentMenu = useSettingsEnvironmentMenu();
   const insets = useSafeAreaInsets();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -89,7 +91,7 @@ export function SettingsProjectOverviewRouteScreen() {
   return (
     <>
       <SettingsEnvironmentFilterHeader />
-      <SettingsScreen title="Projects" menus={[environmentMenu]}>
+      <SettingsScreen title={t("Projects")} menus={[environmentMenu]}>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
@@ -99,12 +101,15 @@ export function SettingsProjectOverviewRouteScreen() {
         >
           {selectedProjectKey === null ? (
             <Text className="px-2 text-base text-foreground-muted">
-              Choose a project with the filter above to manage its name, checkouts and removal.
+              {t(
+                "Choose a project with the filter above to manage its name, checkouts and removal.",
+              )}
             </Text>
           ) : !group || members.length === 0 ? (
             <Text className="px-2 text-base text-foreground-muted">
-              This project has no checkout on the selected connected environments. Change the filter
-              above.
+              {t(
+                "This project has no checkout on the selected connected environments. Change the filter above.",
+              )}
             </Text>
           ) : (
             <ProjectOverviewContent
@@ -142,6 +147,7 @@ function ProjectOverviewContent(props: {
   readonly projectKey: string | null;
   readonly onProjectRemoved: (projectKey: string | null) => void;
 }) {
+  const { t } = useTranslation();
   const { isRemoving, setIsRemoving, startRemoval, finishRemoval } = props;
   const representative = props.members[0]!;
   const displayName = deriveProjectGroupLabel({ representative, members: props.members });
@@ -184,7 +190,7 @@ function ProjectOverviewContent(props: {
     setIsOrganizing(true);
     for (const member of allMembers) {
       if (!readEnvironmentScope(member.environmentId, AuthOrchestrationOperateScope)) {
-        Dialog.alert("Failed to update project", "This connection can no longer change it.");
+        Dialog.alert(t("Failed to update project"), t("This connection can no longer change it."));
         break;
       }
       const result = await organizeProject({
@@ -216,7 +222,7 @@ function ProjectOverviewContent(props: {
       (entry) => entry.environmentId === denied.environmentId,
     );
     Dialog.alert(
-      "Failed to remove project",
+      t("Failed to remove project"),
       `This connection cannot change projects in ${environment?.label ?? "this environment"}.`,
     );
     return false;
@@ -239,9 +245,9 @@ function ProjectOverviewContent(props: {
       unloadedThreadCount: readUnloadedThreadCount(members, threads),
     });
     Dialog.confirm({
-      title: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
+      title: plan.targetKind === "checkout" ? t("Remove checkout") : t("Remove project"),
       message: plan.confirmationMessage,
-      confirmText: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
+      confirmText: plan.targetKind === "checkout" ? t("Remove checkout") : t("Remove project"),
       destructive: true,
       onCancel: finishRemoval,
       onConfirm: () => {
@@ -320,17 +326,19 @@ function ProjectOverviewContent(props: {
             {displayName}
           </Text>
           <Text className="text-sm text-foreground-muted">
-            {props.members.length === 1 ? "1 checkout" : `${props.members.length} checkouts`}
+            {props.members.length === 1
+              ? "1 checkout"
+              : t("{length} checkouts", { length: String(props.members.length) })}
           </Text>
         </View>
       </View>
 
-      <SettingsSection title="Project">
+      <SettingsSection title={t("Project")}>
         <View className="gap-3 p-4">
-          <Text className="text-sm font-t3-medium text-foreground-muted">Name</Text>
+          <Text className="text-sm font-t3-medium text-foreground-muted">{t("Name")}</Text>
           <View className="flex-row items-center gap-3">
             <AppTextInput
-              accessibilityLabel="Project name"
+              accessibilityLabel={t("Project name")}
               className="min-h-11 min-w-0 flex-1 rounded-xl border-continuous bg-card px-3 text-base text-foreground"
               value={draftName ?? displayName}
               onChangeText={setDraftName}
@@ -340,7 +348,7 @@ function ProjectOverviewContent(props: {
             />
             {canSave ? (
               <Button
-                label="Save"
+                label={t("Save")}
                 accessibilityHint="Save project name"
                 tone="secondary"
                 onPress={saveName}
@@ -351,10 +359,10 @@ function ProjectOverviewContent(props: {
       </SettingsSection>
 
       {canOrganize ? (
-        <SettingsSection title="Organize">
+        <SettingsSection title={t("Organize")}>
           <SettingsSwitchRow
             icon="pin"
-            label="Pin"
+            label={t("Pin")}
             subtitle={
               offline
                 ? "Connect every machine with this project to change this."
@@ -378,7 +386,7 @@ function ProjectOverviewContent(props: {
         </SettingsSection>
       ) : null}
 
-      <SettingsSection title="Checkouts">
+      <SettingsSection title={t("Checkouts")}>
         {props.members.map((member, index) => {
           const environment = props.environments.find(
             (entry) => entry.environmentId === member.environmentId,
@@ -395,7 +403,7 @@ function ProjectOverviewContent(props: {
                     : "text-lg text-foreground"
                 }
               >
-                {environment?.label ?? "Environment"}
+                {environment?.label ?? t("Environment")}
               </Text>
               {environment?.displayUrl ? (
                 <Text className="text-sm leading-normal text-foreground-muted">
@@ -416,21 +424,24 @@ function ProjectOverviewContent(props: {
           );
         })}
       </SettingsSection>
-      <SettingsSection title="Danger">
+      <SettingsSection title={t("Danger")}>
         <SettingsActionRow
           icon="trash"
           label={
             props.hasOtherMembers
-              ? "Remove checkout"
+              ? t("Remove checkout")
               : props.members.length > 1
                 ? "Remove this project everywhere"
-                : "Remove project"
+                : t("Remove project")
           }
           description={
             props.hasOtherMembers
               ? "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched."
               : props.members.length > 1
-                ? `Deletes all ${props.members.length} checkout entries and their threads on every machine. Files on disk are not touched.`
+                ? t(
+                    "Deletes all {length} checkout entries and their threads on every machine. Files on disk are not touched.",
+                    { length: String(props.members.length) },
+                  )
                 : "Deletes the project entry and its threads. Files on disk are not touched."
           }
           tone="danger"
@@ -448,16 +459,19 @@ function RemoveCheckoutAction(props: {
   readonly disabled: boolean;
   readonly onPress: () => void;
 }) {
+  const { t } = useTranslation();
   const canRemove = useEnvironmentScope(props.member.environmentId, AuthOrchestrationOperateScope);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Remove checkout ${props.member.workspaceRoot}`}
+      accessibilityLabel={t("Remove checkout {workspaceRoot}", {
+        workspaceRoot: String(props.member.workspaceRoot),
+      })}
       disabled={props.disabled || !canRemove}
       onPress={props.onPress}
       className="self-start rounded-full border border-border bg-card px-3 py-1.5 disabled:opacity-40"
     >
-      <Text className="font-t3-medium text-xs text-danger-foreground">Remove checkout</Text>
+      <Text className="font-t3-medium text-xs text-danger-foreground">{t("Remove checkout")}</Text>
     </Pressable>
   );
 }

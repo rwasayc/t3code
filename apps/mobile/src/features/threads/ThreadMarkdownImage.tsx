@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import { MISSING_FILE_ACCESS_MESSAGE } from "@t3tools/client-runtime/state/assets";
 import type { AssetResource, EnvironmentId } from "@t3tools/contracts";
@@ -95,6 +96,7 @@ export function ThreadMarkdownImageView(props: {
   readonly actionsSource?: MediaActionsSource;
   readonly onPressPreview: (source: FilePreviewSource) => void;
 }) {
+  const { t } = useTranslation();
   const withGallery = useFilePreviewGallery();
   const sourceIdentifier = useId();
   const mediaActions = useMediaActions(props.actionsSource);
@@ -152,8 +154,10 @@ export function ThreadMarkdownImageView(props: {
             {failed ? (
               <Text className="px-3 text-center text-xs text-foreground-muted">
                 {props.unavailableDetail
-                  ? `Image unavailable. ${props.unavailableDetail}`
-                  : "Image unavailable"}
+                  ? t("Image unavailable. {unavailableDetail}", {
+                      unavailableDetail: String(props.unavailableDetail),
+                    })
+                  : t("Image unavailable")}
               </Text>
             ) : (
               <AppActivityIndicator />
@@ -248,12 +252,13 @@ function ThreadMarkdownImageRequest(props: {
 }
 
 function ThreadMarkdownImageLoading() {
+  const { t } = useTranslation();
   return (
     <View
       pointerEvents="none"
       style={[StyleSheet.absoluteFill, { alignItems: "center", justifyContent: "center" }]}
     >
-      <Text className="text-xs text-foreground-muted">Loading image…</Text>
+      <Text className="text-xs text-foreground-muted">{t("Loading image…")}</Text>
     </View>
   );
 }

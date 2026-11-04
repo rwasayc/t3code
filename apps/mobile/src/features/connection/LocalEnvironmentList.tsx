@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import type { EnvironmentId } from "@t3tools/contracts";
 import type { ComponentProps } from "react";
 import { View } from "react-native";
@@ -21,6 +22,7 @@ export function LocalEnvironmentList({
   readonly expandedId: EnvironmentId | null;
   readonly onToggle: (environmentId: EnvironmentId) => void;
 }) {
+  const { t } = useTranslation();
   if (environments.length === 0) {
     return (
       <View
@@ -36,8 +38,10 @@ export function LocalEnvironmentList({
           />
         </View>
         <Text className="text-center text-sm leading-normal text-foreground-muted">
-          No environments connected yet.{"\n"}Tap{" "}
-          <Text className="font-t3-bold text-foreground">+</Text> to add one.
+          {t("No environments connected yet.")}
+          {"\n"}
+          {t("Tap")} <Text className="font-t3-bold text-foreground">+</Text>
+          {t(" to add one.")}
         </Text>
       </View>
     );

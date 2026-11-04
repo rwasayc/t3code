@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { DraftEnvironmentControl } from "./DraftEnvironmentControl";
 import { NativeScrollEdgeEffectsContext } from "../../native/NativeScrollViewMarker";
 import { DraftThreadHeader } from "./DraftThreadHeader";
@@ -153,6 +154,7 @@ export function NewTaskDraftScreen(props: {
   readonly draftId?: string;
   readonly incomingShareId?: string;
 }) {
+  const { t } = useTranslation();
   const [creationMetadata] = useState(makeTurnCommandMetadata);
   const projects = useProjects();
   const flow = useNewTaskFlow();
@@ -233,7 +235,7 @@ export function NewTaskDraftScreen(props: {
     if (AsyncResult.isFailure(result)) {
       const error = Cause.squash(result.cause);
       Dialog.alert(
-        "Failed to remove project",
+        t("Failed to remove project"),
         error instanceof Error ? error.message : "An error occurred.",
       );
       return;
@@ -616,7 +618,7 @@ export function NewTaskDraftScreen(props: {
     // Recovery may retain over-cap attachments; block send before uploading a turn the server would reject.
     if (draft.attachments.length > PROVIDER_SEND_TURN_MAX_ATTACHMENTS) {
       Dialog.alert(
-        "Too many attachments",
+        t("Too many attachments"),
         `Remove attachments until there are at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS}.`,
       );
       return null;
@@ -624,7 +626,7 @@ export function NewTaskDraftScreen(props: {
 
     const contextBlockReason = composerContextSendBlockReason(draft.context);
     if (contextBlockReason) {
-      Dialog.alert("Too much context", contextBlockReason);
+      Dialog.alert(t("Too much context"), contextBlockReason);
       return null;
     }
     const strandedThread = threadContextsOutsideEnvironment({
@@ -639,7 +641,7 @@ export function NewTaskDraftScreen(props: {
           (environment) => environment.environmentId === strandedThread.environmentId,
         )?.environmentLabel ?? "its machine";
       Dialog.alert(
-        "Attached thread unavailable",
+        t("Attached thread unavailable"),
         `"${strandedThread.title}" is on another machine. Switch back to ${owner} or remove it from the draft.`,
       );
       return null;
@@ -658,7 +660,7 @@ export function NewTaskDraftScreen(props: {
     if (AsyncResult.isFailure(queued)) {
       const error = squashAtomCommandFailure(queued);
       Dialog.alert(
-        "Could not queue task",
+        t("Could not queue task"),
         error instanceof Error ? error.message : "The task could not be saved to the outbox.",
       );
       return null;
@@ -726,22 +728,22 @@ export function NewTaskDraftScreen(props: {
   );
   const shareUnavailableNotice = isIncomingShareUnavailable ? (
     <Text textRole="footnote" className="text-center text-foreground-muted">
-      The shared content is no longer in the inbox. You can continue editing this task draft.
+      {t("The shared content is no longer in the inbox. You can continue editing this task draft.")}
     </Text>
   ) : null;
   const hero = flow.isScratchDraft ? (
     <View className="items-center gap-2 px-6" testID="new-task-hero">
       <Text className="text-center text-2xl font-t3-medium tracking-tight text-foreground">
-        What should we work on?
+        {t("What should we work on?")}
       </Text>
       <View className="flex-row flex-wrap items-center justify-center gap-x-1">
         <ComposerInlineControl
           accessibilityHint="Opens the project picker"
-          accessibilityLabel="No project"
+          accessibilityLabel={t("No project")}
           chevronDirection="right"
           disabled={isComposerInteractionLocked}
           icon="folder"
-          label="No project"
+          label={t("No project")}
           onPress={chooseProject}
         />
         {environmentControl}
@@ -752,10 +754,10 @@ export function NewTaskDraftScreen(props: {
     <View className="items-center gap-6 px-6" testID="new-task-hero">
       <View className="w-full items-center gap-1.5">
         <Text className="text-center text-2xl font-t3-medium tracking-tight text-foreground">
-          What should we build
+          {t("What should we build")}
         </Text>
         <View className="max-w-full flex-row items-center justify-center">
-          <Text className="text-2xl font-t3-medium tracking-tight text-foreground">in </Text>
+          <Text className="text-2xl font-t3-medium tracking-tight text-foreground">{t("in ")}</Text>
           <Pressable
             accessibilityHint="Opens the project picker"
             accessibilityLabel={selectedProjectLabel ?? selectedProject.title}
@@ -837,7 +839,7 @@ export function NewTaskDraftScreen(props: {
 
       <View className="min-w-0 shrink">
         <ComposerInlineControl
-          accessibilityLabel={`${flow.workspaceMode === "worktree" ? "Base branch" : "Branch"}: ${selectedBranchLabel}`}
+          accessibilityLabel={`${flow.workspaceMode === "worktree" ? t("Base branch") : t("Branch")}: ${selectedBranchLabel}`}
           chevronDirection="right"
           disabled={isComposerInteractionLocked || !flow.isGitRepo}
           icon="arrow.triangle.branch"
@@ -854,7 +856,7 @@ export function NewTaskDraftScreen(props: {
       <ThreadScreenFallback
         header={
           <AppBar
-            title="New thread"
+            title={t("New thread")}
             onBack={goBack}
             options={{
               ...threadHeaderAppearance(NATIVE_LIQUID_GLASS_SUPPORTED),
@@ -868,13 +870,15 @@ export function NewTaskDraftScreen(props: {
         <View className="flex-1 justify-end gap-3 p-4">
           {environmentControl}
           <Text className="text-foreground-muted">
-            Your draft is saved on this device. Connect to an environment to choose its first model.
+            {t(
+              "Your draft is saved on this device. Connect to an environment to choose its first model.",
+            )}
           </Text>
           <ComposerEditor
             draftKey={flow.draftKey}
             value={flow.prompt}
             onChangeText={flow.setPrompt}
-            placeholder="Ask anything"
+            placeholder={t("Ask anything")}
             multiline
             style={{ minHeight: 64 }}
           />

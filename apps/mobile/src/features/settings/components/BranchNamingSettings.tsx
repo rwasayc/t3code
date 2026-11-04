@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { BranchNamingMode, type ServerSettingsPatch } from "@t3tools/contracts";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { View } from "react-native";
@@ -26,6 +27,7 @@ export function BranchNamingSettings(props: {
   disabled: Readonly<Record<"mode" | "prefix" | "instructions", boolean>>;
   onChange: (patch: ServerSettingsPatch) => void;
 }) {
+  const { t } = useTranslation();
   // Save on exit too: Android Back hides the keyboard without ending editing.
   type Field = "branchNamePrefix" | "branchNameInstructions";
   const drafts = useRef<Partial<Record<Field, { text: string; over: string | null }>>>({});
@@ -55,9 +57,11 @@ export function BranchNamingSettings(props: {
   useEffect(() => () => saveDrafts(), []);
   return (
     <SettingsSection
-      title="Worktree branch naming"
+      title={t("Worktree branch naming")}
       trailing={
-        props.mode === null ? <Text className="text-xs text-foreground-muted">Mixed</Text> : null
+        props.mode === null ? (
+          <Text className="text-xs text-foreground-muted">{t("Mixed")}</Text>
+        ) : null
       }
     >
       {BranchNamingMode.literals.map((mode, index) => (
@@ -74,14 +78,14 @@ export function BranchNamingSettings(props: {
       {props.mode === "static" ? (
         <View className="gap-2 px-4 py-3">
           <Text className="text-sm text-foreground-muted">
-            Use t3 or t3/ for t3/add-search. Leave empty for no prefix.
+            {t("Use t3 or t3/ for t3/add-search. Leave empty for no prefix.")}
           </Text>
           <AppTextInput
             key={props.prefix}
-            accessibilityLabel="Branch prefix"
+            accessibilityLabel={t("Branch prefix")}
             onChangeText={(text) => edit("branchNamePrefix", text)}
             defaultValue={props.prefix ?? ""}
-            placeholder={props.prefix === null ? "Mixed" : "No prefix"}
+            placeholder={props.prefix === null ? t("Mixed") : "No prefix"}
             editable={!props.disabled.prefix}
             autoCapitalize="none"
             autoCorrect={false}
@@ -93,11 +97,11 @@ export function BranchNamingSettings(props: {
       {props.mode === "custom" ? (
         <View className="gap-2 px-4 py-3">
           <Text className="text-sm text-foreground-muted">
-            Append instructions to the naming prompt.
+            {t("Append instructions to the naming prompt.")}
           </Text>
           <AppTextInput
             key={props.instructions}
-            accessibilityLabel="Branch naming instructions"
+            accessibilityLabel={t("Branch naming instructions")}
             onChangeText={(text) => edit("branchNameInstructions", text)}
             defaultValue={props.instructions ?? ""}
             placeholder={

@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import * as Dialog from "../../../components/ui/Dialog";
 import { SheetHeader } from "../../../components/ui/SheetHeader";
 import { useOpenPullRequest } from "../../../native/useOpenPullRequest";
@@ -62,6 +63,7 @@ export function GitOverviewSheet(props: GitOverviewSheetProps) {
 }
 
 function GitOverviewSheetContent(props: GitOverviewSheetProps) {
+  const { t } = useTranslation();
   const { layout } = useAdaptiveWorkspaceLayout();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -263,10 +265,13 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         {behindCount > 0 ? (
           <ListRow
             icon="arrow.down.circle"
-            label="Pull latest"
+            label={t("Pull latest")}
             description={
               canWriteSourceControl
-                ? `${behindCount} commit${behindCount === 1 ? "" : "s"} behind upstream`
+                ? t("{behindCount} commit{value1} behind upstream", {
+                    behindCount: String(behindCount),
+                    value1: String(behindCount === 1 ? "" : "s"),
+                  })
                 : "This connection cannot change source control."
             }
             disabled={!canWriteSourceControl || busy || !isRepo}
@@ -275,8 +280,8 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         ) : null}
         <ListRow
           icon="text.bubble"
-          label="Review changes"
-          description="Inspect changes, uncommitted edits, and turn diffs"
+          label={t("Review changes")}
+          description={t("Inspect changes, uncommitted edits, and turn diffs")}
           disabled={busy || !isRepo}
           onPress={() => {
             const params = { environmentId, threadId };
@@ -291,7 +296,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         />
         <ListRow
           icon="point.topleft.down.curvedto.point.bottomright.up"
-          label="Branches & worktrees"
+          label={t("Branches & worktrees")}
           description={
             canChangeThreadBranch
               ? "Switch branch, create branch, or move to a worktree"
@@ -310,15 +315,21 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         {linkedPrActions.canLink ? (
           <ListRow
             icon="link"
-            label={`Link ${linkedPrActions.terminology.singular}`}
-            description={`Attach a ${linkedPrActions.terminology.singular} by URL or number`}
+            label={t("Link {singular}", {
+              singular: String(t(linkedPrActions.terminology.singular)),
+            })}
+            description={t("Attach a {singular} by URL or number", {
+              singular: String(t(linkedPrActions.terminology.singular)),
+            })}
             onPress={linkedPrActions.promptLink}
           />
         ) : null}
       </ListSection>
 
       {linkedPrLines.length > 0 ? (
-        <ListSection title={`Linked ${linkedPrActions.terminology.plural}`}>
+        <ListSection
+          title={t("Linked {plural}", { plural: String(t(linkedPrActions.terminology.plural)) })}
+        >
           {linkedPrLines.map((line, index) => (
             <LinkedPullRequestRow
               key={linkedPullRequestKey(line)}
@@ -333,7 +344,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
       ) : null}
 
       {currentWorktreePath ? (
-        <ListSection title="Worktree">
+        <ListSection title={t("Worktree")}>
           <Text selectable textRole="footnote" className="p-4 text-foreground-muted">
             {currentWorktreePath}
           </Text>
@@ -343,7 +354,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
   );
 
   const refresh = {
-    accessibilityLabel: "Refresh repository status",
+    accessibilityLabel: t("Refresh repository status"),
     disabled: busy || isRefreshing,
     onPress: () => void handleRefresh(),
   };

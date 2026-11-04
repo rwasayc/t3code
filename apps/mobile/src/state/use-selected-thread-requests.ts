@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import * as Dialog from "../components/ui/Dialog";
 import { useServerConfigs } from "./entities";
 import {
@@ -164,6 +165,7 @@ function collectAnsweredRequestDrafts(
 }
 
 export function useSelectedThreadRequests() {
+  const { t } = useTranslation();
   const respondToApproval = useAtomCommand(
     threadEnvironment.respondToApproval,
     "thread approval response",
@@ -360,8 +362,8 @@ export function useSelectedThreadRequests() {
         )
       ) {
         Dialog.alert(
-          "Attachments are not ready",
-          "Wait for uploads to finish, or retry failed uploads.",
+          t("Attachments are not ready"),
+          t("Wait for uploads to finish, or retry failed uploads."),
         );
         return;
       }

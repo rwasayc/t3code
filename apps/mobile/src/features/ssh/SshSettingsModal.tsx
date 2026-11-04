@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import { Modal, Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,11 +18,11 @@ import {
 } from "./ssh-runtime";
 
 export const SSH_PHASE_LABELS: Record<TunnelPhase, string> = {
-  setup: "未配置",
-  connecting: "正在连接",
-  connected: "已连接",
-  failed: "连接失败",
-  paused: "已断开（回到前台时自动重连）",
+  setup: "Not configured",
+  connecting: "Connecting",
+  connected: "Connected",
+  failed: "Connection failed",
+  paused: "Disconnected (reconnects when the app returns to the foreground)",
 };
 
 /**
@@ -32,6 +33,7 @@ export function SshSettingsModal(props: {
   readonly pairingNeeded: boolean;
   readonly onShowPairing: () => void;
 }) {
+  const { t } = useTranslation();
   const open = useAtomValue(sshSettingsOpenAtom);
   const snapshot = useAtomValue(sshTunnelSnapshotAtom);
   const importAction = useEnrollmentImport(() => closeSshSettings());
@@ -40,9 +42,11 @@ export function SshSettingsModal(props: {
   const controller = sshTunnelController();
   const confirmRemove = () =>
     Dialog.confirm({
-      title: "删除连接配置",
-      message: "将断开 SSH 隧道并删除已保存的连接配置，之后可重新导入连接文件。",
-      confirmText: "删除",
+      title: t("Delete connection configuration"),
+      message: t(
+        "This disconnects the SSH tunnel and removes the saved connection configuration. You can import a connection file again later.",
+      ),
+      confirmText: t("Delete"),
       destructive: true,
       onConfirm: () => {
         closeSshSettings();
@@ -55,11 +59,11 @@ export function SshSettingsModal(props: {
       <SafeAreaView className="flex-1 bg-screen">
         <View collapsable={false} className="flex-row items-center justify-between px-5 py-3">
           <Text textRole="headline" className="font-t3-bold text-foreground">
-            工作台连接
+            {t("Workbench connection")}
           </Text>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="关闭"
+            accessibilityLabel={t("Close")}
             onPress={closeSshSettings}
             className="size-9 items-center justify-center rounded-full bg-subtle active:opacity-70"
           >
@@ -70,21 +74,21 @@ export function SshSettingsModal(props: {
           <View collapsable={false} className="overflow-hidden rounded-[26px] bg-grouped-card">
             {snapshot.profile ? (
               <>
-                <ListRowLayout label="名称" detail={snapshot.profile.name} />
+                <ListRowLayout label={t("Name")} detail={snapshot.profile.name} />
                 <ListRowLayout
-                  label="服务器"
+                  label={t("Server")}
                   detail={`${snapshot.profile.host}:${snapshot.profile.port}`}
                 />
               </>
             ) : (
-              <ListRowLayout label="尚未导入连接文件" />
+              <ListRowLayout label={t("No connection file imported")} />
             )}
-            <ListRowLayout label="状态" detail={SSH_PHASE_LABELS[snapshot.phase]} />
+            <ListRowLayout label={t("Status")} detail={t(SSH_PHASE_LABELS[snapshot.phase])} />
           </View>
           <View collapsable={false} className="overflow-hidden rounded-[26px] bg-grouped-card">
             <ListRow
               icon="arrow.clockwise"
-              label="重新连接"
+              label={t("Reconnect")}
               disabled={snapshot.profile === null}
               onPress={() => {
                 closeSshSettings();
@@ -93,13 +97,13 @@ export function SshSettingsModal(props: {
             />
             <ListRow
               icon="doc.text"
-              label="更换连接文件"
-              description="重新导入连接文件并立即连接"
+              label={t("Change connection file")}
+              description={t("Import a different connection file and connect immediately")}
               onPress={() => void importAction.start()}
             />
             <ListRow
               icon="trash"
-              label="删除连接配置"
+              label={t("Delete connection configuration")}
               disabled={snapshot.profile === null}
               onPress={confirmRemove}
             />
@@ -108,8 +112,8 @@ export function SshSettingsModal(props: {
             <View collapsable={false} className="overflow-hidden rounded-[26px] bg-grouped-card">
               <ListRow
                 icon="link"
-                label="配对工作台"
-                description="输入 T3 配对码完成首次配对"
+                label={t("Pair workbench")}
+                description={t("Enter a T3 pairing code to complete initial pairing")}
                 onPress={() => {
                   closeSshSettings();
                   props.onShowPairing();
@@ -119,11 +123,13 @@ export function SshSettingsModal(props: {
           ) : null}
           {importAction.error ? (
             <Text textRole="footnote" className="px-4 text-danger-foreground">
-              {importAction.error}
+              {t(importAction.error)}
             </Text>
           ) : null}
           <Text textRole="footnote" className="px-4 leading-normal text-foreground-muted">
-            隧道仅绑定本机 127.0.0.1，连接期间应用仍需通过 T3 的访问令牌认证。
+            {t(
+              "The tunnel listens only on 127.0.0.1. T3 access-token authentication is still required while connected.",
+            )}
           </Text>
         </View>
       </SafeAreaView>
