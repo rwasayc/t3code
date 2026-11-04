@@ -94,6 +94,9 @@ import {
 import { pruneNewTaskFlowStates } from "./features/threads/new-task-flow-state";
 import { pruneNewTaskBranchCheckouts } from "./features/threads/NewTaskDraftRouteScreen";
 import { installAppUpdateChecks } from "./features/updates/app-updates";
+import { isSshPersonalBuild } from "./features/ssh/ssh-build";
+import { installSshTunnelRuntime } from "./features/ssh/ssh-runtime";
+import { SshTunnelGate } from "./features/ssh/SshTunnelGate";
 
 import "../global.css";
 
@@ -129,6 +132,7 @@ const appLinking = {
     "t3code-dev://",
     "t3code-preview://",
     DEFAULT_HOSTED_APP_URL,
+    "t3workbench://",
   ],
   config: { initialRouteName: "Home" },
   filter: (url: string) => shouldHandleAppLink(url, hasCloudPublicConfig()),
@@ -195,7 +199,9 @@ const appServiceDisposers = [
   startIncomingShareInbox(),
   installAgentNotificationNavigation(linkToAppPath),
   installAppShortcuts(linkToAppPath),
-  installAppUpdateChecks(),
+  // The personal SSH build disables OTA in app.config; belt-and-braces: never run update checks.
+  ...(isSshPersonalBuild() ? [] : [installAppUpdateChecks()]),
+  installSshTunnelRuntime(),
   installShowcaseCapture(rootPathnameFromState),
 ];
 disposeOnFoundationReplace(typeof module === "undefined" ? undefined : module.hot, () => {
@@ -218,6 +224,7 @@ export default function App() {
     <RegistryContext.Provider value={appAtomRegistry}>
       <CloudAuthProvider>
         <AppearancePreferencesProvider>
+          <SplashScreenCoordinator />
           <AppContent />
         </AppearancePreferencesProvider>
       </CloudAuthProvider>
@@ -231,7 +238,6 @@ function AppContent() {
 
   return (
     <>
-      <SplashScreenCoordinator />
       <SubscriptionUsageCoordinator />
       <GestureHandlerRootView className="flex-1">
         <KeyboardProvider statusBarTranslucent>
@@ -240,16 +246,18 @@ function AppContent() {
             {/* native-stack needs the theme's dark flag to select dark native headers. */}
             <GlobalVoiceInputControl>
               <NativeLayoutMetricsProvider>
-                <Navigation
-                  ref={attachRootNavigation}
-                  linking={appLinking}
-                  onReady={handleNavigationReady}
-                  theme={navigationTheme}
-                  onStateChange={handleNavigationStateChange}
-                />
-                <Dialog.Host />
-                <ThreadArrangementHost />
-                <ProjectChipIconRasterizer />
+                <SshTunnelGate>
+                  <Navigation
+                    ref={attachRootNavigation}
+                    linking={appLinking}
+                    onReady={handleNavigationReady}
+                    theme={navigationTheme}
+                    onStateChange={handleNavigationStateChange}
+                  />
+                  <Dialog.Host />
+                  <ThreadArrangementHost />
+                  <ProjectChipIconRasterizer />
+                </SshTunnelGate>
               </NativeLayoutMetricsProvider>
             </GlobalVoiceInputControl>
             <OverlayPortalHost />

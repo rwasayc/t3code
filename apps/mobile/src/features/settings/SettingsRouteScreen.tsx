@@ -35,6 +35,7 @@ import {
 } from "./components/SettingsEnvironmentFilterHeader";
 import { useSettingsEnvironmentFilter } from "./settings-environment-filter";
 import { filterSettingsSections } from "./settings-search";
+import { useSshTunnelSettingsRow } from "../ssh/sshSettingsRow";
 import { NativePrimaryColumnContext } from "../../native/v5-workspace-context";
 
 export function SettingsRouteScreen() {
@@ -109,6 +110,7 @@ function ConfiguredSettingsRouteScreen() {
   const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
   const { user } = useUser();
   const { savedConnectionsById } = useSavedRemoteConnections();
+  const sshTunnelRow = useSshTunnelSettingsRow();
   const accountLabel = !isLoaded
     ? "Checking"
     : !isSignedIn
@@ -127,6 +129,7 @@ function ConfiguredSettingsRouteScreen() {
           onPress: () => navigation.navigate("SettingsAuth"),
         },
         environmentsRow(Object.keys(savedConnectionsById).length),
+        ...(sshTunnelRow === null ? [] : [sshTunnelRow]),
         {
           id: "SettingsNotifications",
           icon: "bell.badge",
@@ -140,7 +143,15 @@ function ConfiguredSettingsRouteScreen() {
 
 function LocalSettingsRouteScreen() {
   const { savedConnectionsById } = useSavedRemoteConnections();
-  return <SettingsList connections={[environmentsRow(Object.keys(savedConnectionsById).length)]} />;
+  const sshTunnelRow = useSshTunnelSettingsRow();
+  return (
+    <SettingsList
+      connections={[
+        environmentsRow(Object.keys(savedConnectionsById).length),
+        ...(sshTunnelRow === null ? [] : [sshTunnelRow]),
+      ]}
+    />
+  );
 }
 
 function environmentsRow(count: number): SettingsListRow {
