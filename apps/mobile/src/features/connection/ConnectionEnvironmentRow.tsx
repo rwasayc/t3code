@@ -226,7 +226,7 @@ export function ConnectionEnvironmentRow(props: {
                 label={t("Label")}
                 autoCapitalize="words"
                 autoCorrect={false}
-                placeholder="My MacBook"
+                placeholder={t("My MacBook")}
                 value={label}
                 onChangeText={setLabel}
               />

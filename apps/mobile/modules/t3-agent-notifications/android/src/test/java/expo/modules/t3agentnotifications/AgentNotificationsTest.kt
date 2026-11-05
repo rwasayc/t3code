@@ -47,6 +47,7 @@ class AgentNotificationsTest {
         addCategory(Intent.CATEGORY_LAUNCHER)
       }
     )
+    AgentNotifications.setLanguage(context, "en")
     AgentNotifications.clear(context)
     AgentNotifications.configure(context, "device", "user", "t3code-dev", true)
     AgentNotifications.setThreadOnScreen("/threads/environment/thread")
@@ -326,6 +327,34 @@ class AgentNotificationsTest {
     shadowOf(manager).setNotificationsEnabled(false)
     AgentNotifications.receive(context, update("revoked-permission", true))
     assertEquals(4, manager.activeNotifications.size)
+  }
+
+  @Test
+  fun languagePreferenceAppliesWithoutJavaScriptAndPreservesThreadContent() {
+    lifecycle.currentState = Lifecycle.State.RESUMED
+    val title = "Approval" // A user title must not be translated with the status.
+    val data = update("localized", true) + mapOf(
+      "activity_line_0" to "Approval\t$title\tProject",
+      "activity_line_1" to "Working\tAnother thread\tOther project",
+      "activity_phase" to "waiting_for_approval",
+      "activity_active_count" to "2",
+      "activity_attention_count" to "1",
+    )
+    AgentNotifications.setLanguage(context, "zh-CN")
+    AgentNotifications.receive(context, data)
+    val chinese = manager.activeNotifications.single().notification
+    assertEquals("1 项需要你处理", chinese.extras.getCharSequence(Notification.EXTRA_TITLE).toString())
+    assertEquals("2 项活跃", chinese.extras.getString(Notification.EXTRA_SUB_TEXT))
+    assertEquals("待审批 Approval · Project\n工作中 Another thread · Other project", chinese.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString())
+    assertEquals(listOf("审批", "关闭"), chinese.actions.map { it.title.toString() })
+    AgentNotifications.clear(context)
+    AgentNotifications.configure(context, "device", "user", "t3code-dev", true)
+    assertEquals("打开", notificationTranslator(context)("Open"))
+    AgentNotifications.setLanguage(context, "en")
+    AgentNotifications.receive(context, data)
+    val english = manager.activeNotifications.single().notification
+    assertEquals("1 needs you", english.extras.getCharSequence(Notification.EXTRA_TITLE).toString())
+    assertEquals(listOf("Approve", "Dismiss"), english.actions.map { it.title.toString() })
   }
 
   @Test

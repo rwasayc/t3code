@@ -47,7 +47,7 @@ export function AttachmentDocumentBody(props: {
         <EmptyState
           title={t("File unavailable")}
           detail={document.error}
-          actionLabel="Try again"
+          actionLabel={t("Try again")}
           onAction={document.retry}
         />
       </View>
@@ -103,9 +103,9 @@ export function AttachmentDocumentBody(props: {
         title={t("No preview for this file")}
         detail={
           props.nativeError ??
-          "No app on this device can show this format. Save or share it to open it elsewhere."
+          t("No app on this device can show this format. Save or share it to open it elsewhere.")
         }
-        actionLabel="Try again"
+        actionLabel={t("Try again")}
         onAction={props.onOpenNative}
       />
     </View>

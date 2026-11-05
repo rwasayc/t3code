@@ -47,7 +47,7 @@ export function WorkspaceFilePreviewError(props: {
       <EmptyState
         title={t("Preview unavailable")}
         detail={t("This file may be missing, unsupported, or unavailable on this environment.")}
-        actionLabel="Try again"
+        actionLabel={t("Try again")}
         onAction={props.onRetry}
       />
     </View>

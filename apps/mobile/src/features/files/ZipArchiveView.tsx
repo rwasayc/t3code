@@ -859,7 +859,7 @@ function ZipEntryView(props: {
           <EmptyState
             title={viewerError ? t("No preview for this file") : entry.name}
             detail={viewerError ?? "Open it in the file viewer, save it, or add it to chat."}
-            actionLabel="Open in file viewer"
+            actionLabel={t("Open in file viewer")}
             onAction={openViewer}
           />
         </View>

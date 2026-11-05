@@ -691,10 +691,10 @@ export function HomeScreen(props: HomeScreenProps) {
           >
             <View className="w-full max-w-[430px]">
               <EmptyState
-                title={emptyState.title}
-                detail={emptyState.detail}
+                title={t(emptyState.title)}
+                detail={t(emptyState.detail)}
                 actionLabel={
-                  !props.catalogState.hasReadyEnvironment ? "Add environment" : undefined
+                  !props.catalogState.hasReadyEnvironment ? t("Add environment") : undefined
                 }
                 onAction={
                   !props.catalogState.hasReadyEnvironment ? props.onAddConnection : undefined

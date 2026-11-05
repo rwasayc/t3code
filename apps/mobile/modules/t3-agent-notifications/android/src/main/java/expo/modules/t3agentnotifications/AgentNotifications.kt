@@ -53,6 +53,13 @@ object AgentNotifications {
   private const val MAX_LIFETIME_MS = 24 * 60 * 60 * 1000L
 
   @Synchronized
+  fun setLanguage(context: Context, language: String) {
+    context.getSharedPreferences(LANGUAGE_STORE, Context.MODE_PRIVATE).edit()
+      .putString("language", language).apply()
+    channels(context)
+  }
+
+  @Synchronized
   fun configure(
     context: Context,
     deviceId: String,
@@ -255,7 +262,7 @@ object AgentNotifications {
       Intent(context, AgentActivityDismissReceiver::class.java),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
-    val presentation = ActivityPresentation(data, active)
+    val presentation = ActivityPresentation(data, active, notificationTranslator(context))
     val openThread = contentIntent(context, scheme, data["activity_path"], ACTIVITY_ID)
     val builder = base(context, ACTIVITY_CHANNEL)
       .setOngoing(active).setOnlyAlertOnce(true).setSilent(true)
@@ -270,7 +277,7 @@ object AgentNotifications {
     val action = presentation.action
     if (action != null) {
       if (openThread != null) builder.addAction(0, action, openThread)
-      builder.addAction(0, "Dismiss", dismissIntent)
+      builder.addAction(0, notificationTranslator(context)("Dismiss"), dismissIntent)
     }
     manager(context).notify(ACTIVITY_TAG, ACTIVITY_ID, builder.build())
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -307,10 +314,10 @@ object AgentNotifications {
     if (Build.VERSION.SDK_INT >= 26) {
       manager(context).createNotificationChannels(
         listOf(
-          NotificationChannel(ALERT_CHANNEL, "Agent alerts", NotificationManager.IMPORTANCE_HIGH),
+          NotificationChannel(ALERT_CHANNEL, notificationTranslator(context)("Agent alerts"), NotificationManager.IMPORTANCE_HIGH),
           NotificationChannel(
             ACTIVITY_CHANNEL,
-            "Ongoing agent activity",
+            notificationTranslator(context)("Ongoing agent activity"),
             NotificationManager.IMPORTANCE_LOW
           ),
         )

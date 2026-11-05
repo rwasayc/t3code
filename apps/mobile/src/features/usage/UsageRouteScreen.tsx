@@ -301,7 +301,11 @@ function UsageScreen(props: {
                 <View className="flex-1" />
               ) : (
                 <SegmentedControl
-                  options={WINDOW_OPTIONS}
+                  options={WINDOW_OPTIONS.map((option) => ({
+                    ...option,
+                    label: t(option.label),
+                    accessibilityLabel: t(option.accessibilityLabel),
+                  }))}
                   selected={windowDays}
                   onSelect={selectWindow}
                   size="compact"
@@ -309,7 +313,7 @@ function UsageScreen(props: {
                 />
               )}
               <SegmentedControl
-                options={VIEW_OPTIONS}
+                options={VIEW_OPTIONS.map((option) => ({ ...option, label: t(option.label) }))}
                 selected={view}
                 onSelect={setView}
                 size="compact"
@@ -319,7 +323,7 @@ function UsageScreen(props: {
             </View>
           ) : (
             <SegmentedControl
-              options={VIEW_OPTIONS}
+              options={VIEW_OPTIONS.map((option) => ({ ...option, label: t(option.label) }))}
               selected={view}
               onSelect={setView}
               role="tab"
@@ -349,7 +353,11 @@ function UsageScreen(props: {
               <>
                 {wide ? null : (
                   <SegmentedControl
-                    options={WINDOW_OPTIONS}
+                    options={WINDOW_OPTIONS.map((option) => ({
+                      ...option,
+                      label: t(option.label),
+                      accessibilityLabel: t(option.accessibilityLabel),
+                    }))}
                     selected={windowDays}
                     onSelect={selectWindow}
                     size="compact"

@@ -5,6 +5,7 @@ import { Linking, Platform } from "react-native";
 interface AndroidAgentNotifications {
   configure(deviceId: string, userId: string, scheme: string, ongoingEnabled: boolean): void;
   clear(): void;
+  setLanguage?(language: string): void;
   setThreadOnScreen?(path: string | null): void;
   openLiveUpdateSettings?(): boolean;
   showShowcaseActivity?(scheme: string, data: Record<string, string>): void;
@@ -54,4 +55,8 @@ export async function openAndroidLiveUpdateSettings(): Promise<void> {
   if (!native?.openLiveUpdateSettings?.()) {
     await Linking.openSettings();
   }
+}
+
+export function setAndroidAgentNotificationLanguage(language: "en" | "zh-CN"): void {
+  native?.setLanguage?.(language);
 }
