@@ -85,6 +85,7 @@ async function prepareStreamScripts() {
     let rebuild = Promise.resolve();
     for (const [directory, files, generate] of [
       ["apps/mobile/src/native", ["mermaid.browser.ts"], generateMermaidScript],
+      ["apps/mobile/src/lib", ["mermaidMath.ts"], generateMermaidScript],
       [
         "apps/mobile/src/features/devices",
         ["device-stream.browser.ts"],

@@ -52,8 +52,10 @@ preference is saved separately on each device.
 
 On mobile, fenced `mermaid` blocks in messages and Markdown file previews render as diagrams
 without an internet connection. Use **Show code** or **Show diagram** to switch views. Unsupported
-syntax shows its source. Place diagrams at the document level; fences inside lists and blockquotes
-remain code blocks.
+syntax shows its source. Diagrams also render inside lists and blockquotes. Use **Expand diagram**
+for a full-screen view with pinch zoom, dragging, and zoom controls. Close the view to return to
+the same message or file preview. Diagram labels containing `$$...$$` use mathematical typesetting
+when **Render math** is enabled in Appearance settings; otherwise they remain source text.
 
 ## Motion
 
