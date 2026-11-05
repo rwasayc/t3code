@@ -127,11 +127,13 @@ export function MermaidBlock(props: SelectableMarkdownTextProps & { readonly sou
         visible={expanded}
         onRequestClose={() => setExpanded(false)}
         presentationStyle="fullScreen"
+        statusBarTranslucent
+        navigationBarTranslucent
         supportedOrientations={["portrait", "landscape"]}
         animationType="fade"
       >
         <View
-          className="flex-1 bg-background"
+          className="flex-1 bg-screen"
           style={{
             paddingTop: insets.top,
             paddingBottom: insets.bottom,
