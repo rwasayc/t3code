@@ -2,7 +2,7 @@ import { requireOptionalNativeModule } from "expo";
 import { Platform } from "react-native";
 
 import type { SshTunnelProfile } from "./enrollment";
-import { TunnelConnectError, tunnelErrorCategoryOf } from "./tunnel-errors";
+import { TunnelConnectError, isTunnelConnectError, tunnelErrorCategoryOf } from "./tunnel-errors";
 
 export type TunnelEvent = { readonly type: "dropped" };
 
@@ -37,16 +37,16 @@ function serializeConfig(profile: SshTunnelProfile): string {
 }
 
 function toTunnelConnectError(cause: unknown): TunnelConnectError {
-  if (cause instanceof TunnelConnectError) return cause;
+  if (isTunnelConnectError(cause)) return cause;
   const category = tunnelErrorCategoryOf(cause);
   // Native messages are fixed per category; anything else is replaced with the bare category
   // so a JSch detail string (or an accidental credential echo) can never surface in UI state.
-  return new TunnelConnectError(category, category);
+  return new TunnelConnectError({ category, message: category });
 }
 
 export async function nativeTunnelConnect(profile: SshTunnelProfile): Promise<void> {
   if (native === null) {
-    throw new TunnelConnectError("UNKNOWN", "UNKNOWN");
+    throw new TunnelConnectError({ category: "UNKNOWN", message: "UNKNOWN" });
   }
   try {
     await native.connect(serializeConfig(profile));

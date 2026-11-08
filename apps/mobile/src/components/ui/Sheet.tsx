@@ -19,13 +19,16 @@ export function Sheet(props: SheetProps) {
   const containerStyle = useResolveClassNames("bg-sheet");
   const screenId = useId();
   const [isOpen, setIsOpen] = useState(true);
-  const close = () => setIsOpen(false);
+  const close = () => {
+    if (!props.dismissDisabled) setIsOpen(false);
+  };
 
   return (
     <FormSheet
       isOpen={isOpen}
       detents={formSheetDetents(0.5, 0.9)}
       prefersGrabberVisible
+      preventNativeDismiss={props.dismissDisabled}
       // The header holds the close button, so the Duo needs no rail inside this sheet.
       prefersHorizontalBars
       nativeContainerStyle={containerStyle}
@@ -59,6 +62,7 @@ export function Sheet(props: SheetProps) {
                   icon: { name: "xmark", type: "sfSymbol" },
                   accessibilityLabel: t("Close {title}", { title: String(props.title) }),
                   identifier: `app-sheet-close-${screenId}`,
+                  disabled: props.dismissDisabled,
                   onPress: close,
                 },
               ]}

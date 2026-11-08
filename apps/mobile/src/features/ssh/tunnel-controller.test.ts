@@ -149,7 +149,10 @@ describe("TunnelController", () => {
     const started = harness.controller.start();
     await flush();
     harness.bridge.settleNext(
-      new TunnelConnectError("AUTH", `Auth fail: key ${SECRET_MARKER} refused by 47.98.12.3`),
+      new TunnelConnectError({
+        category: "AUTH",
+        message: `Auth fail: key ${SECRET_MARKER} refused by 47.98.12.3`,
+      }),
     );
     await started;
     const snapshot = harness.controller.getSnapshot();
@@ -199,7 +202,9 @@ describe("TunnelController", () => {
     await flush();
     const imported = harness.controller.importProfile(profile("新配置", "121.40.0.8"));
     await flush();
-    harness.bridge.settleNext(new TunnelConnectError("NETWORK", "socket closed for old profile"));
+    harness.bridge.settleNext(
+      new TunnelConnectError({ category: "NETWORK", message: "socket closed for old profile" }),
+    );
     await started;
     expect(harness.controller.getSnapshot().phase).toBe("connecting");
     harness.bridge.settleNext();
@@ -268,7 +273,9 @@ describe("TunnelController", () => {
     harness.network.emit();
     await flush();
     expect(harness.bridge.connectCalls).toHaveLength(2);
-    harness.bridge.settleNext(new TunnelConnectError("TIMEOUT", "timed out"));
+    harness.bridge.settleNext(
+      new TunnelConnectError({ category: "TIMEOUT", message: "timed out" }),
+    );
     await flush();
     expect(harness.controller.getSnapshot().phase).toBe("failed");
     harness.network.emit();
@@ -369,7 +376,9 @@ describe("TunnelController lifecycle races", () => {
     const harness = createHarness(profile("工作台"));
     const started = harness.controller.start();
     await flush();
-    harness.bridge.settleNext(new TunnelConnectError("CANCELLED", "cancelled"));
+    harness.bridge.settleNext(
+      new TunnelConnectError({ category: "CANCELLED", message: "cancelled" }),
+    );
     await started;
     expect(harness.controller.getSnapshot().phase).toBe("failed");
     const retried = harness.controller.retry();

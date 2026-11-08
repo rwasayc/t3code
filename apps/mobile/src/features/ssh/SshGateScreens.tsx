@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useState } from "react";
 import { View } from "react-native";
@@ -10,10 +11,13 @@ import { EnrollmentRejection } from "./enrollment";
 import { EnrollmentTooLargeError, importEnrollmentFile } from "./import-profile";
 import { sshTunnelController } from "./ssh-runtime";
 
+const isEnrollmentTooLargeError = Schema.is(EnrollmentTooLargeError);
+const isEnrollmentRejection = Schema.is(EnrollmentRejection);
+
 function importErrorMessage(cause: unknown): string {
-  if (cause instanceof EnrollmentTooLargeError)
+  if (isEnrollmentTooLargeError(cause))
     return "The file is too large to be a valid connection file.";
-  if (cause instanceof EnrollmentRejection) {
+  if (isEnrollmentRejection(cause)) {
     switch (cause.reason) {
       case "not-json":
         return "The file does not contain valid JSON.";

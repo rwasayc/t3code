@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 import { describe, expect, it } from "vite-plus/test";
 
 import {
@@ -27,11 +28,13 @@ function enrollment(overrides: Record<string, unknown> = {}): string {
   });
 }
 
+const isEnrollmentRejection = Schema.is(EnrollmentRejection);
+
 function rejectionOf(input: string): EnrollmentRejection {
   try {
     parseEnrollment(input);
   } catch (error) {
-    if (error instanceof EnrollmentRejection) return error;
+    if (isEnrollmentRejection(error)) return error;
     throw error;
   }
   throw new Error("expected the enrollment to be rejected");

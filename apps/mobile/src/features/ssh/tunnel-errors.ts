@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 /** Mirrors TunnelClient.ErrorCategory; the native side rejects with these as the error code. */
 export type TunnelErrorCategory =
   | "CONFIG"
@@ -20,18 +21,15 @@ const TUNNEL_ERROR_CATEGORIES: ReadonlyArray<TunnelErrorCategory> = [
   "UNKNOWN",
 ];
 
-export class TunnelConnectError extends Error {
-  readonly category: TunnelErrorCategory;
+export class TunnelConnectError extends Schema.TaggedError<TunnelConnectError>()(
+  "TunnelConnectError",
+  { category: Schema.Literals(TUNNEL_ERROR_CATEGORIES), message: Schema.String },
+) {}
 
-  constructor(category: TunnelErrorCategory, message: string) {
-    super(message);
-    this.name = "TunnelConnectError";
-    this.category = category;
-  }
-}
+export const isTunnelConnectError = Schema.is(TunnelConnectError);
 
 export function tunnelErrorCategoryOf(cause: unknown): TunnelErrorCategory {
-  if (cause instanceof TunnelConnectError) return cause.category;
+  if (isTunnelConnectError(cause)) return cause.category;
   const code =
     typeof cause === "object" && cause !== null && "code" in cause ? cause.code : undefined;
   return typeof code === "string" &&
