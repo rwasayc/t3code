@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "kind": "U1a_SOURCE_ONLY_CANDIDATE_DEPENDENCY_LOCK_PENDING",
+  "recorded_at": "2026-11-09T05:02:39.855575+00:00",
+  "source": {
+    "base": "11a41a307870ded03678a06c64a617514d84bca0",
+    "branch": "feat/project-control-u1a",
+    "delivery_ref": "commit containing this document",
+    "main_unchanged": true,
+    "installed_client_server_correspondence": "UNKNOWN; neither installed 0.1.6 nor running source 0.1.7 is asserted"
+  },
+  "authorization": {
+    "record": "Workbench/docs/lab-project-control/t3-U1a-source-authorization.json",
+    "scope": "sole T3 writer; U1a source and bounded pure/static validation only"
+  },
+  "ui_package": {
+    "name": "@carvebloom/lab-control-ui",
+    "version": "0.1.0",
+    "producer_commit": "fb48b0ac5a84a63b854e75d65f8994681f8fe59b",
+    "dependency": "file:vendor/lab-control-ui-0.1.0-fb48b0a.tgz",
+    "archive": "apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz",
+    "archive_sha256": "45070716b2afbc759bf7ac6897d2308e08de8714111bd0346982d55af78e975b",
+    "manifest_sha256": "e88418c8eaae7b540cdc20bcaf1cc37e1c483b56bce00909024b4e1786624495",
+    "bytes": 8023,
+    "members": 12,
+    "all_member_hashes_match": true,
+    "react_peer": ">=19 <20",
+    "import_mode": "immutable archive dependency; no imports from live Lab checkout"
+  },
+  "implemented": {
+    "route_id": "/_chat/project-control",
+    "url": "/project-control",
+    "entry": "Sidebar utility menu",
+    "modal": "existing AppRouteModal and its useCloseAppModal close/Escape/backdrop path",
+    "classification": "exact /project-control only; existing _chat keeps its background ThreadRouteView mounted and renders an empty SidebarInset on a cold modal entry without a thread target",
+    "host": "HostAdapterV1 with resolved T3 theme CSS variables and navigation only",
+    "thread_navigation": "explicitly scoped links to cached known environment/thread references only; router navigation, no send/wake/create",
+    "binding": "unconfigured; t3EnvironmentId null, backendInstanceId and bindingRevision unconfigured sentinels",
+    "reads": "readPortfolio rejects backend_unavailable or request_cancelled; no fetch, fallback portfolio, guessed origin, identity or grant",
+    "integration_mode": "source integration; no plugin SDK or installed availability claim"
+  },
+  "surfaces": {
+    "web_desktop": "shared web route and sidebar source; no Electron IPC changes",
+    "mobile": "native React Native client unchanged; this delivery is PC only",
+    "providers_agents": "unchanged; no provider, MCP or scheduler additions",
+    "connection_modes": "no backend URL or client localhost assumption; later U1b must bind exact environment/backend instance with authorized read access",
+    "reverse_path": "existing modal close returns to recorded main-app location",
+    "entry_points": "Sidebar only in this slice; no new command palette action or keybinding"
+  },
+  "checks": [
+    {
+      "name": "immutable archive + manifest + all 12 members",
+      "status": "PASS"
+    },
+    {
+      "name": "normal TanStack route generation",
+      "status": "PASS",
+      "generator": "@tanstack/router-generator@1.167.12",
+      "idempotent": true,
+      "route_tree_sha256": "31d38229327073f2b53228f03c3c9f0ba91c81f96eb0cc88b32518e25d6b946f",
+      "seconds": 0.51
+    },
+    {
+      "name": "changed-file formatting",
+      "status": "PASS",
+      "files": 9,
+      "subsequent_page_css_classification_reformat": "PASS"
+    },
+    {
+      "name": "explicit changed TS/TSX lint",
+      "status": "PASS",
+      "files": 7
+    },
+    {
+      "name": "pure host boundary tests",
+      "status": "PASS",
+      "files": 1,
+      "cases": 3,
+      "seconds": 1.36,
+      "environment": "node; no browser",
+      "config": "private config with existing web ~ alias"
+    },
+    {
+      "name": "isolated HostAdapter typecheck",
+      "status": "PASS",
+      "seconds": 0.43,
+      "command": "effect-tsgo tsrs --noEmit --project <private config>",
+      "types": "unaltered declarations extracted from pinned archive; existing T3 contracts; no package installation",
+      "limit": "does not prove full web package typecheck"
+    },
+    {
+      "name": "source scope/base/unchanged root and chat/whitespace",
+      "status": "PASS"
+    },
+    {
+      "name": "offline lockfile-only generation",
+      "status": "FAILED_OFFLINE_CACHE",
+      "command": "node_modules/.bin/vp install --lockfile-only --offline --ignore-scripts",
+      "error": "ERR_PNPM_NO_OFFLINE_META: @astrojs/compiler-binding-linux-x64-musl@0.5.1",
+      "lockfile_changed": false,
+      "download_or_package_install": false,
+      "impact": "pnpm-lock.yaml has no new UI package resolution; frozen-lockfile install/build readiness is not established"
+    }
+  ],
+  "not_run": [
+    "package installation or download",
+    "full affected-package typecheck/check:changed (dependency not linked and lock unresolved)",
+    "web/desktop/mobile build",
+    "existing mainAppLocation browser test extended with project-control close case",
+    "integrated real-client checks: chat identity, cold entry, theme, close, navigation and cancellation",
+    "T3 runtime/service/auth/WS/native-turn operations, browser/devserver, backend calls or U1b implementation"
+  ],
+  "next_validation_budget": [
+    {
+      "stage": "root-allocated dependency metadata slot",
+      "ceiling_seconds": 120,
+      "entry": "node_modules/.bin/vp install --lockfile-only --offline --ignore-scripts",
+      "precondition": "root supplies missing offline metadata/cache or separately authorizes bounded dependency preparation; do not hand-edit lockfile",
+      "stop": "any missing cache, need for download/install, or deadline; review generated lock diff before proceeding"
+    },
+    {
+      "stage": "root-approved package linking and affected checks",
+      "ceiling_seconds_per_phase": 120,
+      "entry": "after approved dependency linking: from apps/web run ../../node_modules/.bin/effect-tsgo tsrs --noEmit; root check:changed after dependency metadata is complete",
+      "stop": "no repo-wide checks or automatic retry"
+    },
+    {
+      "stage": "separate integrated PC slot",
+      "ceiling_minutes": 10,
+      "entry": "existing test-t3-app workflow against isolated dev state after explicit root scheduling; one real-client integrated pass and the two focused frontend files, at most 4 cases",
+      "assertions": [
+        "hot chat remains mounted and close returns to it",
+        "cold /project-control creates no thread",
+        "light/dark theme and scoped CSS",
+        "unavailable renders no fake data and makes no backend fetch",
+        "known thread links only navigate; no send or wake"
+      ],
+      "requires_separate_authorization": [
+        "devserver/browser",
+        "any required web build or dependency install"
+      ]
+    }
+  ],
+  "rollback": "revert this source commit and regenerate routes normally; runtime and stored conversations were not changed",
+  "file_sha256": {
+    "apps/web/package.json": "4043056a753fb4ed80e3e93a185a6af8b74ba6e2af0c26aba14b014901ad4192",
+    "apps/web/src/components/projectControl/ProjectControlPage.browser.test.tsx": "5386f703f639a7e85b61eb5748220f81b4acfc8e5f968b4090753f8f4b1dd083",
+    "apps/web/src/components/projectControl/ProjectControlPage.tsx": "026b23d8dc9d06639dd033971ee706aa4d14fb5db6bf92f0d0f8c23d04ab82ef",
+    "apps/web/src/components/projectControl/T3HostAdapter.ts": "822ded454c7073bf6f61a6c0d755b056628549de77dd1da41029c268822a59ac",
+    "apps/web/src/components/projectControl/projectControl.css": "cb13da3d82669537e36921e56306f15e7f151d5f7384766bea0f8863ca1a843b",
+    "apps/web/src/components/sidebar/SidebarChrome.tsx": "c4eae8b832edfe0f3002a745e3f1075b660bf7fd02a376a64e4c736916e77844",
+    "apps/web/src/components/sidebar/mainAppLocation.browser.test.tsx": "7bffd8de452e0a860ec2fedf1d1c5e39ee287172ccf17a2d2295127badd73f0c",
+    "apps/web/src/components/sidebar/mainAppLocation.ts": "c3b44990f68be9156c9374314726324375a55ec962bf93dd7587a35315562e45",
+    "apps/web/src/routeTree.gen.ts": "31d38229327073f2b53228f03c3c9f0ba91c81f96eb0cc88b32518e25d6b946f",
+    "apps/web/src/routes/_chat.project-control.tsx": "454b97b8e306b78d2ff0ac7bc7270050bc4563258f5ec4d96059a69464981d56",
+    "apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz": "45070716b2afbc759bf7ac6897d2308e08de8714111bd0346982d55af78e975b"
+  }
+}
