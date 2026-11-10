@@ -38,6 +38,7 @@ import * as CodexReplay from "effect-codex-app-server/replay";
 import * as CodexError from "effect-codex-app-server/errors";
 import type * as CodexSchema from "effect-codex-app-server/schema";
 import * as DateTime from "effect/DateTime";
+import * as Hex from "effect/encoding/Hex";
 import * as Deferred from "effect/Deferred";
 import * as Digest from "effect/crypto/Digest";
 import * as Effect from "effect/Effect";
@@ -1238,6 +1239,7 @@ describe("CodexAdapterV2 post-settle continuation", () => {
     readChildMetadata?: Parameters<typeof withCodexReplayChildMetadata>[2],
     beforeEmitInbound?: CodexReplay.CodexAppServerReplayDriver["beforeEmitInbound"],
     onUsageLimits?: CodexAdapterV2.CodexAdapterV2Options["onUsageLimits"],
+    harborBinding = false,
   ) =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
@@ -1245,6 +1247,24 @@ describe("CodexAdapterV2 post-settle continuation", () => {
       const serverConfig = yield* ProviderReplayHarness.makeReplayServerConfig(
         transcript.scenario,
       ).pipe(Effect.orDie);
+      if (harborBinding) {
+        const launcher = `${serverConfig.stateDir}/fixture-harbor.py`;
+        const bytes = new TextEncoder().encode("# fixture only; never executed");
+        yield* fileSystem.writeFile(launcher, bytes);
+        yield* fileSystem.makeDirectory(`${serverConfig.stateDir}/thread-harbor`);
+        yield* fileSystem.writeFileString(
+          `${serverConfig.stateDir}/thread-harbor/thread-${transcript.scenario}.json`,
+          JSON.stringify({
+            schema_version: 1,
+            thread_id: `thread-${transcript.scenario}`,
+            cwd: "/workspace",
+            python: "/fixture/python",
+            launcher,
+            launcher_sha256: Hex.encode(yield* (yield* Digest.Digest).digest(Digest.sha256, bytes)),
+          }),
+          { mode: 0o600 },
+        );
+      }
       const changes = yield* makeChangeSignal;
       const continuationRequests: Array<ProviderContinuationRequests.ProviderContinuationRequest> =
         [];
@@ -1592,70 +1612,86 @@ describe("CodexAdapterV2 post-settle continuation", () => {
       ),
   );
 
-  it.effect("adds the session MCP server without replacing launch-argument servers", () =>
-    Effect.gen(function* () {
-      const scenario = "launch-mcp-servers";
-      yield* (yield* McpProviderSessions.McpProviderSessions).set({
-        environmentId: EnvironmentId.make("environment-codex-mcp"),
-        threadId: ThreadId.make(`thread-${scenario}`),
-        providerSessionId: `provider-session-${scenario}`,
-        providerInstanceId: ProviderInstanceId.make("codex"),
-        endpoint: "http://127.0.0.1:43123/mcp",
-        authorizationHeader: "Bearer secret-codex-token",
-        browserToolsAvailable: true,
-      });
-      const requests: Array<unknown> = [];
-      yield* makeCodexReplayHarness(
-        makeCodexReplayTranscript({
-          scenario,
-          entries: codexReplayPreamble({
-            nativeThreadId: "launch-mcp-thread",
-            nativeTurnId: "unused",
-            prompt: "unused",
-          }).slice(0, 5),
-        }),
-        () => Effect.void,
-        (method, params) =>
-          Effect.sync(() => {
-            if (method === "thread/start") requests.push(params);
+  it.effect.each([false, true])(
+    "adds session MCP without replacing launch servers; Harbor bound=%s",
+    (harborBinding) =>
+      Effect.gen(function* () {
+        const scenario = "launch-mcp-servers";
+        yield* (yield* McpProviderSessions.McpProviderSessions).set({
+          environmentId: EnvironmentId.make("environment-codex-mcp"),
+          threadId: ThreadId.make(`thread-${scenario}`),
+          providerSessionId: `provider-session-${scenario}`,
+          providerInstanceId: ProviderInstanceId.make("codex"),
+          endpoint: "http://127.0.0.1:43123/mcp",
+          authorizationHeader: "Bearer secret-codex-token",
+          browserToolsAvailable: true,
+        });
+        const requests: Array<unknown> = [];
+        const harness = yield* makeCodexReplayHarness(
+          makeCodexReplayTranscript({
+            scenario,
+            entries: codexReplayPreamble({
+              nativeThreadId: "launch-mcp-thread",
+              nativeTurnId: "unused",
+              prompt: "unused",
+            }).slice(0, 5),
           }),
-      );
-      assert.deepEqual(requests, [
-        {
-          cwd: "/workspace",
-          model: "gpt-5.4",
-          config: {
-            "tools.update_plan.enabled": true,
-            mcp_optional_startup_grace_ms: 10_000,
-            "features.concurrent_reasoning_summaries": true,
-            "shell_environment_policy.set.T3CODE_THREAD_ID": `thread-${scenario}`,
-            "mcp_servers.t3-code": {
-              url: "http://127.0.0.1:43123/mcp",
-              tool_timeout_sec: 3_900,
-              http_headers: { Authorization: "Bearer secret-codex-token" },
-              disabled_tools: ["t3_thread_wait"],
-            },
-            "mcp_servers.t3-code-direct": {
-              url: "http://127.0.0.1:43123/mcp",
-              tool_timeout_sec: 3_900,
-              http_headers: { Authorization: "Bearer secret-codex-token" },
-              enabled_tools: ["t3_thread_wait"],
-              omit_tools_from: ["code_mode", "deferred"],
+          () => Effect.void,
+          (method, params) =>
+            Effect.sync(() => {
+              if (method === "thread/start") requests.push(params);
+            }),
+          undefined,
+          undefined,
+          undefined,
+          harborBinding,
+        );
+        assert.deepEqual(requests, [
+          {
+            cwd: "/workspace",
+            model: "gpt-5.4",
+            config: {
+              "tools.update_plan.enabled": true,
+              "mcp_servers.t3-thread-harbor": harborBinding
+                ? {
+                    enabled: true,
+                    command: "/fixture/python",
+                    args: ["-I", "-B", `${harness.serverConfig.stateDir}/fixture-harbor.py`],
+                    enabled_tools: ["task_get", "context_get", "memory_search", "memory_get"],
+                    startup_timeout_sec: 20,
+                    tool_timeout_sec: 30,
+                  }
+                : { enabled: false },
+              mcp_optional_startup_grace_ms: 10_000,
+              "features.concurrent_reasoning_summaries": true,
+              "shell_environment_policy.set.T3CODE_THREAD_ID": `thread-${scenario}`,
+              "mcp_servers.t3-code": {
+                url: "http://127.0.0.1:43123/mcp",
+                tool_timeout_sec: 3_900,
+                http_headers: { Authorization: "Bearer secret-codex-token" },
+                disabled_tools: ["t3_thread_wait"],
+              },
+              "mcp_servers.t3-code-direct": {
+                url: "http://127.0.0.1:43123/mcp",
+                tool_timeout_sec: 3_900,
+                http_headers: { Authorization: "Bearer secret-codex-token" },
+                enabled_tools: ["t3_thread_wait"],
+                omit_tools_from: ["code_mode", "deferred"],
+              },
             },
           },
-        },
-      ]);
-    }).pipe(
-      Effect.scoped,
-      Effect.provide(
-        Layer.mergeAll(
-          IdAllocator.layer,
-          McpProviderSessions.layer,
-          NodeServices.layer,
-          NodeCrypto.layer,
+        ]);
+      }).pipe(
+        Effect.scoped,
+        Effect.provide(
+          Layer.mergeAll(
+            IdAllocator.layer,
+            McpProviderSessions.layer,
+            NodeServices.layer,
+            NodeCrypto.layer,
+          ),
         ),
       ),
-    ),
   );
 
   // regression: #15839 launch-arg MCP servers survive the thread's t3-code server

@@ -1,4 +1,5 @@
 import { pipe } from "effect/Function";
+import * as ThreadHarborBinding from "../../provider/ThreadHarborBinding.ts";
 import * as DocumentText from "../../provider/DocumentText.ts";
 import { revertCodexThread } from "../../provider/CodexThreadRevert.ts";
 import { historyResponseItems } from "@t3tools/provider-core/server/handoffBudget";
@@ -1385,6 +1386,8 @@ export class CodexAppServerClientFactory extends Context.Service<
 /** MCP startup grace in milliseconds; the 1 s default excludes cold npx/uvx servers from the first model request. */
 export const CODEX_THREAD_CONFIG = {
   "tools.update_plan.enabled": true,
+  // Resumes and forks must not inherit a removed or another app thread's binding.
+  "mcp_servers.t3-thread-harbor": { enabled: false },
   mcp_optional_startup_grace_ms: 10_000,
   // Tool calls stop waiting on the detailed reasoning summary. Codex applies it only to its
   // built-in OpenAI provider and sends each summary section whole, not as token deltas.
@@ -1401,6 +1404,7 @@ const CODEX_DIRECT_ONLY_T3_TOOL = "t3_thread_wait";
 function codexThreadRuntimeParams(input: {
   readonly threadId: ThreadId | null;
   readonly mcpSession: McpProviderSession.McpProviderSessionConfig | undefined;
+  readonly additionalMcp?: Readonly<Record<string, Schema.Json>>;
   readonly modelSelection?: { readonly model: string };
   readonly runtimePolicy?: ProviderAdapter.ProviderAdapterV2RuntimePolicy;
 }): {
@@ -1439,6 +1443,7 @@ function codexThreadRuntimeParams(input: {
               omit_tools_from: ["code_mode", "deferred"],
             },
           }),
+      ...input.additionalMcp,
     },
   };
 }
@@ -1723,6 +1728,25 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
     threadId === null ? Effect.undefined : mcpSessions.read(threadId);
   const { clientFactory, digest, fileSystem, idAllocator, serverConfig } = adapterOptions;
   const continuationRequests = adapterOptions.continuationRequests;
+  const path = yield* Path.Path;
+  const harborBindings = yield* Effect.service(ThreadHarborBinding.ThreadHarborBinding).pipe(
+    Effect.provide(ThreadHarborBinding.layer),
+    Effect.provideService(FileSystem.FileSystem, fileSystem),
+    Effect.provideService(Digest.Digest, digest),
+    Effect.provideService(ServerConfig, serverConfig),
+    Effect.provideService(Path.Path, path),
+  );
+  const threadRuntimeParams = Effect.fn("CodexAdapterV2.threadRuntimeParams")(function* (
+    input: Parameters<typeof codexThreadRuntimeParams>[0],
+  ) {
+    return codexThreadRuntimeParams({
+      ...input,
+      additionalMcp: yield* harborBindings.read({
+        threadId: input.threadId,
+        cwd: input.runtimePolicy?.cwd ?? undefined,
+      }),
+    });
+  });
 
   return ProviderAdapter.ProviderAdapterV2.of({
     instanceId: adapterOptions.instanceId,
@@ -3141,6 +3165,7 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
                         .request("thread/resume", {
                           threadId: input.nativeThreadId,
                           excludeTurns: true,
+                          config: { "mcp_servers.t3-thread-harbor": { enabled: false } },
                         })
                         .pipe(Effect.flatMap(decodeCodexChildModel)),
                   ),
@@ -7099,15 +7124,17 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
             ensureInitialized.pipe(
               Effect.andThen(mcpSessions.read(threadInput.threadId)),
               Effect.flatMap((mcpSession) =>
-                client.request(
-                  "thread/start",
-                  codexThreadRuntimeParams({
-                    threadId: threadInput.threadId,
-                    mcpSession,
-                    modelSelection: threadInput.modelSelection,
-                    runtimePolicy: threadInput.runtimePolicy,
-                  }),
-                ),
+                Effect.gen(function* () {
+                  return yield* client.request(
+                    "thread/start",
+                    yield* threadRuntimeParams({
+                      threadId: threadInput.threadId,
+                      mcpSession,
+                      modelSelection: threadInput.modelSelection,
+                      runtimePolicy: threadInput.runtimePolicy,
+                    }),
+                  );
+                }),
               ),
               Effect.map((response): OrchestrationV2ProviderThread =>
                 providerThreadFromCodexThread({
@@ -7134,7 +7161,7 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
               const appThreadId = threadInput.threadId ?? threadInput.providerThread.appThreadId;
               const resume = resumeNativeThread(nativeThreadId, {
                 excludeTurns: true,
-                ...codexThreadRuntimeParams({
+                ...(yield* threadRuntimeParams({
                   threadId: appThreadId,
                   mcpSession: yield* readMcpSession(appThreadId),
                   ...(threadInput.modelSelection === undefined
@@ -7143,7 +7170,7 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
                   ...(threadInput.runtimePolicy === undefined
                     ? {}
                     : { runtimePolicy: threadInput.runtimePolicy }),
-                }),
+                })),
               });
               const response = yield* ensureInitialized.pipe(
                 Effect.andThen(resume),
@@ -7908,12 +7935,12 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
               if (!loaded) {
                 yield* resumeNativeThread(threadId, {
                   excludeTurns: true,
-                  ...codexThreadRuntimeParams({
+                  ...(yield* threadRuntimeParams({
                     threadId: threadInput.providerThread.appThreadId,
                     mcpSession: yield* readMcpSession(threadInput.providerThread.appThreadId),
                     modelSelection: input.modelSelection,
                     runtimePolicy: input.runtimePolicy,
-                  }),
+                  })),
                 });
               }
               const response = yield* ensureInitialized.pipe(
@@ -7957,7 +7984,7 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
               const fork = client.request("thread/fork", {
                 threadId,
                 ...(boundary.lastTurnId === undefined ? {} : { lastTurnId: boundary.lastTurnId }),
-                ...codexThreadRuntimeParams({
+                ...(yield* threadRuntimeParams({
                   threadId: threadInput.targetThreadId,
                   mcpSession: yield* mcpSessions.read(threadInput.targetThreadId),
                   ...(threadInput.modelSelection === undefined
@@ -7966,7 +7993,7 @@ export const makeCodexAdapterV2 = Effect.fn("makeCodexAdapterV2")(function* (
                   ...(threadInput.runtimePolicy === undefined
                     ? {}
                     : { runtimePolicy: threadInput.runtimePolicy }),
-                }),
+                })),
               });
               const response = yield* ensureInitialized.pipe(
                 Effect.andThen(
