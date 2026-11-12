@@ -4,9 +4,22 @@ Owner: this repository's maintainer and sole serial integrator. This is the loca
 profile for `engineering/project-testing@1.0.0`, based on the immutable organization
 source release manifest SHA256
 `8692da6e7cd0f110df8a023dff209074bc68ce4ea8f3b297be65983f4e4e2e46`.
-Registry publication, exact artifact installation and doctor are separate pending
-steps; this document does not claim they happened. Existing stricter
-[writing/time/Scope rules](docs/internals/testing.md) and AGENTS apply.
+The canonical skill is installed from `https://skills.lab.localhost` at that exact
+version, artifact SHA256
+`090ea71a804eed82cad2b94f62ed2a3bf70653d29dfb0d976b1cd682f17a5c36`
+(40954 bytes). On 2026-11-13, target `project-testing-v1` passed
+`local list --verify`, real-entry source inspection and `doctor --offline`;
+installation history is committed. All 17 payload files match the release's
+mode, size and SHA256. Existing AGENTS and other skills were preserved.
+
+The installed [Skill](.agents/skills/project-testing/SKILL.md),
+[policy](.agents/skills/project-testing/references/docs/testing-policy/v1/POLICY.md),
+[adoption inventory](.agents/skills/project-testing/references/docs/testing-policy/v1/ADOPTION.md)
+and [template](.agents/skills/project-testing/references/docs/testing-policy/v1/PROJECT-TESTING.template.md)
+were explicitly read for this profile. Installation validates the skill, not the
+new test commands or remote CI: their behavioral validation is still NOT_RUN.
+Existing stricter [writing/time/Scope rules](docs/internals/testing.md) and AGENTS
+apply.
 
 ## Scope, directory and visibility
 
