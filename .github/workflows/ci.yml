@@ -289,11 +289,8 @@ jobs:
       - name: Ensure Electron runtime is installed
         run: vp run --filter @t3tools/desktop ensure:electron
 
-      - name: Test preview artifact validation
-        run: python3 -B .github/scripts/stage-preview-bundle.test.py
-
-      - name: Test release checks
-        run: node --test .github/scripts/check-nightly-release.test.cjs .github/scripts/vercel-deployment-output.test.cjs
+      - name: Test delivery-script components
+        run: python3 -B scripts/run-testing.py component
 
       - name: Finish installing browser secret helper build libraries
         timeout-minutes: 5

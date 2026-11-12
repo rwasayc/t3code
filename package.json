@@ -57,7 +57,21 @@
     "dist:desktop:win:x64": "node scripts/build-desktop-artifact.ts --platform win --target nsis --arch x64",
     "release:smoke": "node scripts/release-smoke.ts",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/dist apps/*/dist-electron packages/*/dist .vite-plus apps/*/.vite-plus packages/*/.vite-plus",
-    "sync:repos": "node scripts/sync-reference-repos.ts"
+    "sync:repos": "node scripts/sync-reference-repos.ts",
+    "test-unit": "python3 -B scripts/run-testing.py unit",
+    "test-component": "python3 -B scripts/run-testing.py component",
+    "test-integration": "python3 -B scripts/run-testing.py integration",
+    "test-e2e": "python3 -B scripts/run-testing.py e2e",
+    "test-race": "python3 -B scripts/run-testing.py race",
+    "test-fuzz": "python3 -B scripts/run-testing.py fuzz",
+    "test:browser": "python3 -B scripts/run-testing.py browser",
+    "test:native-rust": "python3 -B scripts/run-testing.py native-rust",
+    "test:node-tools": "python3 -B scripts/run-testing.py node-tools",
+    "test:python": "python3 -B scripts/run-testing.py python-component",
+    "test:discover": "python3 -B scripts/run-testing.py inventory",
+    "test:quick": "python3 -B scripts/run-testing.py unit",
+    "check": "python3 -B scripts/run-testing.py check",
+    "generate-check": "python3 -B scripts/run-testing.py generate-check"
   },
   "devDependencies": {
     "@coderabbitai/config": "1.1.0",

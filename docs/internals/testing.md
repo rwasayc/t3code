@@ -1,5 +1,7 @@
 # Testing
 
+Repository commands, discovery, layer boundaries and CI ownership are in [TESTING.md](../../TESTING.md).
+
 Rules for writing tests, and for asking for them in review. AGENTS.md carries the same writing rules under Verifying; change both together.
 
 ## What to test
