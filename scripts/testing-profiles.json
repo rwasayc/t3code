@@ -3,52 +3,28 @@
   "policy": "engineering/project-testing@1.0.0",
   "profiles": {
     "unit": {
-      "groups": [
-        "unit-contracts",
-        "unit-shared"
-      ]
+      "groups": ["unit-contracts", "unit-shared"]
     },
     "component": {
-      "groups": [
-        "node-tools",
-        "python-artifacts",
-        "python-seeder"
-      ]
+      "groups": ["node-tools", "python-artifacts", "python-seeder"]
     },
     "node-tools": {
-      "groups": [
-        "node-tools"
-      ]
+      "groups": ["node-tools"]
     },
     "python-component": {
-      "groups": [
-        "python-artifacts",
-        "python-seeder"
-      ]
+      "groups": ["python-artifacts", "python-seeder"]
     },
     "browser": {
-      "groups": [
-        "browser"
-      ]
+      "groups": ["browser"]
     },
     "native-rust": {
-      "groups": [
-        "rust-resource-monitor",
-        "rust-kde-snap-shot",
-        "rust-hyprland-snap-shot"
-      ]
+      "groups": ["rust-resource-monitor", "rust-kde-snap-shot", "rust-hyprland-snap-shot"]
     },
     "check": {
-      "groups": [
-        "diff-check",
-        "unit-contracts",
-        "unit-shared"
-      ]
+      "groups": ["diff-check", "unit-contracts", "unit-shared"]
     },
     "generate-check": {
-      "groups": [
-        "icons-check"
-      ]
+      "groups": ["icons-check"]
     },
     "integration": {
       "unavailable": "No safe universal external-service suite. Select a reviewed isolated protocol/provider fixture from TESTING.md; configuration is mandatory."
@@ -85,11 +61,7 @@
     },
     "python-artifacts": {
       "cwd": ".",
-      "argv": [
-        "{python}",
-        "-B",
-        ".github/scripts/stage-preview-bundle.test.py"
-      ],
+      "argv": ["{python}", "-B", ".github/scripts/stage-preview-bundle.test.py"],
       "required": [
         ".github/scripts/stage-preview-bundle.test.py",
         ".github/scripts/stage-preview-bundle.py"
@@ -97,11 +69,7 @@
     },
     "python-seeder": {
       "cwd": ".",
-      "argv": [
-        "{python}",
-        "-B",
-        "scripts/seed-issue-21397.test.py"
-      ],
+      "argv": ["{python}", "-B", "scripts/seed-issue-21397.test.py"],
       "required": [
         "scripts/seed-issue-21397.test.py",
         "scripts/seed-issue-21397.py",
@@ -110,38 +78,18 @@
     },
     "browser": {
       "cwd": "apps/web",
-      "argv": [
-        "{vp}",
-        "test",
-        "run",
-        "--project",
-        "browser",
-        "--maxWorkers",
-        "1"
-      ],
-      "required": [
-        "apps/web/vite.config.ts"
-      ]
+      "argv": ["{vp}", "test", "run", "--project", "browser", "--maxWorkers", "1"],
+      "required": ["apps/web/vite.config.ts"]
     },
     "diff-check": {
       "cwd": ".",
-      "argv": [
-        "git",
-        "diff",
-        "--check"
-      ],
+      "argv": ["git", "diff", "--check"],
       "required": []
     },
     "icons-check": {
       "cwd": ".",
-      "argv": [
-        "{vp}",
-        "run",
-        "icons:check"
-      ],
-      "required": [
-        "scripts/export-brand-icons.ts"
-      ]
+      "argv": ["{vp}", "run", "icons:check"],
+      "required": ["scripts/export-brand-icons.ts"]
     },
     "rust-resource-monitor": {
       "cwd": ".",
@@ -153,10 +101,7 @@
         "--manifest-path",
         "native/resource-monitor/Cargo.toml"
       ],
-      "required": [
-        "native/resource-monitor/Cargo.toml",
-        "native/resource-monitor/Cargo.lock"
-      ]
+      "required": ["native/resource-monitor/Cargo.toml", "native/resource-monitor/Cargo.lock"]
     },
     "rust-kde-snap-shot": {
       "cwd": ".",
@@ -168,10 +113,7 @@
         "--manifest-path",
         "native/kde-snap-shot/Cargo.toml"
       ],
-      "required": [
-        "native/kde-snap-shot/Cargo.toml",
-        "native/kde-snap-shot/Cargo.lock"
-      ]
+      "required": ["native/kde-snap-shot/Cargo.toml", "native/kde-snap-shot/Cargo.lock"]
     },
     "rust-hyprland-snap-shot": {
       "cwd": ".",
@@ -183,10 +125,7 @@
         "--manifest-path",
         "native/hyprland-snap-shot/Cargo.toml"
       ],
-      "required": [
-        "native/hyprland-snap-shot/Cargo.toml",
-        "native/hyprland-snap-shot/Cargo.lock"
-      ]
+      "required": ["native/hyprland-snap-shot/Cargo.toml", "native/hyprland-snap-shot/Cargo.lock"]
     },
     "unit-contracts": {
       "cwd": "packages/contracts",

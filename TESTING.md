@@ -70,8 +70,7 @@ Their adapters and generation consistency still require affected checks.
 
 ## Entrypoints (repository root unless noted)
 
-Commands are aliases in `package.json`; `python3 -B scripts/run-testing.py PROFILE
---list` prints exact argv/cwd and validates required file presence **without
+Commands are aliases in `package.json`; `python3 -B scripts/run-testing.py PROFILE --list` prints exact argv/cwd and validates required file presence **without
 loading tests or starting a runner**. `inventory` enumerates tracked plus
 nonignored new test paths, including absent sparse paths. Inventory is a source
 listing, not Vitest collection or a proof that a test executed. New Python/Node
@@ -79,24 +78,24 @@ tool files absent from the explicit manifest make inventory exit nonzero; classi
 and register them rather than silently omitting them. Vitest/platform rows use
 `registered:null` because only the actual runner can prove collection.
 
-| Logical entry | Command / selection | Dependencies and meaning |
-| --- | --- | --- |
-| quick unit | `vp run test-unit` / `test:quick` | Four existing files: contracts keybindings + modelSelection, shared String + cliArgs; Node/VP/Effect, one worker, no DB/socket/provider fixture. A bounded baseline, not all unit tests. |
-| component | `vp run test-component` | Four Node tools + preview-artifact Python + synthetic-SQLite seeder Python, serial/fail-first. Short owned shell/Python children; no service, browser, Docker or credential API. |
-| script subsets | `vp run test:node-tools`, `vp run test:python` | Same registered component groups; not `vitest` or implicit Python discover. |
-| affected unit/component | `vp test run path/to/file.test.ts -t "behavior"` | Actual package config; real codec/SQLite/HTTP/short child decides layer. Server tests can use SQLite, Git, native addons and owned children: do not call the entire server suite unit. |
-| browser component | `vp run test:browser` | Web `browser` project, existing installed Playwright Chromium, one worker; no implicit browser download. |
-| mobile JS component | cwd `apps/mobile`: `vp test run --project react path/to/test.tsx` | jsdom/RN mocks; use `T3_MOBILE_TEST_PLATFORM=android` only for applicable Android branch. Package `test` retains unit+react+the Android file. |
-| real integration | `vp run test-integration` refuses without a project-specific selection | No universal unattended external-service suite. Choose the existing protocol/provider fixture and document owned endpoint, auth, configuration and cleanup first. No shared staging/profile fallback. |
-| e2e | `vp run test-e2e` refuses implicit launch | Existing `test-t3-app` / `test-t3-mobile` workflows, `vp run mobile:e2e` or `release:smoke` require separately reviewed products/environment/options. No automatic install, real provider/model or default profile use. |
-| Rust/native | `vp run test:native-rust` | Three Cargo crates: resource-monitor, kde-snap-shot, hyprland-snap-shot, `--offline --locked`; Rust satisfying lock/MSRV, KDE/Wayland libs by platform. Missing inputs fail before execution, no auto-fetch. |
-| native mobile | `apps/mobile/modules/t3-review-diff/tests/run-android.sh`, `tests/run-ios.sh` in same module; `apps/mobile/modules/t3-highlights/tests/run.sh` | Separate JVM/Robolectric (JDK17+/Gradle, Maven cached or explicitly permitted), macOS Swift SDK, C++20. Android module `android/src/test` needs its owning Gradle build/SDK. No emulator/device claim from these. |
-| race | `vp run test-race` reports not applicable and exits nonzero | No Go detector. Focus `vp test run packages/shared/src/KeyedLock.test.ts packages/shared/src/DrainableWorker.test.ts apps/server/src/orchestration-v2/EffectWorker.test.ts` for actual interleavings; no implied scheduling from filenames. |
-| fuzz | `vp run test-fuzz` reports no registered active target and exits nonzero | Existing deterministic/property cases remain in their package suites. Do not introduce broad fuzz/benchmark costs without a concrete risk and bounded target. |
-| fast check | `vp run check` | `git diff --check` + four-file unit profile. Does **not** include full lint/type/knip/browser or clean-tree assurance. |
-| affected quality/type | `vp run check:changed`; owning package `effect-tsgo tsrs --noEmit` | Legacy affected format/lint/knip/type/test selector; compiler native0 is separate from suite PASS. Root `typecheck`/`tc` remain recursive cached commands, not automatically run locally. |
-| generation | `vp run generate-check` | Existing `icons:check` readonly comparison. GraphQL: `vp run --filter @t3tools/source-control-github generate --check` and `vp run --filter t3 generate --check`; explicit tool/schema scope. No auto-update of generated files. |
-| perf | `vp run test:perf:v2-wire`, `vp run report:renders` | Explicit wire-size/React-commit suites; not a default quick run or hardware throughput claim. |
+| Logical entry           | Command / selection                                                                                                                            | Dependencies and meaning                                                                                                                                                                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| quick unit              | `vp run test-unit` / `test:quick`                                                                                                              | Four existing files: contracts keybindings + modelSelection, shared String + cliArgs; Node/VP/Effect, one worker, no DB/socket/provider fixture. A bounded baseline, not all unit tests.                                                    |
+| component               | `vp run test-component`                                                                                                                        | Four Node tools + preview-artifact Python + synthetic-SQLite seeder Python, serial/fail-first. Short owned shell/Python children; no service, browser, Docker or credential API.                                                            |
+| script subsets          | `vp run test:node-tools`, `vp run test:python`                                                                                                 | Same registered component groups; not `vitest` or implicit Python discover.                                                                                                                                                                 |
+| affected unit/component | `vp test run path/to/file.test.ts -t "behavior"`                                                                                               | Actual package config; real codec/SQLite/HTTP/short child decides layer. Server tests can use SQLite, Git, native addons and owned children: do not call the entire server suite unit.                                                      |
+| browser component       | `vp run test:browser`                                                                                                                          | Web `browser` project, existing installed Playwright Chromium, one worker; no implicit browser download.                                                                                                                                    |
+| mobile JS component     | cwd `apps/mobile`: `vp test run --project react path/to/test.tsx`                                                                              | jsdom/RN mocks; use `T3_MOBILE_TEST_PLATFORM=android` only for applicable Android branch. Package `test` retains unit+react+the Android file.                                                                                               |
+| real integration        | `vp run test-integration` refuses without a project-specific selection                                                                         | No universal unattended external-service suite. Choose the existing protocol/provider fixture and document owned endpoint, auth, configuration and cleanup first. No shared staging/profile fallback.                                       |
+| e2e                     | `vp run test-e2e` refuses implicit launch                                                                                                      | Existing `test-t3-app` / `test-t3-mobile` workflows, `vp run mobile:e2e` or `release:smoke` require separately reviewed products/environment/options. No automatic install, real provider/model or default profile use.                     |
+| Rust/native             | `vp run test:native-rust`                                                                                                                      | Three Cargo crates: resource-monitor, kde-snap-shot, hyprland-snap-shot, `--offline --locked`; Rust satisfying lock/MSRV, KDE/Wayland libs by platform. Missing inputs fail before execution, no auto-fetch.                                |
+| native mobile           | `apps/mobile/modules/t3-review-diff/tests/run-android.sh`, `tests/run-ios.sh` in same module; `apps/mobile/modules/t3-highlights/tests/run.sh` | Separate JVM/Robolectric (JDK17+/Gradle, Maven cached or explicitly permitted), macOS Swift SDK, C++20. Android module `android/src/test` needs its owning Gradle build/SDK. No emulator/device claim from these.                           |
+| race                    | `vp run test-race` reports not applicable and exits nonzero                                                                                    | No Go detector. Focus `vp test run packages/shared/src/KeyedLock.test.ts packages/shared/src/DrainableWorker.test.ts apps/server/src/orchestration-v2/EffectWorker.test.ts` for actual interleavings; no implied scheduling from filenames. |
+| fuzz                    | `vp run test-fuzz` reports no registered active target and exits nonzero                                                                       | Existing deterministic/property cases remain in their package suites. Do not introduce broad fuzz/benchmark costs without a concrete risk and bounded target.                                                                               |
+| fast check              | `vp run check`                                                                                                                                 | `git diff --check` + four-file unit profile. Does **not** include full lint/type/knip/browser or clean-tree assurance.                                                                                                                      |
+| affected quality/type   | `vp run check:changed`; owning package `effect-tsgo tsrs --noEmit`                                                                             | Legacy affected format/lint/knip/type/test selector; compiler native0 is separate from suite PASS. Root `typecheck`/`tc` remain recursive cached commands, not automatically run locally.                                                   |
+| generation              | `vp run generate-check`                                                                                                                        | Existing `icons:check` readonly comparison. GraphQL: `vp run --filter @t3tools/source-control-github generate --check` and `vp run --filter t3 generate --check`; explicit tool/schema scope. No auto-update of generated files.            |
+| perf                    | `vp run test:perf:v2-wire`, `vp run report:renders`                                                                                            | Explicit wire-size/React-commit suites; not a default quick run or hardware throughput claim.                                                                                                                                               |
 
 `test` remains the recursive package test command; `test:cached` remains its
 file/shard cache selector. Both are broad, mixed-layer operations requiring
@@ -121,48 +120,48 @@ Root workspace patterns are `apps/*`, `evals`, `infra/*`, `oxlint-plugin-t3code`
 absent from a package are not synthesized as success. The following table includes
 sparse paths so a partial checkout cannot masquerade as the whole repository.
 
-| Path | Package | Legacy selection |
-| --- | --- | --- |
-| `apps/desktop` | `@t3tools/desktop` | package `test` |
-| `apps/marketing` | sparse checkout: absent | restore explicitly before selecting |
-| `apps/mobile` | `@t3tools/mobile` | package `test` |
-| `apps/server` | `t3` | package `test` |
-| `apps/web` | `@t3tools/web` | package `test` |
-| `evals` | `@t3tools/evals` | package `test` |
-| `infra/relay` | sparse checkout: absent | restore explicitly before selecting |
-| `infra/task-cache` | `@t3tools/task-cache` | package `test` |
-| `oxlint-plugin-t3code` | `@t3tools/oxlint-plugin-t3code` | package `test` |
-| `packages/client-runtime` | `@t3tools/client-runtime` | package `test` |
-| `packages/contracts` | `@t3tools/contracts` | package `test` |
-| `packages/effect-acp` | `effect-acp` | package `test` |
-| `packages/effect-codex-app-server` | `effect-codex-app-server` | package `test` |
-| `packages/provider-acp-registry` | `@t3tools/provider-acp-registry` | package `test` |
-| `packages/provider-acp` | `@t3tools/provider-acp` | package `test` |
-| `packages/provider-core` | `@t3tools/provider-core` | package `test` |
-| `packages/provider-cursor` | `@t3tools/provider-cursor` | package `test` |
-| `packages/provider-fx` | `@t3tools/provider-fx` | package `test` |
-| `packages/provider-grok` | `@t3tools/provider-grok` | package `test` |
-| `packages/provider-kiro` | `@t3tools/provider-kiro` | package `test` |
-| `packages/provider-muse` | `@t3tools/provider-muse` | package `test` |
-| `packages/provider-opencode` | `@t3tools/provider-opencode` | package `test` |
-| `packages/provider-pi` | `@t3tools/provider-pi` | package `test` |
-| `packages/provider-testing` | `@t3tools/provider-testing` | no package test; no empty PASS |
-| `packages/secret-provider-core` | `@t3tools/secret-provider-core` | package `test` |
-| `packages/secret-provider-definitions` | `@t3tools/secret-provider-definitions` | no package test; no empty PASS |
-| `packages/secret-provider-onepassword` | `@t3tools/secret-provider-onepassword` | package `test` |
-| `packages/shared` | `@t3tools/shared` | package `test` |
-| `packages/source-control-azure-devops` | `@t3tools/source-control-azure-devops` | package `test` |
-| `packages/source-control-bitbucket` | `@t3tools/source-control-bitbucket` | package `test` |
-| `packages/source-control-core` | `@t3tools/source-control-core` | package `test` |
-| `packages/source-control-definitions` | `@t3tools/source-control-definitions` | no package test; no empty PASS |
-| `packages/source-control-forgejo` | `@t3tools/source-control-forgejo` | package `test` |
-| `packages/source-control-gitcafe` | `@t3tools/source-control-gitcafe` | package `test` |
-| `packages/source-control-github` | `@t3tools/source-control-github` | package `test` |
-| `packages/source-control-gitlab` | `@t3tools/source-control-gitlab` | package `test` |
-| `packages/source-control-testing` | `@t3tools/source-control-testing` | no package test; no empty PASS |
-| `packages/ssh` | `@t3tools/ssh` | package `test` |
-| `packages/tailscale` | `@t3tools/tailscale` | package `test` |
-| `scripts` | `@t3tools/scripts` | package `test` |
+| Path                                   | Package                                | Legacy selection                    |
+| -------------------------------------- | -------------------------------------- | ----------------------------------- |
+| `apps/desktop`                         | `@t3tools/desktop`                     | package `test`                      |
+| `apps/marketing`                       | sparse checkout: absent                | restore explicitly before selecting |
+| `apps/mobile`                          | `@t3tools/mobile`                      | package `test`                      |
+| `apps/server`                          | `t3`                                   | package `test`                      |
+| `apps/web`                             | `@t3tools/web`                         | package `test`                      |
+| `evals`                                | `@t3tools/evals`                       | package `test`                      |
+| `infra/relay`                          | sparse checkout: absent                | restore explicitly before selecting |
+| `infra/task-cache`                     | `@t3tools/task-cache`                  | package `test`                      |
+| `oxlint-plugin-t3code`                 | `@t3tools/oxlint-plugin-t3code`        | package `test`                      |
+| `packages/client-runtime`              | `@t3tools/client-runtime`              | package `test`                      |
+| `packages/contracts`                   | `@t3tools/contracts`                   | package `test`                      |
+| `packages/effect-acp`                  | `effect-acp`                           | package `test`                      |
+| `packages/effect-codex-app-server`     | `effect-codex-app-server`              | package `test`                      |
+| `packages/provider-acp-registry`       | `@t3tools/provider-acp-registry`       | package `test`                      |
+| `packages/provider-acp`                | `@t3tools/provider-acp`                | package `test`                      |
+| `packages/provider-core`               | `@t3tools/provider-core`               | package `test`                      |
+| `packages/provider-cursor`             | `@t3tools/provider-cursor`             | package `test`                      |
+| `packages/provider-fx`                 | `@t3tools/provider-fx`                 | package `test`                      |
+| `packages/provider-grok`               | `@t3tools/provider-grok`               | package `test`                      |
+| `packages/provider-kiro`               | `@t3tools/provider-kiro`               | package `test`                      |
+| `packages/provider-muse`               | `@t3tools/provider-muse`               | package `test`                      |
+| `packages/provider-opencode`           | `@t3tools/provider-opencode`           | package `test`                      |
+| `packages/provider-pi`                 | `@t3tools/provider-pi`                 | package `test`                      |
+| `packages/provider-testing`            | `@t3tools/provider-testing`            | no package test; no empty PASS      |
+| `packages/secret-provider-core`        | `@t3tools/secret-provider-core`        | package `test`                      |
+| `packages/secret-provider-definitions` | `@t3tools/secret-provider-definitions` | no package test; no empty PASS      |
+| `packages/secret-provider-onepassword` | `@t3tools/secret-provider-onepassword` | package `test`                      |
+| `packages/shared`                      | `@t3tools/shared`                      | package `test`                      |
+| `packages/source-control-azure-devops` | `@t3tools/source-control-azure-devops` | package `test`                      |
+| `packages/source-control-bitbucket`    | `@t3tools/source-control-bitbucket`    | package `test`                      |
+| `packages/source-control-core`         | `@t3tools/source-control-core`         | package `test`                      |
+| `packages/source-control-definitions`  | `@t3tools/source-control-definitions`  | no package test; no empty PASS      |
+| `packages/source-control-forgejo`      | `@t3tools/source-control-forgejo`      | package `test`                      |
+| `packages/source-control-gitcafe`      | `@t3tools/source-control-gitcafe`      | package `test`                      |
+| `packages/source-control-github`       | `@t3tools/source-control-github`       | package `test`                      |
+| `packages/source-control-gitlab`       | `@t3tools/source-control-gitlab`       | package `test`                      |
+| `packages/source-control-testing`      | `@t3tools/source-control-testing`      | no package test; no empty PASS      |
+| `packages/ssh`                         | `@t3tools/ssh`                         | package `test`                      |
+| `packages/tailscale`                   | `@t3tools/tailscale`                   | package `test`                      |
+| `scripts`                              | `@t3tools/scripts`                     | package `test`                      |
 
 ## CI mapping
 
@@ -198,7 +197,6 @@ no model, OAuth, browser, live product RPC or paid eval runs. This measurement
 does not approve budget growth: the separate base-relative budget gate remains.
 Paid model evals described in `evals/README.md` are NOT_RUN.
 
-
 ## Time, fixtures and result gates
 
 Use `it.effect` for in-process logic with TestClock; advance test time explicitly
@@ -227,13 +225,13 @@ actually measured on a named runner. No coverage threshold is introduced.
 
 ## Exceptions and rollback
 
-| Exception | Scope / reason | Owner / review by | Alternative |
-| --- | --- | --- | --- |
-| Historical colocated Python `*.test.py` | Two explicit files; no bulk rename | Repository maintainer / 2026-12-12 | Registered component argv, not default discover |
-| `check:changed` retains `--passWithNoTests` | Legacy changed-path/config filtering; not a required-suite exemption | Repository maintainer / 2026-12-12 | Explicit focused collection and nonzero selected count before claiming PASS |
-| `test:cached --shard` can return0 for an empty shard | Existing partition behavior; non-sharded no-match fails | Repository maintainer / 2026-12-12 | Report shard selection, never infer complete suite from an empty shard |
-| Linux browser-secret `skipIf` on other OS | Native C/libsecret platform boundary | Desktop maintainer / 2026-12-12 | Explicit Linux native job; no cross-platform PASS |
-| Separate external integration/e2e/race/fuzz selection | No safe universal service or Go/active-fuzz target | Repository maintainer / 2026-12-12 | Fail-closed profile + explicit reviewed target; not an empty successful alias |
+| Exception                                             | Scope / reason                                                       | Owner / review by                  | Alternative                                                                   |
+| ----------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
+| Historical colocated Python `*.test.py`               | Two explicit files; no bulk rename                                   | Repository maintainer / 2026-12-12 | Registered component argv, not default discover                               |
+| `check:changed` retains `--passWithNoTests`           | Legacy changed-path/config filtering; not a required-suite exemption | Repository maintainer / 2026-12-12 | Explicit focused collection and nonzero selected count before claiming PASS   |
+| `test:cached --shard` can return0 for an empty shard  | Existing partition behavior; non-sharded no-match fails              | Repository maintainer / 2026-12-12 | Report shard selection, never infer complete suite from an empty shard        |
+| Linux browser-secret `skipIf` on other OS             | Native C/libsecret platform boundary                                 | Desktop maintainer / 2026-12-12    | Explicit Linux native job; no cross-platform PASS                             |
+| Separate external integration/e2e/race/fuzz selection | No safe universal service or Go/active-fuzz target                   | Repository maintainer / 2026-12-12 | Fail-closed profile + explicit reviewed target; not an empty successful alias |
 
 No external tracking issue is invented for these migration items; this table owns
 the review until an issue is assigned. Web/Desktop legacy `test` no longer use
