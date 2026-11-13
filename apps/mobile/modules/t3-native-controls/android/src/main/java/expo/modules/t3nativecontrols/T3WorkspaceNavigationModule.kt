@@ -255,6 +255,13 @@ class T3WorkspaceNavigationView(
     }
   }
 
+  private fun railToggleDescription(expanded: Boolean) =
+    if (expanded) {
+      (labels["collapseRail"] ?: "Collapse navigation rail")
+    } else {
+      (labels["expandRail"] ?: "Expand navigation rail")
+    }
+
   @Composable
   private fun rail() {
     // One rail surface widens in place over the list. Material's ModalWideNavigationRail
@@ -313,12 +320,7 @@ class T3WorkspaceNavigationView(
           IconButton(
             onClick = { expanded = !expanded },
             modifier = Modifier.semantics {
-              contentDescription =
-                if (expanded) {
-                  (labels["collapseRail"] ?: "Collapse navigation rail")
-                } else {
-                  (labels["expandRail"] ?: "Expand navigation rail")
-                }
+              contentDescription = railToggleDescription(expanded)
             },
           ) {
             Icon(
