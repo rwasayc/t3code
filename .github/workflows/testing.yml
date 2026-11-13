@@ -73,3 +73,26 @@ jobs:
           vp run --filter @t3tools/shared typecheck
       - name: Bounded unit profile (four files, serial packages)
         run: python3 -B scripts/run-testing.py unit
+
+  agent-context-measurement:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NODE_OPTIONS: --max-old-space-size=3072
+      RAYON_NUM_THREADS: "2"
+      UV_THREADPOOL_SIZE: "2"
+      VP_REMOTE_CACHE: "off"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+      - uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --frozen-lockfile --ignore-scripts --filter @t3tools/monorepo --filter t3...
+      - name: Exact rendered context and advertised tool budget (two cases)
+        working-directory: apps/server
+        run: ../../node_modules/.bin/vp test run --maxWorkers 1 src/provider/AgentContextBudget.test.ts

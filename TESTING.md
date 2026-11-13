@@ -188,6 +188,17 @@ broader workflows and assertions are retained; their runner/service requirements
 remain independent. Actual run results are recorded per remote SHA, not inferred
 from workflow presence or empty checks.
 
+The owned Android fork additionally runs only
+`apps/server/src/provider/AgentContextBudget.test.ts` (two existing cases) from
+`apps/server`, using the frozen root/server dependency closure without lifecycle
+scripts. It measures the real rendered Claude/Codex instructions and registered
+MCP name/description/inputSchema JSON against the committed budget, and requires
+only request_secret to have alwaysLoad metadata. Handler services are mocked;
+no model, OAuth, browser, live product RPC or paid eval runs. This measurement
+does not approve budget growth: the separate base-relative budget gate remains.
+Paid model evals described in `evals/README.md` are NOT_RUN.
+
+
 ## Time, fixtures and result gates
 
 Use `it.effect` for in-process logic with TestClock; advance test time explicitly
