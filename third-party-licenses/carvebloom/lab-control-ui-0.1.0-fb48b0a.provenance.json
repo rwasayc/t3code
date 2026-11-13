@@ -1,0 +1,40 @@
+{
+  "package": {
+    "name": "@carvebloom/lab-control-ui",
+    "version": "0.1.0"
+  },
+  "sourceProducer": "fb48b0ac5a84a63b854e75d65f8994681f8fe59b",
+  "artifact": {
+    "path": "apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz",
+    "bytes": 8023,
+    "sha256": "45070716b2afbc759bf7ac6897d2308e08de8714111bd0346982d55af78e975b",
+    "integrity": "sha512-8D1OpGsuA7/UtN4eG+fVXbGKxHFbBbCSsfNMX4plhm3doZWktebTFZR3orr9fweE4taufI/ucOJx5K231ANomQ=="
+  },
+  "grant": {
+    "repository": "https://github.com/carvebloom/lab-control",
+    "commit": "c30a44ddc6478b623c2edbf36738e956c246658d",
+    "license": {
+      "path": "web/LICENSE",
+      "bytes": 1064,
+      "sha256": "a34e3bdfcc388d516868d63f434cf622c248d1928fe2d3dd7cd16c471b8e44c2"
+    },
+    "scope": {
+      "path": "web/LICENSING.md",
+      "url": "https://github.com/carvebloom/lab-control/blob/c30a44ddc6478b623c2edbf36738e956c246658d/web/LICENSING.md",
+      "bytes": 3272,
+      "sha256": "ce8a5a2f49a810a0546a4b6b3431592e7a319096f7d4f92dfa24c440834be6d8"
+    },
+    "authority": {
+      "source": "Explicit rights-holder decision recorded by the project coordinator on 2026-11-13",
+      "receipt": "Workbench/docs/testing-rollout/lab-control-ui-mit-user-decision-20261113.json",
+      "sha256": "c0d69cb2590872ebf13dc7697962a1f5729bf00f44808fc5191b7e86a8e4037f"
+    }
+  },
+  "externalNotice": {
+    "path": "third-party-licenses/carvebloom/lab-control-ui-0.1.0-fb48b0a.NOTICE",
+    "bytes": 1064,
+    "sha256": "a34e3bdfcc388d516868d63f434cf622c248d1928fe2d3dd7cd16c471b8e44c2",
+    "unmodifiedCopyOf": "web/LICENSE at c30a44ddc6478b623c2edbf36738e956c246658d"
+  },
+  "boundary": "New MIT grant for project-owned UI represented by this exact historical source/artifact. Original tar did not contain this notice and remains unchanged. Unrelated backend, upstream and third-party materials retain their own rights and notices. This record documents provenance; the existing override matcher binds package name/version, not artifact hash."
+}
