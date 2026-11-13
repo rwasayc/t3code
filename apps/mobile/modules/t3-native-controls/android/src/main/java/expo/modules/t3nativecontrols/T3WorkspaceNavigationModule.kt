@@ -314,8 +314,11 @@ class T3WorkspaceNavigationView(
             onClick = { expanded = !expanded },
             modifier = Modifier.semantics {
               contentDescription =
-                if (expanded) (labels["collapseRail"] ?: "Collapse navigation rail")
-                else (labels["expandRail"] ?: "Expand navigation rail")
+                if (expanded) {
+                  (labels["collapseRail"] ?: "Collapse navigation rail")
+                } else {
+                  (labels["expandRail"] ?: "Expand navigation rail")
+                }
             },
           ) {
             Icon(

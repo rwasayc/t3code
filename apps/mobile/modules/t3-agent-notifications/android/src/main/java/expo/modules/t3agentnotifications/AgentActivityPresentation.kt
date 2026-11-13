@@ -145,8 +145,11 @@ internal class ActivityPresentation(
       builder.setSubText(
         listOfNotNull(
           hero!!.project.takeIf { singleProject && it.isNotBlank() },
-          if (activeCount > 0) countLabel("{count} active", activeCount)
-          else countLabel("{count} threads", threadCount)
+          if (activeCount > 0) {
+            countLabel("{count} active", activeCount)
+          } else {
+            countLabel("{count} threads", threadCount)
+          }
         ).joinToString(" · ")
       )
     }
