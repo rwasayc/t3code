@@ -119,10 +119,10 @@ class T3SshModule : Module() {
     }
     synchronized(stateLock) {
       val current = currentJob
-      if (
-        current != null && current.configJson == configJson &&
-        current.generation == generation && queuedJob == null
-      ) {
+      val sameAttempt = current?.let {
+        it.configJson == configJson && it.generation == generation
+      } == true
+      if (current != null && sameAttempt && queuedJob == null) {
         current.promises.add(promise)
         return@synchronized
       }
@@ -213,7 +213,11 @@ class T3SshModule : Module() {
     val json = try {
       JSONObject(configJson)
     } catch (error: Exception) {
-      throw TunnelClient.TunnelException(TunnelClient.ErrorCategory.CONFIG, "Invalid SSH profile.")
+      throw TunnelClient.TunnelException(
+        TunnelClient.ErrorCategory.CONFIG,
+        "Invalid SSH profile.",
+        error
+      )
     }
     return TunnelClient.Config(
       json.optString("host", ""),
