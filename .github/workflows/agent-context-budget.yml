@@ -1,6 +1,6 @@
 name: Agent Context Budget
 
-# Fails when a PR raises a value in agentContextBudget.json above main's. AgentContextBudget.test.ts
+# Fails when a PR raises a value in agentContextBudget.json above its base. AgentContextBudget.test.ts
 # keeps that file equal to the measured context, so the context cannot grow by editing the file.
 # To accept growth on purpose, a maintainer adds the agent-context-increase label.
 on:
@@ -22,6 +22,7 @@ jobs:
     env:
       BUDGET: apps/server/src/provider/agentContextBudget.json
       ALLOW_INCREASE: ${{ contains(github.event.pull_request.labels.*.name, 'agent-context-increase') }}
+      BASE_REF: ${{ github.base_ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -29,11 +30,11 @@ jobs:
           sparse-checkout: apps/server/src/provider/agentContextBudget.json
           sparse-checkout-cone-mode: false
 
-      - name: Compare with main
+      - name: Compare with PR base
         run: |
-          git fetch --quiet --depth=1 origin main
+          git fetch --quiet --depth=1 origin "refs/heads/$BASE_REF"
           if ! git cat-file -e "FETCH_HEAD:$BUDGET" 2>/dev/null; then
-            echo "main has no agent context budget yet."
+            echo "PR base has no agent context budget yet."
             exit 0
           fi
           git show "FETCH_HEAD:$BUDGET" > "$RUNNER_TEMP/main.json"

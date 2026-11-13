@@ -26,6 +26,10 @@ jobs:
         with:
           fetch-depth: 2
           persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v6
         with:
           node-version-file: package.json
@@ -55,6 +59,10 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
       - uses: ./.github/actions/setup-ci-deps
         with:
           install-args: --frozen-lockfile --ignore-scripts --filter @t3tools/monorepo --filter @t3tools/contracts... --filter @t3tools/shared...
