@@ -16,6 +16,7 @@ const workspaceFiles = [
   "apps/server/package.json",
   "apps/desktop/package.json",
   "apps/web/package.json",
+  "apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz",
   "apps/mobile/package.json",
   "apps/mobile/modules/t3-highlights/package.json",
   "apps/mobile/modules/t3-source-text/package.json",
