@@ -170,7 +170,10 @@ sparse paths so a partial checkout cannot masquerade as the whole repository.
 current delivery branch pushes, PRs targeting the default branch, and manual
 dispatch. `script-components` checks whitespace/Python AST/profile JSON, inventories
 owned sources and runs the same six registered script components without a package
-install. `core-type-and-unit` uses standard hosted Ubuntu, the existing pinned
+install. Whitespace checks exclude vendored references, literal dependency patches
+and generated highlights bindings; their bytes follow upstream/generator contracts.
+Checkout fetches bounded-size blobs before discarding credentials so deleted/renamed
+PR-base source can be compared without authenticated lazy fetching. `core-type-and-unit` uses standard hosted Ubuntu, the existing pinned
 Vite+ setup, frozen lockfile and an install limited to root/contracts/shared
 with lifecycle scripts disabled. Registry/security policy remains enabled.
 It runs the existing contracts/shared typecheck commands serially with their

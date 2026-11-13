@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
+          filter: blob:limit=100m
           persist-credentials: false
           sparse-checkout: |
             /*
@@ -35,7 +36,7 @@ jobs:
           node-version-file: package.json
       - name: Static entry contracts
         run: |
-          git diff --check HEAD^ HEAD
+          git diff --check HEAD^ HEAD -- . ':(exclude).repos/**' ':(exclude)infra/task-cache/vendor/**' ':(exclude)patches/**' ':(exclude)apps/mobile/modules/t3-highlights/nitrogen/generated/**'
           python3 -B - <<'PYTHON'
           import ast, json
           from pathlib import Path
