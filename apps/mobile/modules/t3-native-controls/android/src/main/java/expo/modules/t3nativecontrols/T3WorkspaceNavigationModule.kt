@@ -68,7 +68,9 @@ class T3WorkspaceNavigationModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("T3WorkspaceNavigation")
     View(T3WorkspaceNavigationView::class) {
-      Prop("labels") { view: T3WorkspaceNavigationView, value: Map<String, String> -> view.labels = value }
+      Prop("labels") { view: T3WorkspaceNavigationView, value: Map<String, String> ->
+        view.labels = value
+      }
       Prop("tabs") { view: T3WorkspaceNavigationView, value: List<String> -> view.tabs = value }
       Prop("selectedTab") { view: T3WorkspaceNavigationView, value: String ->
         view.selectedTab = value
@@ -312,7 +314,8 @@ class T3WorkspaceNavigationView(
             onClick = { expanded = !expanded },
             modifier = Modifier.semantics {
               contentDescription =
-                if (expanded) (labels["collapseRail"] ?: "Collapse navigation rail") else (labels["expandRail"] ?: "Expand navigation rail")
+                if (expanded) (labels["collapseRail"] ?: "Collapse navigation rail")
+                else (labels["expandRail"] ?: "Expand navigation rail")
             },
           ) {
             Icon(

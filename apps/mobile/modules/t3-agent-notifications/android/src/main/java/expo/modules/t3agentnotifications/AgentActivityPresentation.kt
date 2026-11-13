@@ -87,10 +87,14 @@ internal fun activityPhase(data: Map<String, String>, rows: List<ActivityRow>): 
   }
 
 internal class ActivityPresentation(
-  data: Map<String, String>, private val active: Boolean,
+  data: Map<String, String>,
+  private val active: Boolean,
   private val translate: (String) -> String = { it }
 ) {
-  private fun countLabel(source: String, count: Any) = translate(source).replace("{count}", count.toString())
+  private fun countLabel(
+    source: String,
+    count: Any
+  ) = translate(source).replace("{count}", count.toString())
   private val rows = activityRows(data)
   private val hero = rows.firstOrNull()
   val phase = activityPhase(data, rows)
@@ -120,7 +124,8 @@ internal class ActivityPresentation(
 
   val chip = when {
     !active -> null
-    phase == null -> data["activity_chip"]?.takeIf { it.isNotBlank() }?.take(7) ?: translate("Active")
+    phase == null ->
+      data["activity_chip"]?.takeIf { it.isNotBlank() }?.take(7) ?: translate("Active")
     phase == ActivityPhase.RUNNING && activeCount > 1 ->
       countLabel("{count} live", if (activeCount > 9) "9+" else activeCount)
     else -> translate(phase.chip)
@@ -140,7 +145,8 @@ internal class ActivityPresentation(
       builder.setSubText(
         listOfNotNull(
           hero!!.project.takeIf { singleProject && it.isNotBlank() },
-          if (activeCount > 0) countLabel("{count} active", activeCount) else countLabel("{count} threads", threadCount)
+          if (activeCount > 0) countLabel("{count} active", activeCount)
+          else countLabel("{count} threads", threadCount)
         ).joinToString(" · ")
       )
     }

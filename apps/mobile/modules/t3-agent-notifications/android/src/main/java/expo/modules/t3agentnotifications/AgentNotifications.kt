@@ -354,7 +354,11 @@ object AgentNotifications {
     if (Build.VERSION.SDK_INT >= 26) {
       manager(context).createNotificationChannels(
         listOf(
-          NotificationChannel(ALERT_CHANNEL, notificationTranslator(context)("Agent alerts"), NotificationManager.IMPORTANCE_HIGH),
+          NotificationChannel(
+            ALERT_CHANNEL,
+            notificationTranslator(context)("Agent alerts"),
+            NotificationManager.IMPORTANCE_HIGH
+          ),
           NotificationChannel(
             ACTIVITY_CHANNEL,
             notificationTranslator(context)("Ongoing agent activity"),

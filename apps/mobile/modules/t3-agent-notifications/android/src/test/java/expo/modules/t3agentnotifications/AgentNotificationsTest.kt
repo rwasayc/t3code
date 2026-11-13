@@ -318,7 +318,10 @@ class AgentNotificationsTest : AgentNotificationsFixture() {
     val chinese = manager.activeNotifications.single().notification
     assertEquals("1 项需要你处理", chinese.extras.getCharSequence(Notification.EXTRA_TITLE).toString())
     assertEquals("2 项活跃", chinese.extras.getString(Notification.EXTRA_SUB_TEXT))
-    assertEquals("待审批 Approval · Project\n工作中 Another thread · Other project", chinese.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString())
+    assertEquals(
+      "待审批 Approval · Project\n工作中 Another thread · Other project",
+      chinese.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString()
+    )
     assertEquals(listOf("审批", "关闭"), chinese.actions.map { it.title.toString() })
     AgentNotifications.clear(context)
     AgentNotifications.configure(context, "device", "user", "t3code-dev", true)
