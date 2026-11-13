@@ -22,6 +22,10 @@ class T3AgentNotificationsModule : Module() {
       }
     }
 
+    Function("setLanguage") { language: String ->
+      appContext.reactContext?.let { AgentNotifications.setLanguage(it, language) }
+    }
+
     Function("clear") {
       appContext.reactContext?.let { AgentNotifications.clear(it) }
     }

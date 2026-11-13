@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import {
   capitalizeTerm,
@@ -16,6 +17,8 @@ import { useAtomCommand } from "../../state/use-atom-command";
 import { PullRequestSheetContent } from "./PullRequestSheetContent";
 import { pullRequestTarget, type PullRequestParams } from "./usePullRequestDiff";
 import { usePullRequestPermissions } from "./usePullRequestPermissions";
+import { PullRequestCompletionSuggestions } from "./PullRequestCompletionSuggestions";
+import { usePullRequestCompletions } from "./usePullRequestCompletions";
 
 export type PullRequestEditParams = PullRequestParams &
   (
@@ -30,6 +33,7 @@ export type PullRequestEditParams = PullRequestParams &
   );
 
 export function PullRequestEditScreen({ route }: StaticScreenProps<PullRequestEditParams>) {
+  const { t } = useTranslation();
   const params = route.params;
   const navigation = useNavigation();
   const target = pullRequestTarget(params);
@@ -49,6 +53,13 @@ export function PullRequestEditScreen({ route }: StaticScreenProps<PullRequestEd
         : (pr?.body ?? null);
   const [draft, setDraft] = useState<string | null>(null);
   const value = draft ?? original ?? "";
+  const completions = usePullRequestCompletions({
+    environmentId: params.environmentId,
+    projectId: params.projectId,
+    value: value,
+    onChangeValue: setDraft,
+    support: params.field === "title" ? null : (pr?.capabilities ?? null),
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inFlight = useRef(false);
@@ -124,25 +135,29 @@ export function PullRequestEditScreen({ route }: StaticScreenProps<PullRequestEd
         <Button
           fullWidth
           tone="contrast"
-          label={busy ? "Saving…" : "Save"}
+          label={busy ? "Saving…" : t("Save")}
           loading={busy}
           disabled={!allowed || unchanged || invalid || original === null}
           onPress={() => void save()}
         />
       }
     >
+      <PullRequestCompletionSuggestions completions={completions} />
       <TextInput
         multiline={params.field !== "title"}
+        selection={completions.selection}
+        onSelectionChange={completions.onSelectionChange}
+        onBlur={completions.onBlur}
         editable={!busy && original !== null}
         autoFocus
         accessibilityLabel={
           params.field === "title"
-            ? `${capitalizeTerm(singular)} title`
+            ? t("{value0} title", { value0: String(capitalizeTerm(singular)) })
             : params.field === "body"
-              ? `${capitalizeTerm(singular)} description`
-              : "Comment"
+              ? t("{value0} description", { value0: String(capitalizeTerm(singular)) })
+              : t("Comment")
         }
-        placeholder={params.field === "title" ? "Title" : "Write in Markdown…"}
+        placeholder={params.field === "title" ? t("Title") : "Write in Markdown…"}
         placeholderTextColorClassName="accent-foreground-muted"
         maxLength={params.field === "title" ? 1024 : 65536}
         value={value}

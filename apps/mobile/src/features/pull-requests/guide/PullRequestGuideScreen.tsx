@@ -1,11 +1,11 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
-import { Toolbar } from "../../../components/ui/Toolbar";
 import { parsePatchFiles } from "@pierre/diffs/utils/parsePatchFiles";
 import type { FileDiffMetadata } from "@pierre/diffs";
 import { StackActions, useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import { useEffect } from "react";
-import { Platform, Pressable, View } from "react-native";
-import { AndroidScreenHeader } from "../../../components/ui/AndroidScreenHeader";
+import { Pressable, View } from "react-native";
+import { AppBar } from "../../../components/ui/AppBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   letterStopNotes,
@@ -16,10 +16,7 @@ import { SymbolView } from "../../../components/ui/AppSymbol";
 import { GuideOutline } from "./GuideOutline";
 import { AppText as Text } from "../../../components/ui/AppText";
 import { ScreenScrollView } from "../../../components/ui/ScreenScrollView";
-import { Menu } from "../../../components/ui/Menu";
-import { IconButton } from "../../../components/ui/IconButton";
 import { useAppearancePreferences } from "../../settings/appearance/AppearancePreferencesProvider";
-import { NativeStackScreenOptions } from "../../../native/StackHeader";
 import { PullRequestCardGroup, PullRequestCardRow } from "../PullRequestControls";
 import { PullRequestMarkdown, PullRequestMarkdownRepository } from "../PullRequestMarkdown";
 import { usePullRequestDiff, type PullRequestParams } from "../usePullRequestDiff";
@@ -55,13 +52,14 @@ export function PullRequestGuideContent({
   readonly params: PullRequestParams;
   readonly visible?: boolean;
 }) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const state = useReviewGuide(params, visible);
   const { guide, stale } = reviewGuideState(state.data);
   return (
     <Animated.View layout={PR_ROW_LAYOUT} className="w-full max-w-[760px] self-center">
       {!state.enabled ? (
-        <Text>Review guides are disabled for this server.</Text>
+        <Text>{t("Review guides are disabled for this server.")}</Text>
       ) : (
         <>
           <GuideNotice state={state} />
@@ -99,6 +97,7 @@ export function PullRequestGuideContent({
 }
 
 export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideStopParams>) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const state = useReviewGuide(route.params);
   const detail = useEnvironmentQuery(composerPullRequests.detail(pullRequestTarget(route.params)));
@@ -132,46 +131,25 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
   const notes = stop ? letterStopNotes(stop).lettered : [];
   return (
     <View className="flex-1 bg-screen">
-      <NativeStackScreenOptions
-        options={{
-          title: `Stop ${route.params.position + 1}`,
-          headerTitle: `Stop ${route.params.position + 1} of ${guide?.stops.length ?? "…"}`,
-        }}
+      <AppBar
+        title={`Stop ${route.params.position + 1} of ${guide?.stops.length ?? "…"}`}
+        onBack={() => navigation.goBack()}
+        menus={[
+          {
+            title: t("Guide options"),
+            icon: "ellipsis",
+            items: [
+              {
+                id: "word-wrap",
+                title: t("Word wrap"),
+                icon: "text.alignleft",
+                selected: appearance.codeWordBreak,
+                onPress: () => setCodeWordBreak(!appearance.codeWordBreak),
+              },
+            ],
+          },
+        ]}
       />
-      {Platform.OS === "android" ? (
-        <AndroidScreenHeader
-          title={`Stop ${route.params.position + 1}`}
-          onBack={() => navigation.goBack()}
-          trailing={
-            <Menu
-              actions={[
-                {
-                  id: "word-wrap",
-                  title: "Word wrap",
-                  image: "text.alignleft",
-                  state: appearance.codeWordBreak ? "on" : "off",
-                },
-              ]}
-              onPressAction={() => setCodeWordBreak(!appearance.codeWordBreak)}
-            >
-              <View pointerEvents="none">
-                <IconButton icon="ellipsis" accessibilityLabel="Guide options" />
-              </View>
-            </Menu>
-          }
-        />
-      ) : null}
-      <Toolbar placement="right">
-        <Toolbar.Menu title="Guide options" accessibilityLabel="Guide options" icon="ellipsis">
-          <Toolbar.MenuAction
-            icon="text.alignleft"
-            isOn={appearance.codeWordBreak}
-            onPress={() => setCodeWordBreak(!appearance.codeWordBreak)}
-          >
-            <Toolbar.Label>Word wrap</Toolbar.Label>
-          </Toolbar.MenuAction>
-        </Toolbar.Menu>
-      </Toolbar>
       <PullRequestMarkdownRepository params={route.params} changeRequest={detail.data}>
         <ScreenScrollView
           contentInsetAdjustmentBehavior="automatic"
@@ -179,9 +157,9 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
         >
           <View className="w-full max-w-[760px] self-center gap-5">
             {!state.enabled ? (
-              <Text>Review guides are disabled for this server.</Text>
+              <Text>{t("Review guides are disabled for this server.")}</Text>
             ) : changedGuide ? (
-              <Text>This guide was rewritten. Go back to start the new tour.</Text>
+              <Text>{t("This guide was rewritten. Go back to start the new tour.")}</Text>
             ) : !stop ? (
               <Text>{state.error ?? "Loading stop…"}</Text>
             ) : (
@@ -202,7 +180,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 ) : null}
                 {stale ? (
                   <Text className="text-sm text-foreground-muted">
-                    Excerpts are hidden until the guide is rewritten for the current head.
+                    {t("Excerpts are hidden until the guide is rewritten for the current head.")}
                   </Text>
                 ) : (
                   stop.excerpts.map((excerpt) => (
@@ -226,7 +204,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 {diff.error ? <Text className="text-danger-foreground">{diff.error}</Text> : null}
                 {notes.length ? (
                   <View className="gap-4">
-                    <Text className="font-t3-semibold">Notes on this stop</Text>
+                    <Text className="font-t3-semibold">{t("Notes on this stop")}</Text>
                     {notes.map(({ marker, note }) => (
                       <View key={marker} className="flex-row gap-3">
                         <View className="h-7 w-7 items-center justify-center rounded-lg bg-grouped-card">
@@ -264,7 +242,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 ) : null}
                 {stop.questions.length ? (
                   <View className="gap-3">
-                    <Text className="font-t3-semibold">Questions to consider</Text>
+                    <Text className="font-t3-semibold">{t("Questions to consider")}</Text>
                     {stop.questions.map((question) => (
                       <PullRequestMarkdown key={question} lineBreaks={false} markdown={question} />
                     ))}
@@ -299,7 +277,10 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="text-xs text-foreground-muted">
                       {guide && position < guide.stops.length - 1
-                        ? `Next · ${position + 2} of ${guide.stops.length}`
+                        ? t("Next · {value0} of {length}", {
+                            value0: String(position + 2),
+                            length: String(guide.stops.length),
+                          })
                         : "End of guide"}
                     </Text>
                     <Text className="text-base font-t3-semibold">

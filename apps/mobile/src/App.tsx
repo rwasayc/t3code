@@ -18,7 +18,9 @@ import {
   type NavigationState,
 } from "@react-navigation/native";
 import { pipe } from "effect/Function";
+import { DEFAULT_HOSTED_APP_URL } from "@t3tools/shared/connectAuth";
 
+import { TranslationProvider } from "./lib/i18n/TranslationProvider";
 import { RegistryContext } from "@effect/atom-react";
 import { ProjectChipIconRasterizer } from "./native/ProjectChipIconImages";
 import { ThreadArrangementHost } from "./features/threads/ThreadArrangementSheet";
@@ -81,8 +83,8 @@ import {
   launchWorkspaceURL,
   recordWorkspaceSelections,
   settingsLinkPage,
-} from "./features/workspace/workspace-selection-store";
-import { workspaceDetailLinkAction } from "./features/workspace/workspace-detail-selection";
+} from "./features/layout/workspace/workspace-selection-store";
+import { workspaceDetailLinkAction } from "./features/layout/workspace/workspace-detail-selection";
 import { NativeLayoutMetricsProvider } from "./native/native-layout-metrics";
 import {
   attachRootNavigation,
@@ -130,6 +132,7 @@ const appLinking = {
     "t3code://",
     "t3code-dev://",
     "t3code-preview://",
+    DEFAULT_HOSTED_APP_URL,
     "t3workbench://",
   ],
   config: { initialRouteName: "Home" },
@@ -220,12 +223,14 @@ function SplashScreenCoordinator() {
 export default function App() {
   return (
     <RegistryContext.Provider value={appAtomRegistry}>
-      <CloudAuthProvider>
-        <AppearancePreferencesProvider>
-          <SplashScreenCoordinator />
-          <AppContent />
-        </AppearancePreferencesProvider>
-      </CloudAuthProvider>
+      <TranslationProvider>
+        <CloudAuthProvider>
+          <AppearancePreferencesProvider>
+            <SplashScreenCoordinator />
+            <AppContent />
+          </AppearancePreferencesProvider>
+        </CloudAuthProvider>
+      </TranslationProvider>
     </RegistryContext.Provider>
   );
 }

@@ -47,9 +47,10 @@
     "measure-renders": "node scripts/measure-renders.mts",
     "generate": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-uniwind-themes.mts",
     "generate:highlights": "node scripts/generate-highlights.mts",
+    "generate:nitro": "cd modules/t3-highlights && nitrogen",
     "eas-build-on-success": "node scripts/upload-sourcemaps.mts build",
-    "test": "vp test run --project unit --project react",
-    "typecheck": "tsc --noEmit"
+    "test": "vp test run --project unit --project react && T3_MOBILE_TEST_PLATFORM=android vp test run --project react src/components/FilePreviewModal.test.tsx",
+    "typecheck": "effect-tsgo tsrs --noEmit"
   },
   "dependencies": {
     "@clerk/expo": "catalog:",
@@ -79,6 +80,7 @@
     "@tabler/icons-react-native": "^3.44.0",
     "clsx": "^2.1.1",
     "diff": "8.0.3",
+    "dompurify": "^3.4.16",
     "effect": "catalog:",
     "expo": "58.0.14",
     "expo-application": "~58.1.2",
@@ -118,6 +120,8 @@
     "expo-video": "58.0.11",
     "expo-web-browser": "~58.0.6",
     "expo-widgets": "58.0.20",
+    "katex": "^0.16.47",
+    "pele": "^1.8.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "0.88.0",
@@ -136,6 +140,7 @@
     "react-native-worklets": "0.13.0",
     "remark-gfm": "catalog:",
     "remark-parse": "catalog:",
+    "remark-stringify": "^11.0.0",
     "tailwind-merge": "^3.5.0",
     "unified": "catalog:",
     "uniwind": "1.13.0"
@@ -151,8 +156,8 @@
     "aws4fetch": "1.0.20",
     "babel-preset-expo": "~58.0.17",
     "jsdom": "^30.0.1",
-    "tailwindcss": "^4.0.0",
-    "typescript": "catalog:"
+    "nitrogen": "0.37.1",
+    "tailwindcss": "^4.0.0"
   },
   "enriched-markdown": {
     "enableMath": true,
@@ -162,7 +167,6 @@
     "install": {
       "exclude": [
         "react-native-keyboard-controller",
-        "typescript",
         "react-native-screens",
         "react-native-enriched-markdown"
       ]

@@ -41,7 +41,7 @@ const outputDir = externalPath(
     NodePath.join(NodeOS.homedir(), ".local/share/t3-workbench/releases"),
   "T3CODE_SSH_OUTPUT_DIR",
 );
-const version = process.env.T3CODE_MOBILE_VERSION ?? "2.2.0-ssh.2";
+const version = process.env.T3CODE_MOBILE_VERSION ?? "2.2.0-ssh.3";
 if (!/^[\w.+-]+$/.test(version)) throw new Error("Invalid T3CODE_MOBILE_VERSION.");
 const env = {
   ...process.env,

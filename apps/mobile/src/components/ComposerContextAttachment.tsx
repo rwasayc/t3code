@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { Button } from "./ui/Button";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import { AsyncResult } from "effect/reactivity";
@@ -24,6 +25,7 @@ export function ComposerContextAttachment(props: {
   environmentId?: EnvironmentId;
   attachment?: DraftComposerAttachment;
 }) {
+  const { t } = useTranslation();
   const { record, attachment } = props;
   const shareSourceIdentifier = useId();
   const resource = {
@@ -73,7 +75,7 @@ export function ComposerContextAttachment(props: {
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not open attachment",
+        t("Could not open attachment"),
         cause instanceof Error ? cause.message : "Try again.",
       );
     }
@@ -83,7 +85,7 @@ export function ComposerContextAttachment(props: {
       {record.kind === "image" && uri ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Preview ${record.name}`}
+          accessibilityLabel={t("Preview {name}", { name: String(record.name) })}
           onPress={() => setPreviewOpen(true)}
         >
           <Image

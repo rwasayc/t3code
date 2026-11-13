@@ -1,6 +1,7 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { Chip } from "../../components/ui/Chip";
 import { PullRequestSectionHeading } from "./PullRequestSectionHeading";
-import type { PullRequestListEntry } from "@t3tools/contracts";
+import type { PullRequestListEntry, PullRequestSummary } from "@t3tools/contracts";
 import { View } from "react-native";
 import { PullRequestCardGroup, PullRequestCardRow } from "./PullRequestControls";
 import { PullRequestStackCard } from "./PullRequestStackCard";
@@ -14,17 +15,21 @@ export function PullRequestOverviewLoading({
   params,
   stack,
 }: {
-  readonly summary: PullRequestListEntry;
+  readonly summary: PullRequestListEntry | PullRequestSummary;
   readonly params: PullRequestParams;
   readonly stack: PullRequestStackState;
 }) {
-  const review = pullRequestListReviewStatus(summary);
+  const { t } = useTranslation();
+  const review = pullRequestListReviewStatus({
+    reviewDecision: summary.reviewDecision ?? undefined,
+    viewerReviewRequested: "viewerReviewRequested" in summary && summary.viewerReviewRequested,
+  });
   const conflicting = summary.mergeability === "conflicting";
   const clean = summary.mergeability === "mergeable";
   return (
     <View
       className="gap-5"
-      accessibilityLabel="Loading pull request details"
+      accessibilityLabel={t("Loading pull request details")}
       accessibilityState={{ busy: true }}
     >
       <PullRequestStackCard params={params} state={stack} />
@@ -37,8 +42,8 @@ export function PullRequestOverviewLoading({
               : summary.checksState === "failing"
                 ? "Checks failing"
                 : summary.checksState === "pending"
-                  ? "Checks running"
-                  : "Checks"
+                  ? t("Checks running")
+                  : t("Checks")
           }
           icon={
             summary.checksState === "passing"
@@ -59,7 +64,7 @@ export function PullRequestOverviewLoading({
         </PullRequestCardRow>
         <PullRequestCardRow
           compact
-          title={review?.accessibleLabel ?? "Reviews"}
+          title={review?.accessibleLabel ?? t("Reviews")}
           icon={review?.icon ?? "bubble.left"}
           tint={review?.tint}
         >
@@ -69,10 +74,10 @@ export function PullRequestOverviewLoading({
           compact
           title={
             conflicting
-              ? `Conflicts with ${summary.baseBranch}`
+              ? t("Conflicts with {baseBranch}", { baseBranch: String(summary.baseBranch) })
               : clean
-                ? `No conflicts with ${summary.baseBranch}`
-                : "Branch"
+                ? t("No conflicts with {baseBranch}", { baseBranch: String(summary.baseBranch) })
+                : t("Branch")
           }
           icon={
             conflicting ? PullRequestGlyph.conflicting : clean ? "checkmark.circle" : "arrow.branch"
@@ -89,7 +94,7 @@ export function PullRequestOverviewLoading({
           <View className="h-11 rounded-xl bg-subtle-strong" />
         </View>
       </PullRequestCardGroup>
-      {summary.labels.length ? (
+      {"labels" in summary && summary.labels.length ? (
         <View className="flex-row flex-wrap gap-2">
           {summary.labels.map((label) => (
             <Chip key={label.name} label={label.name} size="small" />
@@ -97,7 +102,7 @@ export function PullRequestOverviewLoading({
         </View>
       ) : null}
       <View className="gap-3">
-        <PullRequestSectionHeading>Description</PullRequestSectionHeading>
+        <PullRequestSectionHeading>{t("Description")}</PullRequestSectionHeading>
         <View className="gap-3 py-1">
           <View className="h-4 w-full rounded bg-subtle-strong" />
           <View className="h-4 w-full rounded bg-subtle-strong" />

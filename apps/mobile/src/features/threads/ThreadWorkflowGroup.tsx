@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
 import {
   isActiveSubagentStatus,
@@ -48,6 +49,7 @@ export function ThreadWorkflowGroup(props: {
   readonly group: SubagentWorkflowGroup;
   readonly onOpen: (threadId: ThreadId) => void;
 }) {
+  const { t } = useTranslation();
   const { group } = props;
   const provider = useEnvironmentServerConfig(props.environmentId)?.providers.find(
     (candidate) => candidate.instanceId === props.subagent.providerInstanceId,
@@ -64,7 +66,10 @@ export function ThreadWorkflowGroup(props: {
         <View className="flex-row items-center">
           <RowPressable
             accessibilityRole="button"
-            accessibilityLabel={`${label} workflow, ${statusLabel}`}
+            accessibilityLabel={t("{label} workflow, {statusLabel}", {
+              label: String(label),
+              statusLabel: String(statusLabel),
+            })}
             accessibilityHint={open ? "Collapses the workflow" : "Opens the current phase"}
             accessibilityState={{ expanded: open !== undefined }}
             disabled={rail.length === 0}
@@ -109,7 +114,11 @@ export function ThreadWorkflowGroup(props: {
                   icon={RAIL_ICON[item.tone]}
                   label={count ? `${count} ${item.title}` : item.title}
                   selected={item.key === selected}
-                  accessibilityLabel={`${item.title} phase, ${item.tone}${count ? `, ${count} completed` : ""}`}
+                  accessibilityLabel={t("{title} phase, {tone}{value2}", {
+                    title: String(item.title),
+                    tone: String(item.tone),
+                    value2: String(count ? t(", {count} completed", { count: String(count) }) : ""),
+                  })}
                   onPress={() => setSelected(nextWorkflowSelection(rail, selected, item.key))}
                 />
               );
@@ -121,7 +130,7 @@ export function ThreadWorkflowGroup(props: {
             textRole="footnote"
             className="border-t border-border-subtle px-4 py-3 text-foreground-muted"
           >
-            No agents yet
+            {t("No agents yet")}
           </Text>
         ) : (
           open.members.map((member) => (

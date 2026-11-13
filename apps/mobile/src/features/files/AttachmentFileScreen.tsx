@@ -1,27 +1,20 @@
-import { Toolbar } from "../../components/ui/Toolbar";
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
-import { NativeStackScreenOptions } from "../../native/StackHeader";
 import { useNavigation, type StaticScreenProps } from "@react-navigation/native";
-import type { MenuAction } from "@react-native-menu/menu";
 import { EnvironmentId, ThreadId } from "@t3tools/contracts";
 import {
   clampFileAttachmentUploadBytes,
   formatAttachmentSize,
 } from "@t3tools/client-runtime/state/attachments";
 import { useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 
-import {
-  AndroidHeaderIconButton,
-  AndroidScreenHeader,
-} from "../../components/ui/AndroidScreenHeader";
-import { Menu } from "../../components/ui/Menu";
+import { AppBar, type AppBarMenu } from "../../components/ui/AppBar";
 import { FilePreviewModal, type FilePreviewSource } from "../../components/FilePreviewModal";
 import { useAttachmentDocument } from "../../lib/attachmentDocument";
 import { nativeViewerErrorMessage } from "../../lib/attachmentDownload";
 import { isFileBackedComposerAttachment } from "../../lib/composerImages";
 import { copyTextWithHaptic } from "../../lib/copyTextWithHaptic";
-import { useUniwindTheme } from "../../lib/useUniwindTheme";
 import { removeComposerDraftAttachment, useComposerDraft } from "../../state/use-composer-drafts";
 import { useEnvironmentServerConfig } from "../../state/entities";
 import { useRefreshAssetUrl } from "../../state/assets";
@@ -44,10 +37,9 @@ export type AttachmentFileRouteParams = {
 type AttachmentFileScreenProps = StaticScreenProps<AttachmentFileRouteParams>;
 
 export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { appearance, setCodeWordBreak } = useAppearancePreferences();
-  const iconColor = useUniwindTheme()["--color-icon"];
-  const isAndroid = Platform.OS === "android";
   const params = props.route.params;
   const environmentId = params.environmentId?.trim()
     ? EnvironmentId.make(params.environmentId)
@@ -100,7 +92,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     const message = pendingNativeError.current;
     pendingNativeError.current = null;
     if (nativeViewer === null) {
-      if (message) Dialog.alert("Could not open document", message);
+      if (message) Dialog.alert(t("Could not open document"), message);
       return;
     }
     if (message) {
@@ -121,7 +113,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     renderedMode
       ? ({
           id: "preview",
-          title: renderedMode === "table" ? "Table" : "Preview",
+          title: renderedMode === "table" ? "Table" : t("Preview"),
           icon: renderedMode === "table" ? "tablecells" : "eye",
           inline: true,
           onPress: () => setRendered(true),
@@ -130,7 +122,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     renderedMode
       ? ({
           id: "source",
-          title: "Source",
+          title: t("Source"),
           icon: "doc.text",
           inline: true,
           onPress: () => setRendered(false),
@@ -157,7 +149,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     uri
       ? ({
           id: "share",
-          title: sharing ? "Opening share sheet…" : "Save or share",
+          title: sharing ? "Opening share sheet…" : t("Save or share"),
           icon: "square.and.arrow.up",
           inline: false,
           onPress: () => void share(),
@@ -166,7 +158,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     uri
       ? ({
           id: "open-viewer",
-          title: "Open in file viewer",
+          title: t("Open in file viewer"),
           icon: "arrow.up.left.and.arrow.down.right",
           inline: false,
           onPress: () => {
@@ -178,7 +170,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
     draftKey
       ? ({
           id: "remove",
-          title: "Remove from draft",
+          title: t("Remove from draft"),
           icon: "trash",
           inline: false,
           destructive: true,
@@ -187,15 +179,37 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
       : null,
   ].filter((action) => action !== null);
   const selectedAction = activeMode === "source" ? "source" : "preview";
-  const androidMenuActions = menuActions.map((action) => ({
-    id: action.id,
-    title: action.title,
-    image: action.icon,
-    state: action.inline ? (action.id === selectedAction ? "on" : "off") : undefined,
-    ...("destructive" in action ? { attributes: { destructive: true } } : {}),
-  })) satisfies MenuAction[];
-  const handleAndroidMenuAction = (event: { nativeEvent: { event: string } }) => {
-    menuActions.find(({ id }) => id === event.nativeEvent.event)?.onPress();
+  const fileMenu: AppBarMenu = {
+    title: t("File actions"),
+    icon: "ellipsis",
+    items: [
+      ...(renderedMode
+        ? [
+            {
+              id: "modes",
+              inline: true,
+              items: menuActions
+                .filter(({ inline }) => inline)
+                .map((action) => ({
+                  id: action.id,
+                  title: action.title,
+                  icon: action.icon,
+                  selected: action.id === selectedAction,
+                  onPress: action.onPress,
+                })),
+            },
+          ]
+        : []),
+      ...menuActions
+        .filter(({ inline }) => !inline)
+        .map((action) => ({
+          id: action.id,
+          title: action.title,
+          icon: action.icon,
+          destructive: "destructive" in action,
+          onPress: action.onPress,
+        })),
+    ],
   };
   const subtitle = `${draftKey ? "Draft attachment" : "Attachment"}${sizeBytes > 0 ? ` · ${formatAttachmentSize(sizeBytes)}` : ""}`;
   const refresh = useRefreshAssetUrl(environmentId, resource);
@@ -210,7 +224,6 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
       <ZipArchiveView
         name={params.name}
         subtitle={subtitle}
-        tintColor={iconColor}
         sizeBytes={sizeBytes}
         uri={uri}
         isLocal={localAttachment !== null}
@@ -231,64 +244,7 @@ export function AttachmentFileScreen(props: AttachmentFileScreenProps) {
 
   return (
     <View className="flex-1 bg-sheet">
-      <NativeStackScreenOptions
-        options={{
-          headerShown: !isAndroid,
-          headerTintColor: iconColor,
-          headerTitle: params.name,
-          title: params.name,
-          unstable_headerSubtitle: Platform.OS === "ios" ? subtitle : undefined,
-        }}
-      />
-      {isAndroid ? (
-        <AndroidScreenHeader
-          title={params.name}
-          subtitle={subtitle}
-          onBack={handleBack}
-          trailing={
-            <Menu
-              actions={androidMenuActions}
-              isAnchoredToRight
-              title="File actions"
-              onPressAction={handleAndroidMenuAction}
-            >
-              <AndroidHeaderIconButton accessibilityLabel="File actions" icon="ellipsis" />
-            </Menu>
-          }
-        />
-      ) : null}
-      <Toolbar placement="right">
-        <Toolbar.Menu accessibilityLabel="File actions" icon="ellipsis">
-          {renderedMode ? (
-            <Toolbar.Menu inline>
-              {menuActions
-                .filter(({ inline }) => inline)
-                .map((action) => (
-                  <Toolbar.MenuAction
-                    key={action.id}
-                    icon={action.icon}
-                    isOn={action.id === selectedAction}
-                    onPress={action.onPress}
-                  >
-                    {action.title}
-                  </Toolbar.MenuAction>
-                ))}
-            </Toolbar.Menu>
-          ) : null}
-          {menuActions
-            .filter(({ inline }) => !inline)
-            .map((action) => (
-              <Toolbar.MenuAction
-                key={action.id}
-                icon={action.icon}
-                destructive={"destructive" in action}
-                onPress={action.onPress}
-              >
-                {action.title}
-              </Toolbar.MenuAction>
-            ))}
-        </Toolbar.Menu>
-      </Toolbar>
+      <AppBar title={params.name} subtitle={subtitle} onBack={handleBack} menus={[fileMenu]} />
       <AttachmentDocumentBody
         document={document}
         name={params.name}

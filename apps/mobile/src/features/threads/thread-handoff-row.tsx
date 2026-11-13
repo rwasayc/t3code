@@ -1,7 +1,12 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomValue } from "@effect/atom-react";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
-import { resolveHandoffEndpoints, type HandoffEndpoints } from "@t3tools/client-runtime/handoff";
+import {
+  resolveHandoffEndpoints,
+  resolveModelSwitchChange,
+  type HandoffEndpoints,
+} from "@t3tools/client-runtime/handoff";
 import { resolveModelShortName } from "@t3tools/client-runtime/provider-clients";
 import {
   normalizeProviderAccentColor,
@@ -10,6 +15,8 @@ import {
 } from "@t3tools/client-runtime/state/provider-instance-display";
 import type {
   EnvironmentId,
+  ModelSelection,
+  OrchestrationV2ModelSwitch,
   OrchestrationV2ProjectedTurnItem,
   ProviderInstanceId,
   ServerProvider,
@@ -45,12 +52,40 @@ function handoffEndpointsAtom(
   });
 }
 
+/** A same-harness model or effort change. Shows only what changed. */
+export function ThreadModelSwitchDivider(props: {
+  environmentId: EnvironmentId;
+  modelSwitch: OrchestrationV2ModelSwitch;
+  iconColor: ColorValue;
+}) {
+  const providers = useAtomValue(serverEnvironment.providersValueAtom(props.environmentId)) ?? [];
+  const change = resolveModelSwitchChange(props.modelSwitch, providers);
+  if (change === null) return null;
+  const describe = (selection: ModelSelection, effort: string | undefined) => {
+    const provider = providers.find((candidate) => candidate.instanceId === selection.instanceId);
+    const model = provider?.models.find((candidate) => candidate.slug === selection.model);
+    const modelName =
+      (model ? resolveModelShortName(model, provider?.driver) : undefined) ??
+      model?.name ??
+      selection.model;
+    return [change.modelChanged ? modelName : null, effort].filter(Boolean).join(" ");
+  };
+  const { from, to } = props.modelSwitch;
+  return (
+    <ThreadContextDivider
+      label={`${describe(from, change.effort?.from)} → ${describe(to, change.effort?.to)}`}
+      iconColor={props.iconColor}
+    />
+  );
+}
+
 export function ThreadHandoffRow(props: {
   environmentId: EnvironmentId;
   projectedItem: OrchestrationV2ProjectedTurnItem;
   iconColor: ColorValue;
   surfaceColor: string;
 }) {
+  const { t } = useTranslation();
   const { item } = props.projectedItem;
   const endpointsAtom = useMemo(
     () => handoffEndpointsAtom(props.environmentId, props.projectedItem),
@@ -65,7 +100,7 @@ export function ThreadHandoffRow(props: {
       endpoints={endpoints}
       iconColor={color}
       surfaceColor={props.surfaceColor}
-      label="Context handoff"
+      label={t("Context handoff")}
       failed={item.status === "failed"}
     />
   );

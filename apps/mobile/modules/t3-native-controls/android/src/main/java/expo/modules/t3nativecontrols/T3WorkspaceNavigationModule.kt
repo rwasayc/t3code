@@ -68,6 +68,9 @@ class T3WorkspaceNavigationModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("T3WorkspaceNavigation")
     View(T3WorkspaceNavigationView::class) {
+      Prop("labels") { view: T3WorkspaceNavigationView, value: Map<String, String> ->
+        view.labels = value
+      }
       Prop("tabs") { view: T3WorkspaceNavigationView, value: List<String> -> view.tabs = value }
       Prop("selectedTab") { view: T3WorkspaceNavigationView, value: String ->
         view.selectedTab = value
@@ -126,6 +129,7 @@ class T3WorkspaceNavigationView(
   private val onTabSelected by EventDispatcher()
   private val onNewThread by EventDispatcher()
   private val onOverlayChange by EventDispatcher()
+  var labels by mutableStateOf(emptyMap<String, String>())
   var tabs by mutableStateOf(listOf("threads", "pullRequests", "usage", "settings"))
   var selectedTab by mutableStateOf("threads")
   var rail by mutableStateOf(false)
@@ -251,6 +255,13 @@ class T3WorkspaceNavigationView(
     }
   }
 
+  private fun railToggleDescription(expanded: Boolean) =
+    if (expanded) {
+      (labels["collapseRail"] ?: "Collapse navigation rail")
+    } else {
+      (labels["expandRail"] ?: "Expand navigation rail")
+    }
+
   @Composable
   private fun rail() {
     // One rail surface widens in place over the list. Material's ModalWideNavigationRail
@@ -287,7 +298,7 @@ class T3WorkspaceNavigationView(
       val railShape = RoundedCornerShape(topEnd = 16.dp * fraction, bottomEnd = 16.dp * fraction)
       if (fraction > 0f) {
         Scrim(
-          contentDescription = "Close navigation rail",
+          contentDescription = (labels["closeRail"] ?: "Close navigation rail"),
           onClick = { expanded = false },
           alpha = { fraction },
         )
@@ -309,8 +320,7 @@ class T3WorkspaceNavigationView(
           IconButton(
             onClick = { expanded = !expanded },
             modifier = Modifier.semantics {
-              contentDescription =
-                if (expanded) "Collapse navigation rail" else "Expand navigation rail"
+              contentDescription = railToggleDescription(expanded)
             },
           ) {
             Icon(
@@ -356,7 +366,7 @@ class T3WorkspaceNavigationView(
         .height(FAB_SIZE)
         .width(lerp(FAB_SIZE, EXPANDED_RAIL_WIDTH - RAIL_INSET * 2, fraction))
         .alpha(if (newEnabled) 1f else DISABLED_ALPHA)
-        .semantics { contentDescription = "New thread" },
+        .semantics { contentDescription = (labels["newThread"] ?: "New thread") },
     ) {
       Row(
         Modifier.padding(start = (FAB_SIZE - ICON_SIZE) / 2).clipToBounds(),
@@ -364,7 +374,7 @@ class T3WorkspaceNavigationView(
       ) {
         Icon(painterResource(R.drawable.t3_new_thread), contentDescription = null)
         Text(
-          "New thread",
+          (labels["newThread"] ?: "New thread"),
           Modifier.padding(start = 12.dp).alpha(labelAlpha(fraction)).clearAndSetSemantics {},
           style = MaterialTheme.typography.labelLarge,
           fontSize = (14 * textScale).sp,
@@ -412,7 +422,7 @@ class T3WorkspaceNavigationView(
     }
   }
 
-  private fun tabTitle(tab: String) = when (tab) {
+  private fun tabTitle(tab: String) = labels[tab] ?: when (tab) {
     "threads" -> "Chats"
     "pullRequests" -> "Pulls"
     "usage" -> "Usage"
@@ -420,7 +430,7 @@ class T3WorkspaceNavigationView(
   }
 
   private fun expandedTabTitle(tab: String) =
-    if (tab == "pullRequests") "Pull Requests" else tabTitle(tab)
+    if (tab == "pullRequests") labels["pullRequestsExpanded"] ?: "Pull Requests" else tabTitle(tab)
 
   @Composable
   private fun tabIconPainter(tab: String) = painterResource(

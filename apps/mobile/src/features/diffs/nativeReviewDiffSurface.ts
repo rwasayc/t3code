@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import {
   createElement,
   useCallback,
@@ -163,7 +164,7 @@ export function isNativeReviewDiffDrawEvent(payload: Readonly<Record<string, unk
 }
 
 interface NativeReviewDiffViewRef {
-  readonly setRowsJson: (rowsJson: string) => Promise<void>;
+  readonly setRowsJson: (rowsJson: string, contentResetKey: string) => Promise<void>;
   readonly setTokensJson: (tokensJson: string) => Promise<void>;
   readonly setTokensPatchJson: (tokensPatchJson: string) => Promise<boolean>;
   readonly scrollToFile: (fileId: string, animated: boolean) => Promise<void>;
@@ -216,8 +217,7 @@ function useNativeReviewDiffPayload(
       }
 
       const view = nativeRef.current;
-      const command: ((payload: string) => Promise<void | boolean>) | undefined = view?.[method];
-      if (!view || !command) {
+      if (!view?.[method]) {
         if (attempts < NATIVE_REVIEW_DIFF_PAYLOAD_RETRY_FRAMES) {
           attempts += 1;
           frame = requestAnimationFrame(dispatch);
@@ -229,8 +229,12 @@ function useNativeReviewDiffPayload(
       }
 
       void Promise.resolve()
-        .then(() => {
-          if (!cancelled) return command.call(view, payload);
+        .then((): Promise<void | boolean> | undefined => {
+          if (cancelled) return;
+          // Fabric can apply the contentResetKey prop after this call, so rows carry the key.
+          return method === "setRowsJson"
+            ? view.setRowsJson(payload, resetKey ?? "")
+            : view[method](payload);
         })
         .then((accepted) => {
           if (cancelled) return;
@@ -264,7 +268,6 @@ function useNativeReviewDiffPayload(
         cancelAnimationFrame(frame);
       }
     };
-    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- A new resetKey redelivers an unchanged payload after the diff surface resets.
   }, [method, nativeRef, payload, resetKey, onFailure, onDelivered]);
 }
 
@@ -275,6 +278,7 @@ function getExpoViewConfig(moduleName: string) {
 }
 
 function NativeReviewDiffView(props: NativeReviewDiffViewProps) {
+  const { t } = useTranslation();
   const [failedRowsJson, setFailedRowsJson] = useState<string | null>(null);
   const onRowsFailure = useCallback(() => setFailedRowsJson(props.rowsJson), [props.rowsJson]);
   if (failedRowsJson !== null && failedRowsJson !== props.rowsJson) setFailedRowsJson(null);
@@ -293,8 +297,8 @@ function NativeReviewDiffView(props: NativeReviewDiffViewProps) {
         ],
       },
       createElement(EmptyState, {
-        title: "Could not display diff",
-        detail: "Try loading the diff view again.",
+        title: t("Could not display diff"),
+        detail: t("Try loading the diff view again."),
         variant: "plain",
         actionLabel: "Retry diff",
         onAction: () => {

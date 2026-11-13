@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../lib/i18n/useTranslation";
 import type { EnvironmentId, SourceControlSignInPrompt } from "@t3tools/contracts";
 import {
   readHostCredentialSettings,
@@ -98,6 +99,7 @@ function AppSignInRow(props: {
   readonly appSignIn: SourceControlAppSignIn;
   readonly disabled: boolean;
 }) {
+  const { t } = useTranslation();
   const { environment, definition, appSignIn } = props;
   const environmentId = environment.environmentId;
   const host = appSignIn.hosts[0] ?? "";
@@ -113,7 +115,7 @@ function AppSignInRow(props: {
   const attempt = useRef<SourceControlSignInPrompt | null>(null);
   const input = { provider: definition.kind, host };
   const updateSettings = useAtomCommand(serverEnvironment.updateSettings, {
-    label: `sign out of ${appSignIn.appName}`,
+    label: t("sign out of {appName}", { appName: String(appSignIn.appName) }),
   });
   const [pending, setPending] = useState<SourceControlSignInPrompt | "starting" | null>(null);
 
@@ -142,7 +144,7 @@ function AppSignInRow(props: {
     const started = await start({ environmentId, input });
     if (started._tag !== "Success") {
       setPending(null);
-      Alert.alert("Could not start the sign-in", failureMessage(started.cause));
+      Alert.alert(t("Could not start the sign-in"), failureMessage(started.cause));
       return;
     }
     const prompt = started.value;
@@ -154,7 +156,7 @@ function AppSignInRow(props: {
     attempt.current = null;
     setPending(null);
     if (finished._tag !== "Success") {
-      Alert.alert("Sign-in did not finish", failureMessage(finished.cause));
+      Alert.alert(t("Sign-in did not finish"), failureMessage(finished.cause));
     }
   };
 
@@ -173,7 +175,9 @@ function AppSignInRow(props: {
     if (signedIn) {
       Alert.alert(
         appSignIn.appName,
-        "Signed in. GitHub requests use the app's higher rate limit, in repositories where the app is installed.",
+        t(
+          "Signed in. GitHub requests use the app's higher rate limit, in repositories where the app is installed.",
+        ),
         [
           { text: "Install on an organization", onPress: () => openUrl(appSignIn.installUrl) },
           { text: "Sign out", style: "destructive", onPress: signOut },

@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { NativeThemeHost } from "./ui/NativeThemeHost.android";
 import { Box, ExtendedFloatingActionButton, Icon, Text } from "@expo/ui/jetpack-compose";
 import {
@@ -17,12 +18,15 @@ import { resolveScaledTextRole } from "../lib/appearancePreferences";
 export function ScrollComposeButton(props: {
   readonly expanded: boolean;
   readonly onPress: () => void;
+  readonly size?: number;
   readonly className?: string;
   readonly style?: StyleProp<ViewStyle>;
 }) {
+  const { t } = useTranslation();
   const { appearance, themeVariables: colors } = useAppearancePreferences();
   const typography = resolveScaledTextRole("footnote", appearance.baseFontSize);
-  const { iconSize, fabSize } = useAndroidControlSizing();
+  const { iconSize, fabSize: scaledFabSize } = useAndroidControlSizing();
+  const fabSize = props.size ?? scaledFabSize;
   const nativeSize = Math.max(56, fabSize);
   const scale = fabSize / nativeSize;
   const nativeIconSize = Math.round(iconSize / scale);
@@ -77,7 +81,7 @@ export function ScrollComposeButton(props: {
                     fontWeight: "500",
                   }}
                 >
-                  New thread
+                  {t("New thread")}
                 </Text>
               </ExtendedFloatingActionButton.Text>
             </ExtendedFloatingActionButton>
@@ -88,7 +92,7 @@ export function ScrollComposeButton(props: {
       <Pressable
         onPress={props.onPress}
         accessibilityRole="button"
-        accessibilityLabel="New thread"
+        accessibilityLabel={t("New thread")}
         android_ripple={{ foreground: true }}
         style={{
           position: "absolute",

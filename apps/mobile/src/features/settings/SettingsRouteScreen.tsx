@@ -1,24 +1,25 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
+import { useSshTunnelSettingsRow } from "../ssh/sshSettingsRow";
 import {
   navigationCustomizationAvailable,
   overflowNavigationTabs,
-} from "../workspace/navigation-tab-order";
+} from "../layout/workspace/navigation-tab-order";
 import {
   NAVIGATION_TAB_ICONS,
   WORKSPACE_TAB_LABELS,
   useNavigationTabOrder,
   useHiddenNavigationTabs,
-} from "../workspace/navigation-tabs";
-import { currentWorkspaceSelections } from "../workspace/workspace-selection-store";
-import { rememberedSettingsPage } from "../workspace/workspace-tab-navigation";
-import { useSelectWorkspaceTab } from "../workspace/useSelectWorkspaceTab";
-import { useWorkspaceTabs } from "../workspace/WorkspaceTabsContext";
+} from "../layout/workspace/navigation-tabs";
+import { currentWorkspaceSelections } from "../layout/workspace/workspace-selection-store";
+import { rememberedSettingsPage } from "../layout/workspace/workspace-tab-navigation";
+import { useSelectWorkspaceTab } from "../layout/workspace/useSelectWorkspaceTab";
+import { useWorkspaceTabs } from "../layout/workspace/WorkspaceTabsContext";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { useAuth, useUser } from "@clerk/expo";
 import { useNavigation, useNavigationState } from "@react-navigation/native";
 import { use, type ComponentProps } from "react";
 import { Platform, View } from "react-native";
-import { useWorkspaceSurface } from "../workspace/useWorkspaceSurface";
 import { useNativeColumnLayoutMetrics } from "../../native/native-layout-metrics";
 import { deriveProjectGroupLabel } from "@t3tools/client-runtime/state/project-grouping";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,18 +31,30 @@ import { SettingsRow } from "./components/SettingsRow";
 import { SettingsSection, SettingsSidebarContext } from "./components/SettingsSection";
 import { SettingsScreen } from "./components/SettingsScreen";
 import type { SettingsPageTarget } from "./components/settings-page-targets";
-import {
-  AndroidSettingsEnvironmentFilter,
-  SettingsEnvironmentFilterHeader,
-} from "./components/SettingsEnvironmentFilterHeader";
+import { useSettingsEnvironmentMenu } from "./components/SettingsEnvironmentFilterHeader";
 import { useSettingsEnvironmentFilter } from "./settings-environment-filter";
 import { filterSettingsSections } from "./settings-search";
-import { useSshTunnelSettingsRow } from "../ssh/sshSettingsRow";
-import { NativePrimaryColumnContext } from "../../native/v5-workspace-context";
+import { usePaneRole } from "../../components/ui/Pane";
 
 export function SettingsRouteScreen() {
-  const { layout } = useAdaptiveWorkspaceLayout();
-  const inSidebar = use(NativePrimaryColumnContext) !== null && layout.usesSplitView;
+  const list = useSettingsListPlacement();
+  return <SettingsListScreen sidebar={list.sidebar} selected={list.selected} />;
+}
+
+/** The Settings list inside a workspace shell that draws its bar, title and search itself. */
+export function WorkspaceSettingsList() {
+  const list = useSettingsListPlacement();
+  return (
+    <SettingsSidebarContext value={list.sidebar ? { selected: list.selected } : null}>
+      <View className="flex-1 bg-screen">
+        <SettingsListContent />
+      </View>
+    </SettingsSidebarContext>
+  );
+}
+
+function useSettingsListPlacement() {
+  const sidebar = usePaneRole() === "sidebar";
   // The page open beside the list: the route right above the Settings tab's route. While
   // another tab is open this list stays mounted, hidden, and must keep showing the page Settings
   // reopens on; otherwise returning shows it unselected for a frame before the page arrives.
@@ -51,49 +64,40 @@ export function SettingsRouteScreen() {
       ? rememberedSettingsPage(currentWorkspaceSelections())
       : (state.routes[list + 1]?.name ?? null);
   });
-  return <SettingsListScreen sidebar={inSidebar} selected={selected} />;
+  return { sidebar, selected };
+}
+
+function SettingsListContent() {
+  return hasCloudPublicConfig() ? <ConfiguredSettingsRouteScreen /> : <LocalSettingsRouteScreen />;
 }
 
 export function SettingsListScreen(props: {
   readonly sidebar: boolean;
   readonly selected: string | null;
 }) {
-  const surface = useWorkspaceSurface();
+  const { t } = useTranslation();
   const workspace = useWorkspaceTabs();
-  const inSidebar = props.sidebar;
-  const selected = props.selected;
-  const sidebar = inSidebar ? { selected } : null;
-  const content = hasCloudPublicConfig() ? (
-    <ConfiguredSettingsRouteScreen />
-  ) : (
-    <LocalSettingsRouteScreen />
-  );
-
+  const environmentMenu = useSettingsEnvironmentMenu();
   return (
-    <SettingsSidebarContext value={sidebar}>
-      <View className={`flex-1 ${inSidebar ? surface.className : "bg-screen"}`}>
-        <SettingsEnvironmentFilterHeader />
-        {Platform.OS === "android" ? (
-          <SettingsScreen
-            title="Settings"
-            workspaceRoot={inSidebar}
-            trailing={<AndroidSettingsEnvironmentFilter />}
-            search={
-              workspace
-                ? {
-                    value: workspace.state.tabs.settings.query,
-                    onChangeText: (query) =>
-                      workspace.dispatch({ type: "query", tab: "settings", query }),
-                    placeholder: "Search settings",
-                  }
-                : undefined
-            }
-          >
-            {content}
-          </SettingsScreen>
-        ) : (
-          content
-        )}
+    <SettingsSidebarContext value={props.sidebar ? { selected: props.selected } : null}>
+      <View className="flex-1 bg-screen">
+        <SettingsScreen
+          title={t("Settings")}
+          workspaceRoot={props.sidebar}
+          menus={[environmentMenu]}
+          search={
+            workspace
+              ? {
+                  value: workspace.state.tabs.settings.query,
+                  onChangeText: (query) =>
+                    workspace.dispatch({ type: "query", tab: "settings", query }),
+                  placeholder: t("Search settings"),
+                }
+              : undefined
+          }
+        >
+          <SettingsListContent />
+        </SettingsScreen>
       </View>
     </SettingsSidebarContext>
   );
@@ -107,16 +111,17 @@ interface SettingsListSection {
 }
 
 function ConfiguredSettingsRouteScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
   const { user } = useUser();
   const { savedConnectionsById } = useSavedRemoteConnections();
   const sshTunnelRow = useSshTunnelSettingsRow();
   const accountLabel = !isLoaded
-    ? "Checking"
+    ? t("Checking")
     : !isSignedIn
-      ? "Sign in"
-      : (user?.primaryEmailAddress?.emailAddress ?? "Signed in");
+      ? t("Sign in")
+      : (user?.primaryEmailAddress?.emailAddress ?? t("Signed in"));
 
   return (
     <SettingsList
@@ -124,17 +129,17 @@ function ConfiguredSettingsRouteScreen() {
         {
           id: "account",
           icon: "person.crop.circle",
-          label: "T3 Account",
+          label: t("T3 Account"),
           value: accountLabel,
           disabled: !isLoaded,
           onPress: () => navigation.navigate("SettingsAuth"),
         },
-        environmentsRow(Object.keys(savedConnectionsById).length),
+        environmentsRow(Object.keys(savedConnectionsById).length, t),
         ...(sshTunnelRow === null ? [] : [sshTunnelRow]),
         {
           id: "SettingsNotifications",
           icon: "bell.badge",
-          label: "Notifications",
+          label: t("Notifications"),
           target: "SettingsNotifications",
         },
       ]}
@@ -143,23 +148,24 @@ function ConfiguredSettingsRouteScreen() {
 }
 
 function LocalSettingsRouteScreen() {
+  const { t } = useTranslation();
   const { savedConnectionsById } = useSavedRemoteConnections();
   const sshTunnelRow = useSshTunnelSettingsRow();
   return (
     <SettingsList
       connections={[
-        environmentsRow(Object.keys(savedConnectionsById).length),
+        environmentsRow(Object.keys(savedConnectionsById).length, t),
         ...(sshTunnelRow === null ? [] : [sshTunnelRow]),
       ]}
     />
   );
 }
 
-function environmentsRow(count: number): SettingsListRow {
+function environmentsRow(count: number, t: (message: string) => string): SettingsListRow {
   return {
     id: "SettingsEnvironments",
     icon: "desktopcomputer",
-    label: "Environments",
+    label: t("Environments"),
     value: `${count}`,
     valuePosition: "trailing",
     target: "SettingsEnvironments",
@@ -167,6 +173,7 @@ function environmentsRow(count: number): SettingsListRow {
 }
 
 function SettingsList(props: { readonly connections: readonly SettingsListRow[] }) {
+  const { t } = useTranslation();
   // UIKit's scroll-edge material takes the scroll view's own color; like the chat list, match
   // the sidebar's surface so the bar doesn't darken over content at rest.
   // Grouped cards only lift off the screen surface; the drawer is as dark as they are.
@@ -179,7 +186,11 @@ function SettingsList(props: { readonly connections: readonly SettingsListRow[] 
   const overflowRows = useOverflowRows();
   const indexSections = useSettingsIndexSections();
   const sections = filterSettingsSections(
-    [{ rows: overflowRows }, { title: "Connections", rows: props.connections }, ...indexSections],
+    [
+      { rows: overflowRows },
+      { title: t("Connections"), rows: props.connections },
+      ...indexSections,
+    ],
     query,
   );
 
@@ -211,8 +222,8 @@ function SettingsList(props: { readonly connections: readonly SettingsListRow[] 
         ) : (
           <EmptyState
             variant="plain"
-            title="No results"
-            detail={`No settings match “${query.trim()}”.`}
+            title={t("No results")}
+            detail={t("No settings match “{query}”.", { query: query.trim() })}
           />
         )}
       </ScrollView>
@@ -221,6 +232,7 @@ function SettingsList(props: { readonly connections: readonly SettingsListRow[] 
 }
 
 function useSettingsIndexSections(): SettingsListSection[] {
+  const { t } = useTranslation();
   const { selectedTargets, projectGroups, selectedProjectKey } = useSettingsEnvironmentFilter();
   const noServerTargets = selectedTargets.length === 0;
   const selectedProject = projectGroups.find((group) => group.key === selectedProjectKey);
@@ -249,53 +261,54 @@ function useSettingsIndexSections(): SettingsListSection[] {
   return [
     {
       rows: [
-        page("SettingsOrganization", "gearshape", "General"),
-        page("SettingsAppearance", "paintbrush", "Appearance"),
-        page("SettingsFollowUp", "bubble.left.and.bubble.right", "Chat"),
+        page("SettingsOrganization", "gearshape", t("General")),
+        page("SettingsAppearance", "paintbrush", t("Appearance")),
+        page("SettingsFollowUp", "bubble.left.and.bubble.right", t("Chat")),
         ...(navigationCustomizationAvailable()
-          ? [page("SettingsNavigation", "line.3.horizontal", "Navigation tabs")]
+          ? [page("SettingsNavigation", "line.3.horizontal", t("Navigation tabs"))]
           : []),
-        ...(Platform.OS === "ios"
-          ? [
-              page("SettingsKeyboard", "keyboard", "Keyboard"),
-              page("SettingsMicrophone", "mic", "Microphone"),
-            ]
-          : []),
+        ...(Platform.OS === "ios" ? [page("SettingsKeyboard", "keyboard", "Keyboard")] : []),
+        page("SettingsVoice", "mic", "Voice"),
       ],
     },
     {
-      title: "Agents",
+      title: t("Agents"),
       rows: [
-        serverPage("SettingsProviderAccounts", "person.crop.circle", "Providers"),
-        serverPage("SettingsThreads", "text.bubble", "Threads"),
-        page("SettingsScheduledTasks", "clock", "Scheduled tasks"),
+        serverPage("SettingsProviderAccounts", "person.crop.circle", t("Providers")),
+        serverPage("SettingsThreads", "text.bubble", t("Threads")),
+        page("SettingsScheduledTasks", "clock", t("Scheduled tasks")),
       ],
     },
     {
-      title: "Code",
+      title: t("Code"),
       rows: [
         page(
           "SettingsProjectOverview",
           "folder",
-          "Projects",
+          t("Projects"),
           selectedProjectKey !== null ? { value: projectLabel } : undefined,
         ),
-        serverPage("SettingsEnvironmentSourceControl", "arrow.triangle.branch", "Source control"),
-        serverPage("SettingsWorktrees", "square.on.square", "Worktrees"),
+        serverPage(
+          "SettingsEnvironmentSourceControl",
+          "arrow.triangle.branch",
+          t("Source control"),
+        ),
+        serverPage("SettingsWorktrees", "square.on.square", t("Worktrees")),
       ],
     },
     {
       rows: [
-        serverPage("SettingsEnvironmentMaintenance", "arrow.clockwise", "Maintenance"),
-        page("SettingsLabs", "sparkles", "Labs"),
-        page("SettingsAbout", "info.circle", "About"),
-        page("SettingsArchive", "archivebox", "Archive"),
+        serverPage("SettingsEnvironmentMaintenance", "arrow.clockwise", t("Maintenance")),
+        page("SettingsLabs", "sparkles", t("Labs")),
+        page("SettingsAbout", "info.circle", t("About")),
+        page("SettingsArchive", "archivebox", t("Archive")),
       ],
     },
   ];
 }
 
 function useOverflowRows(): SettingsListRow[] {
+  const { t } = useTranslation();
   const order = useNavigationTabOrder();
   const hidden = useHiddenNavigationTabs();
   const { layout } = useAdaptiveWorkspaceLayout();
@@ -305,7 +318,7 @@ function useOverflowRows(): SettingsListRow[] {
   return tabs.map((tab) => ({
     id: tab,
     icon: NAVIGATION_TAB_ICONS[tab],
-    label: WORKSPACE_TAB_LABELS[tab],
+    label: t(WORKSPACE_TAB_LABELS[tab]),
     onPress: () => selectTab(tab),
   }));
 }

@@ -1,7 +1,9 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAtomValue } from "@effect/atom-react";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
 import {
   resolveWorkflowOpening,
+  workflowMemberModelSelection,
   workflowOpeningHeadline,
   workflowOpeningParentThreadId,
   type RuntimeSubagent,
@@ -63,6 +65,7 @@ function memberRowSubagent(
     threadId: coordinatorThreadId,
     childThreadId: member.childThreadId as ThreadId | null,
     model: member.model,
+    modelSelection: workflowMemberModelSelection(member, opening.providerInstanceId!),
     driver: opening.driver!,
     providerInstanceId: opening.providerInstanceId!,
     title: member.title,
@@ -80,6 +83,7 @@ export function ThreadWorkflowOpening(props: {
   readonly threadId: ThreadId;
   readonly opening: WorkflowOpeningValue;
 }) {
+  const { t } = useTranslation();
   const openLinkedThread = useOpenLinkedThread();
   const { opening } = props;
   const headline = workflowOpeningHeadline(opening);
@@ -113,7 +117,9 @@ export function ThreadWorkflowOpening(props: {
       <View className="mb-5 gap-3">
         <View className="flex-row items-start gap-2">
           <View className="min-w-0 flex-1 gap-0.5">
-            <Text className="font-t3-medium text-2xs text-foreground-muted">Workflow started</Text>
+            <Text className="font-t3-medium text-2xs text-foreground-muted">
+              {t("Workflow started")}
+            </Text>
             <Text numberOfLines={1} className="font-t3-medium text-sm text-foreground">
               {headline.title}
             </Text>

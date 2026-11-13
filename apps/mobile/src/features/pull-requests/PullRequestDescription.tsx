@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { splitPullRequestBody } from "@t3tools/client-runtime/pull-request-markdown";
 import {
   PullRequestImageAttachment,
@@ -5,7 +6,7 @@ import {
   PullRequestMediaContext,
 } from "./PullRequestMedia";
 import { PullRequestSectionHeading } from "./PullRequestSectionHeading";
-import { useContext, useMemo, useState, type ReactNode } from "react";
+import { useContext, useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { pullRequestImageSource } from "./pullRequestMediaSource";
@@ -26,7 +27,9 @@ export function PullRequestDescription(props: {
   readonly expanded: boolean;
   readonly onExpandedChange: (expanded: boolean) => void;
   readonly footer?: ReactNode;
+  readonly onTaskListChange?: ComponentProps<typeof PullRequestMarkdown>["onTaskListChange"];
 }) {
+  const { t } = useTranslation();
   const { expanded, onExpandedChange } = props;
   const [bodyHeight, setBodyHeight] = useState(0);
   const mediaContext = useContext(PullRequestMediaContext);
@@ -53,7 +56,7 @@ export function PullRequestDescription(props: {
   return (
     <View className="gap-5">
       <View className="gap-3">
-        <PullRequestSectionHeading>Description</PullRequestSectionHeading>
+        <PullRequestSectionHeading>{t("Description")}</PullRequestSectionHeading>
         {props.markdown.trim() ? (
           <View className="overflow-hidden">
             <View
@@ -66,7 +69,10 @@ export function PullRequestDescription(props: {
                 style={{ position: "absolute", top: 0, left: 0, right: 0 }}
                 onLayout={(event) => setBodyHeight(event.nativeEvent.layout.height)}
               >
-                <PullRequestMarkdown markdown={props.markdown} />
+                <PullRequestMarkdown
+                  markdown={props.markdown}
+                  onTaskListChange={props.onTaskListChange}
+                />
               </View>
             </View>
             {collapsed ? (
@@ -132,13 +138,13 @@ export function PullRequestDescription(props: {
             ) : null}
           </View>
         ) : (
-          <Text className="text-sm text-foreground-muted">No description provided.</Text>
+          <Text className="text-sm text-foreground-muted">{t("No description provided.")}</Text>
         )}
         {props.footer}
       </View>
       {content.attachments.length ? (
         <View className="gap-3">
-          <PullRequestSectionHeading>Attachments</PullRequestSectionHeading>
+          <PullRequestSectionHeading>{t("Attachments")}</PullRequestSectionHeading>
           <ScrollView
             horizontal
             keyboardShouldPersistTaps="always"

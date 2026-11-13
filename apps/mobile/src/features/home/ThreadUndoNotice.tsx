@@ -1,3 +1,4 @@
+import { useTranslation } from "../../lib/i18n/useTranslation";
 import { useAndroidFloatingTabs } from "../settings/appearance/AppearancePreferencesProvider";
 import { useState } from "react";
 import { useKeyboardState } from "react-native-keyboard-controller";
@@ -10,8 +11,8 @@ import {
   useNativeLayoutMetrics,
   useNativeColumnLayoutMetrics,
 } from "../../native/native-layout-metrics";
-import { workspaceSearchBottomClearance } from "../workspace/workspace-tabs-state";
-import { useWorkspaceTabs } from "../workspace/WorkspaceTabsContext";
+import { workspaceSearchBottomClearance } from "../layout/workspace/workspace-tabs-state";
+import { useWorkspaceTabs } from "../layout/workspace/WorkspaceTabsContext";
 import {
   dismissThreadUndoNotice,
   readThreadUndoNotice,
@@ -19,6 +20,7 @@ import {
 } from "./thread-undo-notice";
 
 export function ThreadUndoNotice(props: { readonly visible: boolean }) {
+  const { t } = useTranslation();
   const floatingTabsEnabled = useAndroidFloatingTabs();
   const notice = useThreadUndoNotice();
   const insets = useSafeAreaInsets();
@@ -78,9 +80,9 @@ export function ThreadUndoNotice(props: { readonly visible: boolean }) {
       pointerEvents="box-none"
     >
       <Toast
-        message={`${notice.action} thread`}
+        message={t("{action} thread", { action: String(notice.action) })}
         action={{
-          label: "Undo",
+          label: t("Undo"),
           onPress: () => {
             void notice.undo();
           },

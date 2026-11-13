@@ -1,3 +1,4 @@
+import { useTranslation } from "../lib/i18n/useTranslation";
 import { videoMimeType } from "@t3tools/shared/video";
 import { Modal, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,9 +18,7 @@ import {
 import { useAssetUrlState, useRefreshAssetUrl } from "../state/assets";
 import { usePreparedConnection } from "../state/session";
 import { AppText } from "./ui/AppText";
-import { SymbolView } from "./ui/AppSymbol";
-import { MediaActionsMenu } from "./MediaActionsMenu";
-import { MediaSourceCaption } from "./MediaSourceCaption";
+import { MediaPreviewHeader } from "./MediaPreviewHeader";
 import { MediaVideoPlayer } from "./MediaVideoPlayer";
 
 export type { VideoPreviewSource } from "../lib/videoPreviewSource";
@@ -101,6 +100,7 @@ function OpenVideoPreviewModal(props: {
   readonly playback: PlaybackState;
   readonly onRequestClose: () => void;
 }) {
+  const { t } = useTranslation();
   const { playback } = props;
   const insets = useSafeAreaInsets();
   const mediaActions = useMediaActions(playback.actionsSource, props.onRequestClose);
@@ -118,25 +118,16 @@ function OpenVideoPreviewModal(props: {
         className="flex-1 bg-black"
         style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
       >
-        <View className="min-h-14 flex-row items-center gap-3 pl-4 pr-2">
-          <AppText className="flex-1 font-t3-medium text-base text-white" numberOfLines={2}>
-            {props.name}
-          </AppText>
-          <MediaActionsMenu media={mediaActions} inModal />
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close video"
-            onPress={props.onRequestClose}
-            className="size-12 items-center justify-center"
-          >
-            <SymbolView name="xmark" size={20} tintColor="#ffffff" type="monochrome" />
-          </Pressable>
-        </View>
-        <MediaSourceCaption source={mediaActions.title} />
+        <MediaPreviewHeader
+          title={props.name}
+          media={mediaActions}
+          closeAccessibilityLabel={t("Close video")}
+          onClose={props.onRequestClose}
+        />
         {playback.uri === null && !playback.unavailable ? (
           <View className="flex-1 items-center justify-center gap-3 px-6">
             <AppActivityIndicator color="#ffffff" />
-            <AppText className="text-sm text-white/80">Loading video...</AppText>
+            <AppText className="text-sm text-white/80">{t("Loading video...")}</AppText>
           </View>
         ) : (
           <MediaVideoPlayer
@@ -157,13 +148,13 @@ function OpenVideoPreviewModal(props: {
         ) : null}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Save or share video"
+          accessibilityLabel={t("Save or share video")}
           disabled={playback.uri === null || mediaActions.sharing}
           onPress={mediaActions.share}
           className="mx-4 my-3 min-h-12 items-center justify-center rounded-xl bg-white/15 px-4"
         >
           <AppText className="font-t3-medium text-base text-white">
-            {mediaActions.sharing ? "Opening share sheet..." : "Save or share video"}
+            {mediaActions.sharing ? "Opening share sheet..." : t("Save or share video")}
           </AppText>
         </Pressable>
       </View>

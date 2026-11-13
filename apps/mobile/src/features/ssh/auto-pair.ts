@@ -33,7 +33,7 @@ export async function autoPairOverTunnel(options: {
     } else {
       // A later tunnel reconnect may retry automatically.
       attemptedAutoPairs.delete(attemptKey);
-      options.onError(outcome.error ?? "自动配对失败，请手动输入配对码。");
+      options.onError(outcome.error ?? "Automatic pairing failed. Enter a pairing code manually.");
     }
   } catch {
     // A SecureStore or pairing hiccup leaves the manual code entry in place.

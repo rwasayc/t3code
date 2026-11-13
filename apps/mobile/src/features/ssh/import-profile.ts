@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 import { beginForegroundHandoff } from "../../lib/foreground-handoff";
 import { parseEnrollment, SSH_PROFILE_MAX_FILE_BYTES, type SshTunnelProfile } from "./enrollment";
 
@@ -5,10 +6,12 @@ export type EnrollmentImportResult =
   | { readonly status: "imported"; readonly profile: SshTunnelProfile }
   | { readonly status: "cancelled" };
 
-export class EnrollmentTooLargeError extends Error {
-  constructor() {
-    super("The connection file is too large.");
-    this.name = "EnrollmentTooLargeError";
+export class EnrollmentTooLargeError extends Schema.TaggedError<EnrollmentTooLargeError>()(
+  "EnrollmentTooLargeError",
+  {},
+) {
+  override get message(): string {
+    return "The connection file is too large.";
   }
 }
 

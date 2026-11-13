@@ -86,7 +86,15 @@ internal fun activityPhase(data: Map<String, String>, rows: List<ActivityRow>): 
     else -> rows.firstOrNull()?.let { ActivityPhase.forStatus(it.status) }
   }
 
-internal class ActivityPresentation(data: Map<String, String>, private val active: Boolean) {
+internal class ActivityPresentation(
+  data: Map<String, String>,
+  private val active: Boolean,
+  private val translate: (String) -> String = { it }
+) {
+  private fun countLabel(
+    source: String,
+    count: Any
+  ) = translate(source).replace("{count}", count.toString())
   private val rows = activityRows(data)
   private val hero = rows.firstOrNull()
   val phase = activityPhase(data, rows)
@@ -104,29 +112,29 @@ internal class ActivityPresentation(data: Map<String, String>, private val activ
 
   val summary = when {
     hero == null -> data["activity_title"]?.takeIf { it.isNotBlank() }?.take(120)
-      ?: "Agent activity"
+      ?: translate("Agent activity")
     rows.size == 1 -> hero.title
-    attentionCount == 1 -> "1 needs you"
-    attentionCount > 1 -> "$attentionCount need you"
-    activeCount > 0 && failedCount > 0 -> "$failedCount failed"
-    activeCount > 0 -> "$activeCount working"
-    failedCount > 0 -> "Finished, $failedCount failed"
-    else -> "All finished"
+    attentionCount == 1 -> translate("1 needs you")
+    attentionCount > 1 -> countLabel("{count} need you", attentionCount)
+    activeCount > 0 && failedCount > 0 -> countLabel("{count} failed", failedCount)
+    activeCount > 0 -> countLabel("{count} working", activeCount)
+    failedCount > 0 -> countLabel("Finished, {count} failed", failedCount)
+    else -> translate("All finished")
   }
 
   val chip = when {
     !active -> null
-    phase == null -> data["activity_chip"]?.takeIf { it.isNotBlank() }?.take(7) ?: "Active"
+    phase == null ->
+      data["activity_chip"]?.takeIf { it.isNotBlank() }?.take(7) ?: translate("Active")
     phase == ActivityPhase.RUNNING && activeCount > 1 ->
-      "${if (activeCount > 9) "9+" else activeCount} live"
-    else -> phase.chip
+      countLabel("{count} live", if (activeCount > 9) "9+" else activeCount)
+    else -> translate(phase.chip)
   }
 
-  val action = if (active) phase?.action ?: "Open" else null
+  val action = if (active) translate(phase?.action ?: "Open") else null
 
   fun applyTo(builder: NotificationCompat.Builder, context: Context) {
     val tint = phase?.let { ContextCompat.getColor(context, it.color) }
-    builder.setSmallIcon(R.drawable.agent_activity_mark)
     if (tint != null) builder.setColor(tint)
     // Tint the summary only when it names an outcome or a request; a plain
     // "3 working" stays neutral so the accent keeps meaning something.
@@ -137,7 +145,11 @@ internal class ActivityPresentation(data: Map<String, String>, private val activ
       builder.setSubText(
         listOfNotNull(
           hero!!.project.takeIf { singleProject && it.isNotBlank() },
-          if (activeCount > 0) "$activeCount active" else "$threadCount threads"
+          if (activeCount > 0) {
+            countLabel("{count} active", activeCount)
+          } else {
+            countLabel("{count} threads", threadCount)
+          }
         ).joinToString(" · ")
       )
     }
@@ -165,7 +177,7 @@ internal class ActivityPresentation(data: Map<String, String>, private val activ
     SpannableStringBuilder().apply {
       val status = ActivityPhase.forStatus(row.status)
       val color = ContextCompat.getColor(context, status?.color ?: R.color.agent_activity_waiting)
-      append(tinted(row.status, color, bold = true))
+      append(tinted(if (status != null) translate(row.status) else row.status, color, bold = true))
       append(" ").append(row.title)
       // Promoted cards drop text color, so the separator has to do the work of the dimming.
       if (trailing.isNotBlank()) {

@@ -1,3 +1,13 @@
+vi.mock("../lib/i18n/useTranslation", async () => {
+  const { translate } = await import("../lib/i18n/translations");
+  return {
+    useTranslation: () => ({
+      t: (message: string, values?: Readonly<Record<string, string | number>>) =>
+        translate("en", message, values),
+    }),
+  };
+});
+
 import { AuthOrchestrationOperateScope, AuthSourceControlWriteScope } from "@t3tools/contracts";
 import type { VcsListRefsResult } from "@t3tools/contracts";
 import { resolveAutoFeatureBranchName } from "@t3tools/shared/git";

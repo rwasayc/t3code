@@ -1,3 +1,13 @@
+vi.mock("../../lib/i18n/useTranslation", async () => {
+  const { translate } = await import("../../lib/i18n/translations");
+  return {
+    useTranslation: () => ({
+      t: (message: string, values?: Readonly<Record<string, string | number>>) =>
+        translate("en", message, values),
+    }),
+  };
+});
+
 import { makeThreadShellFixture } from "../../test-fixtures";
 import type { EnvironmentThreadShell } from "@t3tools/client-runtime/state/shell";
 import {

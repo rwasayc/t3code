@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "policy": "engineering/project-testing@1.0.0",
+  "profiles": {
+    "unit": {
+      "groups": ["unit-contracts", "unit-shared"]
+    },
+    "component": {
+      "groups": ["node-tools", "python-artifacts", "python-seeder"]
+    },
+    "node-tools": {
+      "groups": ["node-tools"]
+    },
+    "python-component": {
+      "groups": ["python-artifacts", "python-seeder"]
+    },
+    "browser": {
+      "groups": ["browser"]
+    },
+    "native-rust": {
+      "groups": ["rust-resource-monitor", "rust-kde-snap-shot", "rust-hyprland-snap-shot"]
+    },
+    "check": {
+      "groups": ["diff-check", "unit-contracts", "unit-shared"]
+    },
+    "generate-check": {
+      "groups": ["icons-check"]
+    },
+    "integration": {
+      "unavailable": "No safe universal external-service suite. Select a reviewed isolated protocol/provider fixture from TESTING.md; configuration is mandatory."
+    },
+    "e2e": {
+      "unavailable": "Product/browser/device acceptance needs an explicit owned deployment, identity, resources and cleanup. See TESTING.md; no implicit launch."
+    },
+    "race": {
+      "unavailable": "Go -race is not applicable: no owned Go module. Use the named Effect concurrency regressions in TESTING.md; no empty PASS."
+    },
+    "fuzz": {
+      "unavailable": "No registered active fuzz target. Property/regression cases run in their existing suites; no empty fuzz PASS."
+    }
+  },
+  "groups": {
+    "node-tools": {
+      "cwd": ".",
+      "argv": [
+        "node",
+        "--test",
+        ".github/scripts/check-nightly-release.test.cjs",
+        ".github/scripts/relay-state-output.test.cjs",
+        ".github/scripts/thread-transfer-report.test.cjs",
+        ".github/scripts/vercel-deployment-output.test.cjs"
+      ],
+      "required": [
+        ".github/scripts/check-nightly-release.test.cjs",
+        ".github/scripts/relay-state-output.test.cjs",
+        ".github/scripts/thread-transfer-report.test.cjs",
+        ".github/scripts/vercel-deployment-output.test.cjs",
+        ".github/workflows/release.yml",
+        ".github/workflows/web-preview.yml"
+      ]
+    },
+    "python-artifacts": {
+      "cwd": ".",
+      "argv": ["{python}", "-B", ".github/scripts/stage-preview-bundle.test.py"],
+      "required": [
+        ".github/scripts/stage-preview-bundle.test.py",
+        ".github/scripts/stage-preview-bundle.py"
+      ]
+    },
+    "python-seeder": {
+      "cwd": ".",
+      "argv": ["{python}", "-B", "scripts/seed-issue-21397.test.py"],
+      "required": [
+        "scripts/seed-issue-21397.test.py",
+        "scripts/seed-issue-21397.py",
+        "scripts/fixtures/issue-21397.json"
+      ]
+    },
+    "browser": {
+      "cwd": "apps/web",
+      "argv": ["{vp}", "test", "run", "--project", "browser", "--maxWorkers", "1"],
+      "required": ["apps/web/vite.config.ts"]
+    },
+    "diff-check": {
+      "cwd": ".",
+      "argv": ["git", "diff", "--check"],
+      "required": []
+    },
+    "icons-check": {
+      "cwd": ".",
+      "argv": ["{vp}", "run", "icons:check"],
+      "required": ["scripts/export-brand-icons.ts"]
+    },
+    "rust-resource-monitor": {
+      "cwd": ".",
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "native/resource-monitor/Cargo.toml"
+      ],
+      "required": ["native/resource-monitor/Cargo.toml", "native/resource-monitor/Cargo.lock"]
+    },
+    "rust-kde-snap-shot": {
+      "cwd": ".",
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "native/kde-snap-shot/Cargo.toml"
+      ],
+      "required": ["native/kde-snap-shot/Cargo.toml", "native/kde-snap-shot/Cargo.lock"]
+    },
+    "rust-hyprland-snap-shot": {
+      "cwd": ".",
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "native/hyprland-snap-shot/Cargo.toml"
+      ],
+      "required": ["native/hyprland-snap-shot/Cargo.toml", "native/hyprland-snap-shot/Cargo.lock"]
+    },
+    "unit-contracts": {
+      "cwd": "packages/contracts",
+      "argv": [
+        "{vp}",
+        "test",
+        "run",
+        "--config",
+        "../../vite.config.ts",
+        "--maxWorkers",
+        "1",
+        "src/keybindings.test.ts",
+        "src/modelSelection.test.ts"
+      ],
+      "required": [
+        "packages/contracts/src/keybindings.test.ts",
+        "packages/contracts/src/modelSelection.test.ts",
+        "vite.config.ts"
+      ]
+    },
+    "unit-shared": {
+      "cwd": "packages/shared",
+      "argv": [
+        "{vp}",
+        "test",
+        "run",
+        "--config",
+        "../../vite.config.ts",
+        "--maxWorkers",
+        "1",
+        "src/String.test.ts",
+        "src/cliArgs.test.ts"
+      ],
+      "required": [
+        "packages/shared/src/String.test.ts",
+        "packages/shared/src/cliArgs.test.ts",
+        "vite.config.ts"
+      ]
+    }
+  }
+}

@@ -21,6 +21,13 @@ Android uses **Material You Layout** by default unless you have turned it off in
 It changes shapes, spacing, and controls independently
 of the selected theme.
 
+## Language
+
+On Android, choose **Settings → Appearance → Language** to follow the system language or select
+**简体中文** or **English**. Changes apply immediately and are saved on this device. Chinese
+system locales use Simplified Chinese; other system languages use English. Messages, code,
+file names, and project names keep their original text.
+
 ## Composer context
 
 Git-backed projects show branch and worktree controls below the composer while you create a thread.
@@ -41,6 +48,15 @@ exporting a table preserves the TeX.
 The composer keeps TeX source editable, including when rich text is enabled. The Render math
 preference is saved separately on each device.
 
+## Mermaid diagrams
+
+On mobile, fenced `mermaid` blocks in messages and Markdown file previews render as diagrams
+without an internet connection. Use **Show code** or **Show diagram** to switch views. Unsupported
+syntax shows its source. Diagrams also render inside lists and blockquotes. Use **Expand diagram**
+for a full-screen view with pinch zoom, dragging, and zoom controls. Close the view to return to
+the same message or file preview. Diagram labels containing `$$...$$` use mathematical typesetting
+when **Render math** is enabled in Appearance settings; otherwise they remain source text.
+
 ## Motion
 
 The main sidebar, right panel, and terminal drawer open and close immediately by default. Move the
@@ -57,7 +73,9 @@ change. Export your theme as JSON to share it.
 ## Environment themes
 
 Environment themes and defaults come from the server serving your web app or the desktop app's
-main local environment. app.t3.codes and additional connections do not use them.
+main local environment. With the desktop app's local environment off, they come from the
+[background service](./background-service.md) on the same machine while the app is connected to
+it. app.t3.codes and other connections do not use them.
 
 Select a published theme in **Settings → Appearance** to follow its palette as the server updates
 it. **Duplicate** makes an independent copy you can edit. A saved custom theme with the same ID
