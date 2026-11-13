@@ -9,6 +9,7 @@ import * as Option from "effect/Option";
 import type * as Path from "effect/Path";
 import type * as Scope from "effect/Scope";
 import * as Stream from "effect/Stream";
+import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
 import { SCAN_CACHE_FILE_NAME } from "./usage/usageScanCache.ts";
 import { TestClock } from "effect/testing";
 import * as SqlClient from "effect/sql/SqlClient";
@@ -2050,10 +2051,60 @@ describe("storage cleanup reports and local file policies", () => {
         yield* fs.remove(`${index.trim()}.lock`);
         const gitFile = yield* fs.readFileString(`${worktree}/.git`);
         yield* fs.writeFileString(`${worktree}/.git`, "gitdir: /missing-git-directory\n");
-        expect((yield* service.runNow).entries[0]).toMatchObject(changed);
+        const brokenGitFile = yield* service.runNow;
+        expect(brokenGitFile.entries[0]).toMatchObject(changed);
+        expect(brokenGitFile.bytesFreed).toBe(0);
+        expect(yield* fs.exists(worktree)).toBe(true);
+        expect(yield* fs.readFileString(`${worktree}/tracked.txt`)).toBe("original\n");
         yield* fs.writeFileString(`${worktree}/.git`, gitFile);
         expect((yield* service.runNow).entries[0]).toMatchObject({ outcome: "removed" });
         expect(fullStatusCalls()).toBe(0);
+      }),
+    ),
+  );
+  it.live.each([
+    ["permission error", "fatal: cannot read index: Permission denied\n"],
+    ["other fatal error", "fatal: bad object HEAD\n"],
+    [
+      "non-prefix gitfile diagnostic",
+      "warning: command failed\nfatal: gitfile does not point to a valid repository: .git\n",
+    ],
+  ] as const)("reports a branch-check %s without removing the worktree", ([_name, stderr]) =>
+    runCleanupTest(
+      Effect.gen(function* () {
+        const git = yield* GitVcsDriver.GitVcsDriver;
+        let branchChecks = 0;
+        let removals = 0;
+        const fixture = yield* cleanupFixture().pipe(
+          Effect.provideService(GitVcsDriver.GitVcsDriver, {
+            ...git,
+            execute: (input) => {
+              if (input.args.includes("remove")) removals++;
+              if (input.operation !== "StorageCleanup.branchChanged") return git.execute(input);
+              branchChecks++;
+              expect(input.env).toEqual({ LC_ALL: "C" });
+              expect(input.allowNonZeroExit).toBe(true);
+              return Effect.succeed({
+                exitCode: ChildProcessSpawner.ExitCode(128),
+                stdout: "",
+                stderr,
+                stdoutTruncated: false,
+                stderrTruncated: false,
+              });
+            },
+          }),
+        );
+        const report = yield* fixture.service.runNow;
+        expect(report.entries[0]).toMatchObject({ outcome: "failed" });
+        expect(report.entries[0]?.reason).toContain(stderr.trim().split("\n")[0]);
+        expect(report.bytesFreed).toBe(0);
+        expect(yield* fixture.fs.exists(fixture.worktree)).toBe(true);
+        expect(yield* fixture.fs.readFileString(`${fixture.worktree}/tracked.txt`)).toBe(
+          "original\n",
+        );
+        expect(branchChecks).toBeGreaterThan(0);
+        expect(removals).toBe(0);
+        expect(fixture.fullStatusCalls()).toBe(0);
       }),
     ),
   );
