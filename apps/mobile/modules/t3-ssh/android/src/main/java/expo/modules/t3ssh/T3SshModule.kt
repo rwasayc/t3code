@@ -119,8 +119,10 @@ class T3SshModule : Module() {
     }
     synchronized(stateLock) {
       val current = currentJob
-      if (current != null && current.configJson == configJson &&
-          current.generation == generation && queuedJob == null) {
+      if (
+        current != null && current.configJson == configJson &&
+        current.generation == generation && queuedJob == null
+      ) {
         current.promises.add(promise)
         return@synchronized
       }
