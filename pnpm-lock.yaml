@@ -1040,6 +1040,9 @@ importers:
       '@betteroffice/xlsx':
         specifier: 0.3.0
         version: 0.3.0
+      '@carvebloom/lab-control-ui':
+        specifier: file:vendor/lab-control-ui-0.1.0-fb48b0a.tgz
+        version: file:apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@clerk/clerk-js':
         specifier: 6.40.0
         version: 6.40.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -3304,6 +3307,13 @@ packages:
   '@capsizecss/unpack@4.0.1':
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
     engines: {node: '>=18'}
+
+  '@carvebloom/lab-control-ui@file:apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz':
+    resolution: {integrity: sha512-8D1OpGsuA7/UtN4eG+fVXbGKxHFbBbCSsfNMX4plhm3doZWktebTFZR3orr9fweE4taufI/ucOJx5K231ANomQ==, tarball: file:apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz}
+    version: 0.1.0
+    peerDependencies:
+      react: '>=19 <20'
+      react-dom: '>=19 <20'
 
   '@clack/core@1.5.1':
     resolution: {integrity: sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ==}
@@ -13342,6 +13352,11 @@ snapshots:
   '@capsizecss/unpack@4.0.1':
     dependencies:
       fontkitten: 1.0.3
+
+  '@carvebloom/lab-control-ui@file:apps/web/vendor/lab-control-ui-0.1.0-fb48b0a.tgz(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      react: 19.3.0
+      react-dom: 19.3.0(react@19.3.0)
 
   '@clack/core@1.5.1':
     dependencies:
