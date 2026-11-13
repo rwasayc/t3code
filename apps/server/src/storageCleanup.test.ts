@@ -2069,7 +2069,7 @@ describe("storage cleanup reports and local file policies", () => {
       "non-prefix gitfile diagnostic",
       "warning: command failed\nfatal: gitfile does not point to a valid repository: .git\n",
     ],
-  ] as const)("reports a branch-check %s without removing the worktree", (_name, stderr) =>
+  ] as const)("reports a branch-check %s without removing the worktree", ([_name, stderr]) =>
     runCleanupTest(
       Effect.gen(function* () {
         const git = yield* GitVcsDriver.GitVcsDriver;
@@ -2099,7 +2099,9 @@ describe("storage cleanup reports and local file policies", () => {
         expect(report.entries[0]?.reason).toContain(stderr.trim().split("\n")[0]);
         expect(report.bytesFreed).toBe(0);
         expect(yield* fixture.fs.exists(fixture.worktree)).toBe(true);
-        expect(yield* fixture.fs.readFileString(`${fixture.worktree}/tracked.txt`)).toBe("original\n");
+        expect(yield* fixture.fs.readFileString(`${fixture.worktree}/tracked.txt`)).toBe(
+          "original\n",
+        );
         expect(branchChecks).toBeGreaterThan(0);
         expect(removals).toBe(0);
         expect(fixture.fullStatusCalls()).toBe(0);
