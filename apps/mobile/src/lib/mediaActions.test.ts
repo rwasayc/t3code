@@ -17,6 +17,9 @@ const state = vi.hoisted(() => ({
   copy: vi.fn(),
 }));
 
+vi.mock("./i18n/useTranslation", () => ({
+  useTranslation: () => ({ t: (message: string) => message }),
+}));
 vi.mock("react", () => ({
   useEffect: () => {},
   useRef: <A>(current: A) => ({ current }),

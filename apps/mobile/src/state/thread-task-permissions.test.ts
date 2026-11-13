@@ -65,6 +65,9 @@ const state = vi.hoisted(() => ({
   },
 }));
 
+vi.mock("../lib/i18n/useTranslation", () => ({
+  useTranslation: () => ({ t: (message: string) => message }),
+}));
 vi.mock("react", () => ({
   useCallback: <A>(callback: A) => callback,
   useEffect: () => {},
