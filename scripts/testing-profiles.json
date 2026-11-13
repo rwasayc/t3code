@@ -4,7 +4,8 @@
   "profiles": {
     "unit": {
       "groups": [
-        "unit-vitest"
+        "unit-contracts",
+        "unit-shared"
       ]
     },
     "component": {
@@ -40,7 +41,8 @@
     "check": {
       "groups": [
         "diff-check",
-        "unit-vitest"
+        "unit-contracts",
+        "unit-shared"
       ]
     },
     "generate-check": {
@@ -62,27 +64,6 @@
     }
   },
   "groups": {
-    "unit-vitest": {
-      "cwd": ".",
-      "argv": [
-        "{vp}",
-        "test",
-        "run",
-        "--maxWorkers",
-        "1",
-        "packages/contracts/src/keybindings.test.ts",
-        "packages/contracts/src/modelSelection.test.ts",
-        "packages/shared/src/String.test.ts",
-        "packages/shared/src/cliArgs.test.ts"
-      ],
-      "required": [
-        "packages/contracts/src/keybindings.test.ts",
-        "packages/contracts/src/modelSelection.test.ts",
-        "packages/shared/src/String.test.ts",
-        "packages/shared/src/cliArgs.test.ts",
-        "vite.config.ts"
-      ]
-    },
     "node-tools": {
       "cwd": ".",
       "argv": [
@@ -205,6 +186,44 @@
       "required": [
         "native/hyprland-snap-shot/Cargo.toml",
         "native/hyprland-snap-shot/Cargo.lock"
+      ]
+    },
+    "unit-contracts": {
+      "cwd": "packages/contracts",
+      "argv": [
+        "{vp}",
+        "test",
+        "run",
+        "--config",
+        "../../vite.config.ts",
+        "--maxWorkers",
+        "1",
+        "src/keybindings.test.ts",
+        "src/modelSelection.test.ts"
+      ],
+      "required": [
+        "packages/contracts/src/keybindings.test.ts",
+        "packages/contracts/src/modelSelection.test.ts",
+        "vite.config.ts"
+      ]
+    },
+    "unit-shared": {
+      "cwd": "packages/shared",
+      "argv": [
+        "{vp}",
+        "test",
+        "run",
+        "--config",
+        "../../vite.config.ts",
+        "--maxWorkers",
+        "1",
+        "src/String.test.ts",
+        "src/cliArgs.test.ts"
+      ],
+      "required": [
+        "packages/shared/src/String.test.ts",
+        "packages/shared/src/cliArgs.test.ts",
+        "vite.config.ts"
       ]
     }
   }

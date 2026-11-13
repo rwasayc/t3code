@@ -1,0 +1,66 @@
+name: Testing profiles
+
+on:
+  push:
+    branches:
+      - "workbench/android-ssh"
+      - "feat/thread-harbor-mcp-binding"
+  pull_request:
+    branches:
+      - "workbench/android-ssh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testing-profiles-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  script-components:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - name: Static entry contracts
+        run: |
+          git diff --check HEAD^ HEAD
+          python3 -B - <<'PYTHON'
+          import ast, json
+          from pathlib import Path
+          ast.parse(Path("scripts/run-testing.py").read_text())
+          json.loads(Path("scripts/testing-profiles.json").read_text())
+          PYTHON
+      - name: Inventory owned test sources
+        run: python3 -B scripts/run-testing.py inventory > test-inventory.json
+      - name: Delivery-script components (no dependency install)
+        run: python3 -B scripts/run-testing.py component
+
+  core-type-and-unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NODE_OPTIONS: --max-old-space-size=3072
+      RAYON_NUM_THREADS: "2"
+      UV_THREADPOOL_SIZE: "2"
+      VP_REMOTE_CACHE: "off"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --frozen-lockfile --ignore-scripts --filter @t3tools/monorepo --filter @t3tools/contracts... --filter @t3tools/shared...
+      - name: Core TypeScript and Effect diagnostics
+        run: |
+          vp run --filter @t3tools/contracts typecheck
+          vp run --filter @t3tools/shared typecheck
+      - name: Bounded unit profile (four files, serial packages)
+        run: python3 -B scripts/run-testing.py unit

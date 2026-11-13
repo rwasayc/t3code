@@ -166,19 +166,24 @@ sparse paths so a partial checkout cannot masquerade as the whole repository.
 
 ## CI mapping
 
-`.github/workflows/ci.yml` retains its existing affected-package test job,
-`test_web`, cached server shards (`test_server`), `rust`,
-`mobile_native_static_analysis`, build/typecheck and `check` jobs. The existing
-`test` job now calls `python3 -B scripts/run-testing.py component` for **all four**
-Node tools and **both** Python files, instead of two Node files and one Python
-file. The normal workspace run already covers the four-file unit selection;
-it is not duplicated in another CI job. `release.yml` also calls this component profile before its existing package tests.
-`windows-tests.yml` retains its existing platform command and does not implicitly
-include the script-component profile. No remote job was run as part of this change.
-The current sparse checkout lacks 38 tracked test files (relay and KDE helpers),
-plus the three native Cargo manifests. Inventory reports them as `present:false`;
-missing files are not skips or passes. Explicitly materialize the relevant tracked
-paths before selecting those suites; do not silently narrow the CI matrix.
+`.github/workflows/testing.yml` runs on this repository's default branch and
+current delivery branch pushes, PRs targeting the default branch, and manual
+dispatch. `script-components` checks whitespace/Python AST/profile JSON, inventories
+owned sources and runs the same six registered script components without a package
+install. `core-type-and-unit` uses standard hosted Ubuntu, the existing pinned
+Vite+ setup, frozen lockfile and an install limited to root/contracts/shared
+with lifecycle scripts disabled. Registry/security policy remains enabled.
+It runs the existing contracts/shared typecheck commands serially with their
+original Effect diagnostics, then the same four unit files from their owning
+package directories. Package cwd avoids loading unrelated application test configs.
+
+GITHUB_TOKEN is contents-read only; checkout credentials are not persisted. No
+private task-cache token, product launch, fixed Mac fixture, provider/model, OAuth,
+browser/device or release action is part of these jobs. These are a bounded core
+baseline, not whole-server/web/mobile type or behavior verification. Existing
+broader workflows and assertions are retained; their runner/service requirements
+remain independent. Actual run results are recorded per remote SHA, not inferred
+from workflow presence or empty checks.
 
 ## Time, fixtures and result gates
 
