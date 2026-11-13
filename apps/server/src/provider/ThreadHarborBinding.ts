@@ -51,6 +51,16 @@ const make = Effect.gen(function* () {
     read: Effect.fn("ThreadHarborBinding.read")(
       function* ({ threadId, cwd }) {
         if (threadId === null) return {};
+        const directory = yield* fileSystem.lstat(path.join(stateDir, "thread-harbor")).pipe(
+          Effect.catchIf(
+            (error) => error.reason._tag === "NotFound",
+            () => Effect.succeed(null),
+          ),
+        );
+        if (directory === null) return {};
+        if (directory.type !== "Directory") {
+          return yield* new ThreadHarborBindingError({ threadId });
+        }
         if (!/^[A-Za-z0-9][A-Za-z0-9:_-]{0,255}$/.test(threadId)) {
           return yield* new ThreadHarborBindingError({ threadId });
         }
@@ -59,8 +69,13 @@ const make = Effect.gen(function* () {
           "thread-harbor",
           `${encodeURIComponent(threadId)}.json`,
         );
-        if (!(yield* fileSystem.exists(configPath))) return {};
-        const info = yield* fileSystem.lstat(configPath);
+        const info = yield* fileSystem.lstat(configPath).pipe(
+          Effect.catchIf(
+            (error) => error.reason._tag === "NotFound",
+            () => Effect.succeed(null),
+          ),
+        );
+        if (info === null) return {};
         if (info.type !== "File" || Number(info.size) > 16_384 || (info.mode & 0o077) !== 0) {
           return yield* new ThreadHarborBindingError({ threadId });
         }

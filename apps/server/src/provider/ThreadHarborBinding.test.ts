@@ -40,6 +40,25 @@ const fixture = Effect.gen(function* () {
   return { fs, configPath, binding, service: yield* ThreadHarborBinding.ThreadHarborBinding };
 });
 
+it.effect("leaves unconfigured Harbor inactive without imposing binding-key IDs", () =>
+  Effect.gen(function* () {
+    const service = yield* ThreadHarborBinding.ThreadHarborBinding;
+    const threadIds = [
+      ThreadId.make("thread-recovers archived-session errors"),
+      ThreadId.make("thread:fixture:fork%3Aproject"),
+    ];
+    for (const threadId of threadIds) {
+      assert.deepEqual(yield* service.read({ threadId, cwd: "/workspace" }), {});
+    }
+    yield* fixture;
+    for (const threadId of threadIds) {
+      const error = yield* Effect.flip(service.read({ threadId, cwd: "/workspace" }));
+      assert.equal(error._tag, "ThreadHarborBindingError");
+      assert.equal(error.threadId, threadId);
+    }
+  }).pipe(Effect.scoped, Effect.provide(testLayer)),
+);
+
 it.effect(
   "binds only the exact thread and cwd to four read tools without reading credentials",
   () =>
